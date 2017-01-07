@@ -167,6 +167,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
+        stoptimertask(getWindow().getDecorView().getRootView());
+
     }
 
     @Override
@@ -212,9 +214,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void stoptimertask(View v) {
+        Log.d(TAG, "OnResume method called...");
         //stop the timer, if it's not already null
         if (timer != null) {
+
+
+            Log.d(TAG, "Stopping timer HTextView animated text...");
+            hTextView.clearAnimation();
             timer.cancel();
+            timer.purge();
             timer = null;
         }
     }
