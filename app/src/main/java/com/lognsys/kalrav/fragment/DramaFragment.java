@@ -1,69 +1,126 @@
 package com.lognsys.kalrav.fragment;
 
-import android.content.Context;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.model.DramaInfo;
+
+import java.util.ArrayList;
 
 
 public class DramaFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    ArrayList<DramaInfo> listitems = new ArrayList<>();
+    RecyclerView myRecyclerView;
+    String dramas[] = {"Gujjubhai the Great", "Gujjubhai Ghode Chadhiya", "Jalsa Karo Jayantilal"};
+    int images[] = {R.drawable.gujjubhai_great, R.drawable.gujjubhai_ghode_chadhiya, R.drawable.jalsa_karo_jayantilal};
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-
-
-    public DramaFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DramaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DramaFragment newInstance(String param1, String param2) {
-        DramaFragment fragment = new DramaFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        initializeList();
+        getActivity().setTitle("Kalrav Arts");
+    }
+
+    public void initializeList() {
+        listitems.clear();
+
+        for (int i = 0; i < 3; i++) {
+
+
+            DramaInfo item = new DramaInfo();
+            item.setDrama_name(dramas[i]);
+            item.setImageResourceId(images[i]);
+            listitems.add(item);
+
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_drama, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_drama, container, false);
+        myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+        myRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        if (listitems.size() > 0 & myRecyclerView != null) {
+            myRecyclerView.setAdapter(new MyAdapter(listitems));
+        }
+        myRecyclerView.setLayoutManager(MyLayoutManager);
+
+        return view;
     }
 
 
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView titleTextView;
+        public ImageView coverImageView;
+        public ImageView likeImageView;
+        public ImageView shareImageView;
+
+        public MyViewHolder(View v) {
+            super(v);
+            titleTextView = (TextView) v.findViewById(R.id.titleTextView);
+            coverImageView = (ImageView) v.findViewById(R.id.coverImageView);
+            likeImageView = (ImageView) v.findViewById(R.id.likeImageView);
+            shareImageView = (ImageView) v.findViewById(R.id.shareImageView);
+
+        }
+    }
+
+
+    public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+        private ArrayList<DramaInfo> list;
+
+        public MyAdapter(ArrayList<DramaInfo> Data) {
+            list = Data;
+        }
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            // create a new view
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.recycle_items, parent, false);
+            MyViewHolder holder = new MyViewHolder(view);
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(final MyViewHolder holder, int position) {
+
+            holder.titleTextView.setText(list.get(position).getDrama_name());
+            holder.coverImageView.setImageResource(list.get(position).getImageResourceId());
+           // holder.coverImageView.setTag(list.get(position).getImageResourceId());
+            holder.likeImageView.setTag(R.drawable.ic_like);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:htext="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -7,7 +8,7 @@
     <pl.droidsonroids.gif.GifImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/theatre_curtain_crop"/>
+        android:background="@drawable/theatre"/>
 
     <ImageView
         android:id="@+id/kalrav_logo"
@@ -20,16 +21,18 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="155dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.hanks.htextview.HTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/company_name"
-        android:textColor="#FFFF"
-        android:visibility="visible"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:fontFamily="@string/font_family_black"/>
+        htext:animateType="typer"
+        htext:fontAsset="fonts/Mirza-Regular.ttf" />
+
 
     <com.facebook.login.widget.LoginButton
         xmlns:facebook="http://schemas.android.com/apk/res-auto"

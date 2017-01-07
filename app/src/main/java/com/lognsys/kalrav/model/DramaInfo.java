@@ -7,12 +7,30 @@ package com.lognsys.kalrav.model;
 public class DramaInfo {
 
 
-
     private String group_name;
     private String drama_name;
     private String link_photo;
     private String datetime;
+    private String briefDescription;
+    private int imageResourceId;
 
+    public int getImageResourceId() {
+        return imageResourceId;
+    }
+
+    public void setImageResourceId(int imageResourceId) {
+        this.imageResourceId = imageResourceId;
+    }
+
+
+
+    public String getBriefDescription() {
+        return briefDescription;
+    }
+
+    public void setBriefDescription(String briefDescription) {
+        this.briefDescription = briefDescription;
+    }
 
     public String getGroup_name() {
         return group_name;

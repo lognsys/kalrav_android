@@ -1,16 +1,20 @@
 package com.lognsys.kalrav;
 
-
+import android.content.res.AssetManager;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,16 +33,22 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
+import com.hanks.htextview.HTextView;
+import com.hanks.htextview.HTextViewType;
+import com.hanks.htextview.animatetext.HText;
 import com.lognsys.kalrav.db.SQLiteHelper;
 import com.lognsys.kalrav.db.UserInfoDAO;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
+import com.lognsys.kalrav.util.FontManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,7 +57,17 @@ public class LoginActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private UserInfoDAOImpl userDaoImpl;
     private KalravApplication globalObj;
+    private HTextView hTextView;
 
+
+    Timer timer;
+    TimerTask timerTask;
+
+    //we are going to use a handler to be able to run in our TimerTask
+    final Handler handler = new Handler();
+
+    Handler mHtHandler;
+    Handler mUiHandler;
 
     public LoginActivity() {
         //Create database
@@ -89,6 +109,14 @@ public class LoginActivity extends AppCompatActivity {
             //setting layout activity_login
             setContentView(com.lognsys.kalrav.R.layout.activity_login);
 
+
+            hTextView = (HTextView) findViewById(R.id.text);
+            hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
+            // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
+            hTextView.setAnimateType(HTextViewType.TYPER);
+            hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
+
+
             loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_location"));
             //loginButton.setReadPermissions(Arrays.asList("read_stream, public_profile, email, user_birthday, user_friends, user_about_me, user_location, user_likes"));
@@ -127,6 +155,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -146,9 +175,12 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "OnResume method called...");
         super.onResume();
 
+
+        //onResume we start our timer so it can start when the app comes from the background
+        startTimer();
+
+
         UserInfo user = globalObj.getGlobalObject();
-
-
         if (null != user) {
 
             Log.v(TAG, "OnResume method - Starting HOME_ACTIVITY FROM ");
@@ -165,8 +197,53 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    public void startTimer() {
+
+        //set a new Timer
+        timer = new Timer();
+
+        //initialize the TimerTask's job
+        initializeTimerTask();
+
+        //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
+
+        timer.schedule(timerTask, 5000, 9000); //
+
+    }
+
+    public void stoptimertask(View v) {
+        //stop the timer, if it's not already null
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+
+            public void run() {
+
+                //use a handler to run a toast that shows the current timestamp
+                handler.post(new Runnable() {
+
+                    public void run() {
+                        hTextView = (HTextView) findViewById(R.id.text);
+                        hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
+                        // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
+                        hTextView.setAnimateType(HTextViewType.TYPER);
+                        hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
+
+                    }
+                });
+            }
+        };
+    }
+
+
     /**
-     * requestData to get data
+     * Request data from facebook api
      */
     public void requestData() {
 
@@ -179,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
 
-                Log.v(TAG, " RESPONSE FB - " + response.toString());
+                Log.v(TAG, " Facebook API response - " + response.toString());
 
                 JSONObject json = response.getJSONObject();
 
