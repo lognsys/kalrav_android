@@ -12,7 +12,53 @@ public class DramaInfo {
     private String link_photo;
     private String datetime;
     private String briefDescription;
+    private String[] cast;
+    private String genre;
+    private String director;
+    private String writer;
+    private String music;
     private int imageResourceId;
+
+    public String[] getCast() {
+        return cast;
+    }
+
+    public void setCast(String[] cast) {
+        this.cast = cast;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getWriter() {
+        return writer;
+    }
+
+    public void setWriter(String writer) {
+        this.writer = writer;
+    }
+
+    public String getMusic() {
+        return music;
+    }
+
+    public void setMusic(String music) {
+        this.music = music;
+    }
+
 
     public int getImageResourceId() {
         return imageResourceId;
@@ -21,7 +67,6 @@ public class DramaInfo {
     public void setImageResourceId(int imageResourceId) {
         this.imageResourceId = imageResourceId;
     }
-
 
 
     public String getBriefDescription() {

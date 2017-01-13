@@ -1,51 +1,31 @@
 package com.lognsys.kalrav;
 
-import android.content.res.AssetManager;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookRequestError;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginFragment;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.facebook.login.widget.ProfilePictureView;
 import com.hanks.htextview.HTextView;
 import com.hanks.htextview.HTextViewType;
-import com.hanks.htextview.animatetext.HText;
 import com.lognsys.kalrav.db.SQLiteHelper;
-import com.lognsys.kalrav.db.UserInfoDAO;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.FontManager;
-
+import com.lognsys.kalrav.util.KalravApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,10 +33,9 @@ import java.util.TimerTask;
 public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
-    private CallbackManager callbackManager;
+    private CallbackManager facebookCallbackManager;
     private LoginButton loginButton;
     private UserInfoDAOImpl userDaoImpl;
-    private KalravApplication globalObj;
     private HTextView hTextView;
 
 
@@ -85,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         SQLiteHelper database = new SQLiteHelper(this);
         userDaoImpl = new UserInfoDAOImpl(this);
         //Instantiating global obj
-        globalObj = ((KalravApplication) getApplicationContext());
+       // globalObj = ((KalravApplication) getApplicationContext());
 
         //LOGIN MODULE Step 1: Check if last user loggedIN
         UserInfo user = userDaoImpl.lastUserLoggedIn();
@@ -94,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
 
             //setting global variable
-            globalObj.setGlobalObject(user);
+            KalravApplication.getInstance().setGlobalUserObject(user);
 
             Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
 
@@ -104,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "Case2: OnCreate method - Login through Facebook Auth and saving to database.");
             //Initialize Facebook sdk
             FacebookSdk.sdkInitialize(getApplicationContext());
-            callbackManager = CallbackManager.Factory.create();
+            facebookCallbackManager = CallbackManager.Factory.create();
 
             //setting layout activity_login
             setContentView(com.lognsys.kalrav.R.layout.activity_login);
@@ -120,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_location"));
             //loginButton.setReadPermissions(Arrays.asList("read_stream, public_profile, email, user_birthday, user_friends, user_about_me, user_location, user_likes"));
-            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            loginButton.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
 
@@ -159,7 +138,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        boolean isFacebookLogin = facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+
     }
 
 
@@ -181,8 +162,8 @@ public class LoginActivity extends AppCompatActivity {
         //onResume we start our timer so it can start when the app comes from the background
         startTimer();
 
-
-        UserInfo user = globalObj.getGlobalObject();
+        //Check if user is loggedIn
+        UserInfo user =  KalravApplication.getInstance().getGlobalUserObject();
         if (null != user) {
 
             Log.v(TAG, "OnResume method - Starting HOME_ACTIVITY FROM ");
@@ -220,7 +201,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
             Log.d(TAG, "Stopping timer HTextView animated text...");
-            hTextView.clearAnimation();
             timer.cancel();
             timer.purge();
             timer = null;
@@ -278,7 +258,7 @@ public class LoginActivity extends AppCompatActivity {
                         userInfo.setLocation(json.getJSONObject("location").getString("name"));
                         userInfo.setLoggedIn(Constants.LOG_IN);
 
-                        globalObj.setGlobalObject(userInfo);
+                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
 
                         //save to the database
                         userDaoImpl.addUser(userInfo);

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "624284113440",
+    "firebase_url": "https://kalrav-9ed87.firebaseio.com",
+    "project_id": "kalrav-9ed87",
+    "storage_bucket": "kalrav-9ed87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624284113440:android:fb47a31bb4031952",
+        "android_client_info": {
+          "package_name": "com.lognsys.kalrav"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "624284113440-hhmovn48aqtskm0bej0vneae2a3vrnva.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnD_sCqiHiyOsAK8spDu7emkyY0kHVMzs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

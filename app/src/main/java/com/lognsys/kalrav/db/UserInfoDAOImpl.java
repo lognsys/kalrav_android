@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.lognsys.kalrav.KalravApplication;
 import com.lognsys.kalrav.model.UserInfo;
 
 /**

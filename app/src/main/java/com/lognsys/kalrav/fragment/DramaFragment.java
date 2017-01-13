@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.util.Constants;
 
 import java.util.ArrayList;
 
@@ -24,8 +24,7 @@ import java.util.ArrayList;
 public class DramaFragment extends Fragment {
     ArrayList<DramaInfo> listitems = new ArrayList<>();
     RecyclerView myRecyclerView;
-    String dramas[] = {"Gujjubhai the Great", "Gujjubhai Ghode Chadhiya", "Jalsa Karo Jayantilal"};
-    int images[] = {R.drawable.gujjubhai_great, R.drawable.gujjubhai_ghode_chadhiya, R.drawable.jalsa_karo_jayantilal};
+
 
 
     @Override
@@ -40,10 +39,9 @@ public class DramaFragment extends Fragment {
 
         for (int i = 0; i < 3; i++) {
 
-
             DramaInfo item = new DramaInfo();
-            item.setDrama_name(dramas[i]);
-            item.setImageResourceId(images[i]);
+            item.setDrama_name(Constants.dramaNames[i]);
+            item.setImageResourceId(Constants.dramaImages[i]);
             listitems.add(item);
 
         }
@@ -56,6 +54,7 @@ public class DramaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
+
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if (listitems.size() > 0 & myRecyclerView != null) {
@@ -106,7 +105,7 @@ public class DramaFragment extends Fragment {
 
             holder.titleTextView.setText(list.get(position).getDrama_name());
             holder.coverImageView.setImageResource(list.get(position).getImageResourceId());
-           // holder.coverImageView.setTag(list.get(position).getImageResourceId());
+            // holder.coverImageView.setTag(list.get(position).getImageResourceId());
             holder.likeImageView.setTag(R.drawable.ic_like);
 
         }
