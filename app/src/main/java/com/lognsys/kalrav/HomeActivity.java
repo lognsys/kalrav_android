@@ -53,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawer;
     private View navHeader;
-    private ImageView imgNavHeaderBg, imgProfile;
+    private ImageView imgNavHeaderBg, imgProfile, shareImage;
     private TextView txtName, txtWebsite;
     private Toolbar toolbar;
     private FloatingActionButton fab;
@@ -128,7 +128,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // load nav menu header data
-        loadNavHeader();
+//        loadNavHeader();
 
         // initializing navigation menu
         setUpNavigationView();
@@ -151,13 +151,13 @@ public class HomeActivity extends AppCompatActivity {
         // name, website
        UserInfo user = globalObj.getGlobalUserObject();
 
-        profile_photo_url = profile_photo_url.replace("fb_id", user.getFb_id());
+       // profile_photo_url = profile_photo_url.replace("fb_id", user.getFb_id());
 
         txtName.setText(user.getName());
         //txtWebsite.setText("www.androidhive.info");
 
         // loading header background image
-        Glide.with(this).load(R.drawable.ic_user_background_first)
+        Glide.with(this).load(R.drawable.ic_share)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgNavHeaderBg);
@@ -441,6 +441,14 @@ public class HomeActivity extends AppCompatActivity {
             fab.show();
         else
             fab.hide();
+    }
+    private void shareIt() {
+//sharing implementation here
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "AndroidSolved");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Now Learn Android with AndroidSolved clicke here to visit https://androidsolved.wordpress.com/ ");
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 }
 

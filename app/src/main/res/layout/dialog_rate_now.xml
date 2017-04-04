@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivDramaImage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/gujjubhai_ghode_chadhiya"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
+            android:text="How was the drama ?"/>
+        <TextView
+            android:id="@+id/tvRatingStar"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:text="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:background="@drawable/rate_this_order"
+            android:layout_gravity="center_horizontal"
+            />
+
+
+        <RatingBar
+            android:id="@+id/rbRating"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:numStars="5"
+            android:rating="0"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:stepSize=".5"
+            android:theme="@style/RatingBar" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:gravity="center_horizontal"
+            android:text="Write a Review (Its optional)"/>
+
+
+
+
+            <EditText
+                android:id="@+id/etTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHighlight="@color/black"
+                android:focusableInTouchMode="true"
+                android:gravity="center_horizontal"
+                android:hint="Title"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:textColor="@android:color/black" />
+
+
+
+
+
+            <EditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:gravity="center_horizontal"
+                android:hint="Description"
+                android:maxLines="1"
+                android:textColor="@android:color/black" />
+
+
+        <Button
+            android:id="@+id/sign_in_button"
+            style="?android:textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Submit"
+            android:textColor="@android:color/holo_red_dark"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+</ScrollView>

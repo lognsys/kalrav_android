@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import com.lognsys.kalrav.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -86,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             facebookCallbackManager = CallbackManager.Factory.create();
 
             //setting layout activity_login
-            setContentView(com.lognsys.kalrav.R.layout.activity_login);
+            setContentView(R.layout.activity_login);
 
 
             hTextView = (HTextView) findViewById(R.id.text);
