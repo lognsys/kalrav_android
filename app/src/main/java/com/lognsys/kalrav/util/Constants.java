@@ -25,4 +25,6 @@ public class Constants {
     public static int dramaImages[] = {R.drawable.gujjubhai_great, R.drawable.gujjubhai_ghode_chadhiya, R.drawable.jalsa_karo_jayantilal};
     public static String dramaNames[] = {"Gujjubhai the Great", "Gujjubhai Ghode Chadhiya", "Jalsa Karo Jayantilal"};
 
+    public class Shared {
+    }
 }

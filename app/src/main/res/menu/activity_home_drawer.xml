@@ -15,6 +15,10 @@
             android:icon="@drawable/photos"
             android:title="@string/nav_photos" />
         <item
+            android:id="@+id/my_ticket"
+            android:icon="@drawable/photos"
+            android:title="@string/my_tickets" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings"
             android:title="@string/nav_settings" />

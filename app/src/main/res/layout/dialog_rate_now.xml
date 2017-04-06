@@ -14,13 +14,13 @@
             android:id="@+id/ivDramaImage"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:src="@drawable/gujjubhai_ghode_chadhiya"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:textStyle="italic"
+            android:textStyle="normal"
             android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:text="How was the drama ?"/>
@@ -30,7 +30,7 @@
             android:layout_height="100dp"
             android:text="1"
             android:textSize="20sp"
-            android:textStyle="bold"
+            android:textStyle="normal"
             android:textColor="#000000"
             android:gravity="center"
             android:background="@drawable/rate_this_order"
@@ -99,7 +99,7 @@
             android:layout_gravity="bottom"
             android:text="Submit"
             android:textColor="@android:color/holo_red_dark"
-            android:textStyle="bold" />
+            android:textStyle="normal" />
 
 
     </LinearLayout>

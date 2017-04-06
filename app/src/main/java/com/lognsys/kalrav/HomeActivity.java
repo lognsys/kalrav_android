@@ -31,8 +31,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.fragment.DramaFragment;
+import com.lognsys.kalrav.fragment.FragmentDramaDetail;
+import com.lognsys.kalrav.fragment.MyTicketFragment;
 import com.lognsys.kalrav.fragment.NotificationFragment;
 import com.lognsys.kalrav.fragment.PhotoFragment;
 import com.lognsys.kalrav.model.UserInfo;
@@ -294,7 +297,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     case R.id.logout :
 
-                        UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
+                      /*  UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
                         u.setLoggedIn(Constants.LOG_OUT);
 
                         //set log_out in database
@@ -303,13 +306,18 @@ public class HomeActivity extends AppCompatActivity {
                         //set global Object to null
                         u = null;
                         KalravApplication.getInstance().setGlobalUserObject(u);
-                        LoginManager.getInstance().logOut();
-
-                        finish();
+                        LoginManager.getInstance().logOut();*/
+                        FirebaseAuth.getInstance().signOut();
+                       // finish();
                         Intent i = new Intent(HomeActivity.this, LoginActivity.class);
                         startActivity(i);
                         return true;
+                    case R.id.my_ticket :
+                        Fragment fragment = new MyTicketFragment();
 
+
+                        HomeActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
                     default:
                         navItemIndex = 0;
                 }
@@ -400,9 +408,10 @@ public class HomeActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
             switch (item.getItemId()) {
             case R.id.logout:
-
-
-               UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
+                Intent i = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(i);
+/*
+              UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
                 u.setLoggedIn(Constants.LOG_OUT);
 
                 //set log_out in database
@@ -414,7 +423,7 @@ public class HomeActivity extends AppCompatActivity {
                 LoginManager.getInstance().logOut();
 
                 Intent i = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(i);
+                startActivity(i);*/
                 return true;
 
         }

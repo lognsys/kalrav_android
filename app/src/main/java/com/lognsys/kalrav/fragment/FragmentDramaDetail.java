@@ -53,13 +53,13 @@ public class FragmentDramaDetail extends Fragment  {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-    TextView tvRateDrama;
+    TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics;
     AlertDialog dialog;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
+         View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
 
         //recycler view for users review
         horizontal_recycler_view_users = (RecyclerView) view.findViewById(R.id.rvUsersReview);
@@ -113,6 +113,30 @@ public class FragmentDramaDetail extends Fragment  {
         horizontal_recycler_view_users.setAdapter(horizontalAdapterUsers);
         horizontal_recycler_view_critics.setAdapter(horizontalAdapterCritics);
         tvRateDrama = (TextView) view.findViewById(R.id.tvRateDrama);
+        tvAllreviewUsers=(TextView)view.findViewById(R.id.tvAllReviewUsers);
+        tvAllreviewCritics=(TextView)view.findViewById(R.id.tvAllReviewCritics);
+
+        tvAllreviewUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new TestFragment();
+
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+            }
+        });
+        tvAllreviewCritics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new TestFragment();
+
+
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+            }
+        });
+        tvAllreviewCritics=(TextView)view.findViewById(R.id.tvAllReviewCritics);
         tvRateDrama.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

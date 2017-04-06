@@ -12,6 +12,7 @@
     <string name="nav_photos">Photo</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_about_us">About Us</string>
+    <string name="my_tickets">My Tickets</string>
 
 
     <!-- Toolbar titles when navigation menu item is selected -->
