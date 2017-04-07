@@ -235,6 +235,7 @@ public class HomeActivity extends AppCompatActivity {
             case 0:
                 // Drama
                 DramaFragment dramaFragment = new DramaFragment();
+
                 return dramaFragment;
             case 1:
                 // notification
@@ -243,6 +244,7 @@ public class HomeActivity extends AppCompatActivity {
             case 2:
                 // photos fragment
                 PhotoFragment photoFragment = new PhotoFragment();
+
                 return  photoFragment;
             default:
                 return new DramaFragment();
@@ -316,8 +318,8 @@ public class HomeActivity extends AppCompatActivity {
                         Fragment fragment = new MyTicketFragment();
 
 
-                        HomeActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                    HomeActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).commit();
                     default:
                         navItemIndex = 0;
                 }

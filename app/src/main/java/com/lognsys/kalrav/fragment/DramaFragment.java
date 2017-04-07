@@ -221,6 +221,7 @@ public class DramaFragment extends Fragment {
             /*share.putExtra(Intent.EXTRA_STREAM,
                     Uri.parse((File)Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg"));*/
             share.putExtra(Intent.EXTRA_STREAM,uri);
+            share.putExtra(Intent.EXTRA_TEXT, "Drama Gujarati thali, Drama time 12/2/1017, 10:20 am");
             startActivity(Intent.createChooser(share, "Share Image"));
            /* if (isPackageInstalled("com.whatsapp", getActivity())) {
                 share.setPackage("com.whatsapp");

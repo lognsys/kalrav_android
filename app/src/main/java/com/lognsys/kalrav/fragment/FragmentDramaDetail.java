@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
@@ -21,11 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.ExpadableListAdapter;
 import com.lognsys.kalrav.adapter.HorizontalAdapterCriticsReview;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
+import com.lognsys.kalrav.adapter.SlidingImage_Adapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,12 +56,14 @@ public class FragmentDramaDetail extends Fragment  {
     HashMap<String, List<String>> listDataChild;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics;
     AlertDialog dialog;
-
+    private static final Integer[] IMAGES= {R.drawable.gujjubhai_ghode_chadhiya,R.drawable.gujjubhai_great,R.drawable.google,R.drawable.com_facebook_button_background};
+    ViewPager viewPager;
+    private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
          View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
-
+         viewPager=(ViewPager)view.findViewById(R.id.viewpager);
         //recycler view for users review
         horizontal_recycler_view_users = (RecyclerView) view.findViewById(R.id.rvUsersReview);
         SnapHelper helper = new LinearSnapHelper();
@@ -267,7 +270,6 @@ public class FragmentDramaDetail extends Fragment  {
         listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
 
     }
-
 
 }
 
