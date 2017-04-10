@@ -59,6 +59,16 @@ public class UserInfo {
 
     //facebook fields
     private String fb_id;
+
+    public String getGoogle_id() {
+        return google_id;
+    }
+
+    public void setGoogle_id(String google_id) {
+        this.google_id = google_id;
+    }
+
+    private String google_id;
     private String location;
     private String name;
     private String email;

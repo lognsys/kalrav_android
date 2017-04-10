@@ -19,7 +19,7 @@ public class KalravApplication extends Application {
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private UserInfo userInfo;
-
+    Preference prefs;
     private static KalravApplication mInstance;
 
 
@@ -28,8 +28,11 @@ public class KalravApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        prefs = new Preference(this);
     }
-
+    public Preference getPrefs() {
+        return prefs;
+    }
     public static synchronized KalravApplication getInstance() {
         return mInstance;
     }

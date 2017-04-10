@@ -31,6 +31,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.fragment.DramaFragment;
@@ -61,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private FloatingActionButton fab;
 
+    private GoogleApiClient mGoogleApiClient;
     // urls to load navigation header background image
     // and profile image
    // private static final String urlNavHeaderBg = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
@@ -117,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
         txtName = (TextView) navHeader.findViewById(R.id.name);
         //txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
-        imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
+//        imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
@@ -299,7 +303,12 @@ public class HomeActivity extends AppCompatActivity {
 
                     case R.id.logout :
 
-                      /*  UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
+                        KalravApplication.getInstance().getPrefs().setIsLogin(false);
+                        FirebaseAuth.getInstance().signOut();
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                        mGoogleApiClient.disconnect();
+                        mGoogleApiClient=null;
+                     UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
                         u.setLoggedIn(Constants.LOG_OUT);
 
                         //set log_out in database
@@ -308,11 +317,12 @@ public class HomeActivity extends AppCompatActivity {
                         //set global Object to null
                         u = null;
                         KalravApplication.getInstance().setGlobalUserObject(u);
-                        LoginManager.getInstance().logOut();*/
-                        FirebaseAuth.getInstance().signOut();
-                       // finish();
+                        LoginManager.getInstance().logOut();
+                        // finish();
                         Intent i = new Intent(HomeActivity.this, LoginActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(i);
+                        finish();
                         return true;
                     case R.id.my_ticket :
                         Fragment fragment = new MyTicketFragment();
@@ -361,6 +371,17 @@ public class HomeActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    @Override
+    public void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(HomeActivity.this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

@@ -38,6 +38,8 @@
         android:id="@+id/fb_image"
         android:layout_width="88dp"
         android:layout_height="90dp"
+        fb:login_text=""
+        fb:logout_text=""
         android:layout_centerVertical="true"
         android:background="@drawable/fb" />
 

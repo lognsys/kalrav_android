@@ -31,6 +31,7 @@ public class UserInfoDAOImpl implements UserInfoDAO {
     public void addUser(UserInfo user) {
         Log.d(TAG, "adduser dao method called... " + user.toString());
         db = sqLiteHelper.getWritableDatabase();
+        Log.d(TAG, "adduser dao method called isUserExist(user)... " +isUserExist(user));
 
         // If user exists update user
         if (isUserExist(user)) {

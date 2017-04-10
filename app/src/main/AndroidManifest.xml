@@ -55,7 +55,12 @@
             android:label="@string/activity_title_about_us"></activity>
         <activity
             android:name=".PrivacyPolicyActivity"
-            android:label="@string/activity_title_privacy_policy"></activity>
+            android:label="@string/activity_title_privacy_policy" />
+        <activity android:name=".AdmobActivity">
+
+        </activity>
+
+
     </application>
 
 </manifest>
