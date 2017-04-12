@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -54,7 +55,10 @@ import com.lognsys.kalrav.util.KalravApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -130,7 +134,8 @@ public class LoginActivity extends AppCompatActivity implements
             startActivity(i);
             finish();
 
-        } else {
+        }
+        else {
 
             Log.d(TAG, "Case2: OnCreate method - Login through Facebook Auth and saving to database.");
             //Initialize Facebook sdk
@@ -149,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
             loginButton = (LoginButton) findViewById(R.id.fb_image);
-            loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_location"));
+            loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
             //loginButton.setReadPermissions(Arrays.asList("read_stream, public_profile, email, user_birthday, user_friends, user_about_me, user_location, user_likes"));
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
@@ -158,13 +163,11 @@ public class LoginActivity extends AppCompatActivity implements
                     requestData();
 
                     //start home activity
-                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(i);
 
                     loginButton.setVisibility(View.INVISIBLE);
 
                     //close current activity
-                    finish();
+
 
                 }
 
@@ -179,7 +182,7 @@ public class LoginActivity extends AppCompatActivity implements
                     Toast.makeText(getApplicationContext(), "Login Error: Check network connection...", Toast.LENGTH_SHORT).show();
 
                     //log facebook Error
-                    Log.e(TAG, e.getMessage());
+                    Log.e(TAG,"Exception" +e);
                 }
             });
             /******************************************************************************/
@@ -260,18 +263,18 @@ public class LoginActivity extends AppCompatActivity implements
 
                 try {
                     if (json != null) {
+                        Log.v(TAG, " Facebook API response id- " + json.getString("id"));
 
                         userInfo.setFb_id(json.getString("id"));
                         userInfo.setEmail(json.getString("email"));
                         userInfo.setName(json.getString("name"));
-                        userInfo.setBirthday(json.getString("birthday"));
-                        userInfo.setLocation(json.getJSONObject("location").getString("name"));
                         userInfo.setLoggedIn(Constants.LOG_IN);
-
-                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
-                        //save to the database
-                        userDaoImpl.addUser(userInfo);
-                        KalravApplication.getInstance().getPrefs().setIsLogin(true);
+                        ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
+                        userInfos.add(userInfo);
+                        Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+                        i.putExtra("userInfos",userInfos);
+                        startActivity(i);
+                        finish();
                     }
                      else {
                     Log.e(TAG, "Could not retrieve data from facebook graphapi...");
@@ -286,7 +289,7 @@ public class LoginActivity extends AppCompatActivity implements
     });
 
     Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, name, email, birthday, location");
+        parameters.putString("fields", "id, name, email");
         request.setParameters(parameters);
         request.executeAsync();
     }
@@ -405,20 +408,13 @@ public class LoginActivity extends AppCompatActivity implements
                                             if( mAuth.getCurrentUser().getDisplayName()!=null) {
                                                 userInfo.setName(mAuth.getCurrentUser().getDisplayName());
                                             }
-                                           /* TODO
-                                           if( mAuth.getCurrentUser().geu()!=null) {
-                                                userInfo.setBirthday(json.getString("birthday"));
-                                            }
-                                            if( mAuth.getCurrentUser().getUid()!=null) {
-                                                userInfo.setLocation(json.getJSONObject("location").getString("name"));
-                                            }*/
 
-                                            userInfo.setLoggedIn(Constants.LOG_IN);
-
-                                            KalravApplication.getInstance().setGlobalUserObject(userInfo);
-                                            //save to the database
-                                            userDaoImpl.addUser(userInfo);
-                                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                                        userInfo.setLoggedIn(Constants.LOG_IN);
+                                        ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
+                                        userInfos.add(userInfo);
+                                        Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+                                        i.putExtra("userInfos",userInfos);
+                                        startActivity(i);
                                         finish();
 
 
@@ -868,20 +864,7 @@ public class LoginActivity extends AppCompatActivity implements
         super.onResume();
         startTimer();
 
-        //Check if user is loggedIn
-        UserInfo user =  KalravApplication.getInstance().getGlobalUserObject();
-        if (null != user) {
 
-            Log.v(TAG, "OnResume method - Starting HOME_ACTIVITY FROM ");
-            //start home activity
-            Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(i);
-
-            this.finish();
-
-        } else {
-            Log.v(TAG, "OnResume method - global Object user - NULL");
-        }
     }
 
     @Override

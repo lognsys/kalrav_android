@@ -1,10 +1,12 @@
 package com.lognsys.kalrav.model;
 
+import java.io.Serializable;
+
 /**
  * Created by pdoshi on 27/12/16.
  */
 
-public class UserInfo {
+public class UserInfo implements Serializable {
 
 
     //User fields
@@ -14,6 +16,16 @@ public class UserInfo {
     private String city;
     private String state;
     private String zipcode;
+
+    public String getGroupname() {
+        return groupname;
+    }
+
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
+    }
+
+    private String groupname;
 
 
     public String getPhoneNo() {

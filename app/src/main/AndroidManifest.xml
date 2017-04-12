@@ -49,18 +49,18 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AboutUsActivity"
-            android:label="@string/activity_title_about_us"></activity>
+            android:label="@string/activity_title_about_us" />
         <activity
             android:name=".PrivacyPolicyActivity"
             android:label="@string/activity_title_privacy_policy" />
-        <activity android:name=".AdmobActivity">
-
-        </activity>
-
-
+        <activity android:name=".AdmobActivity"></activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

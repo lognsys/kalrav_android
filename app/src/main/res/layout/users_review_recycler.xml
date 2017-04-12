@@ -25,7 +25,10 @@
         <TextView
             android:id="@+id/tvUserName"
             android:layout_toRightOf="@+id/ivProfileImage"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
+            android:textSize="14sp"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="123"/>
@@ -33,26 +36,30 @@
             <TextView
                 android:id="@+id/tvReview"
                 android:layout_width="match_parent"
+                android:layout_marginTop="3dip"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="3dip"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_below="@+id/ivProfileImage"
+                android:layout_below="@+id/rbRating"
+                android:layout_alignParentEnd="true"
                 android:text="123"/>
             <RatingBar
                 android:id="@+id/rbRating"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/ivProfileImage"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
                 android:numStars="5"
+                android:paddingLeft="0px"
                 android:rating="0"
                 android:scaleX="0.6"
                 android:scaleY="0.6"
                 android:stepSize=".1"
-                android:theme="@style/RatingBar"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="75dp" />
+                android:theme="@style/RatingBar" />
 
         </RelativeLayout>
 

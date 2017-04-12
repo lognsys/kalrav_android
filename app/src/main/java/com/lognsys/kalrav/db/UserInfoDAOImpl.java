@@ -45,14 +45,17 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             ContentValues values = new ContentValues();
             values.put(SQLiteHelper.COLUMN_USER_FBID, user.getFb_id());
             values.put(SQLiteHelper.COLUMN_USER_EMAIL, user.getEmail());
-            values.put(SQLiteHelper.COLUMN_USER_NAME, user.getName());
-            values.put(SQLiteHelper.COLUMN_USER_BIRTHDAY, user.getBirthday());
+            values.put(SQLiteHelper.COLUMN_USER_NAME, user.getName());/*
+            values.put(SQLiteHelper.COLUMN_USER_BIRTHDAY, user.getBirthday());*/
             values.put(SQLiteHelper.COLUMN_USER_LOGGEDIN, user.getLoggedIn());
             values.put(SQLiteHelper.COLUMN_USER_LOCATION, user.getLocation());
+            values.put(SQLiteHelper.COLUMN_USER_GROUPNAME, user.getGroupname());
+            values.put(SQLiteHelper.COLUMN_USER_PHONENO, user.getPhoneNo());
+            values.put(SQLiteHelper.COLUMN_USER_GOOGLEID, user.getGoogle_id());
 
             // Inserting Row
             db.insert(SQLiteHelper.TABLE_USER, null, values);
-            db.close(); // Closing database connection
+//            db.close(); // Closing database connection
         }
     }
 
@@ -69,9 +72,12 @@ public class UserInfoDAOImpl implements UserInfoDAO {
         Cursor c = db.rawQuery("SELECT " + SQLiteHelper.COLUMN_USER_FBID + "," +
                 SQLiteHelper.COLUMN_USER_EMAIL + "," +
                 SQLiteHelper.COLUMN_USER_NAME + "," +
-                SQLiteHelper.COLUMN_USER_BIRTHDAY + "," +
+          //      SQLiteHelper.COLUMN_USER_BIRTHDAY + "," +
                 SQLiteHelper.COLUMN_USER_LOGGEDIN + "," +
-                SQLiteHelper.COLUMN_USER_LOCATION +
+                SQLiteHelper.COLUMN_USER_LOCATION +"," +
+                SQLiteHelper.COLUMN_USER_GROUPNAME + "," +
+                SQLiteHelper.COLUMN_USER_PHONENO + "," +
+                SQLiteHelper.COLUMN_USER_GOOGLEID +
                 " FROM user where email=? ", new String[]{userArg.getEmail()});
 
         if (c != null && c.moveToFirst()) {
@@ -82,18 +88,23 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             String fb_id = c.getString(0);
             String email = c.getString(1);
             String name = c.getString(2);
-            String birthday = c.getString(3);
-            int loggedIn = c.getInt(4);
-            String location = c.getString(5);
+//            String birthday = c.getString(3);
+            int loggedIn = c.getInt(3);
+            String location = c.getString(4);
+            String groupname = c.getString(5);
+            String mobile = c.getString(6);
+            String google_id = c.getString(7);
 
             user.setFb_id(fb_id);
             user.setEmail(email);
             user.setName(name);
-            user.setBirthday(birthday);
+//            user.setBirthday(birthday);
             user.setLoggedIn(loggedIn);
             user.setLocation(location);
 
-
+            user.setGroupname(groupname);
+            user.setPhoneNo(mobile);
+            user.setGoogle_id(google_id);
             //Do something Here with values
 //            } while (c.moveToNext());
         }
@@ -150,10 +161,13 @@ public class UserInfoDAOImpl implements UserInfoDAO {
         values.put(SQLiteHelper.COLUMN_USER_FBID, user.getFb_id());
         values.put(SQLiteHelper.COLUMN_USER_EMAIL, user.getEmail());
         values.put(SQLiteHelper.COLUMN_USER_NAME, user.getName());
-        values.put(SQLiteHelper.COLUMN_USER_BIRTHDAY, user.getBirthday());
+//        values.put(SQLiteHelper.COLUMN_USER_BIRTHDAY, user.getBirthday());
         values.put(SQLiteHelper.COLUMN_USER_LOGGEDIN, user.getLoggedIn());
         values.put(SQLiteHelper.COLUMN_USER_LOCATION, user.getLocation());
+        values.put(SQLiteHelper.COLUMN_USER_GROUPNAME, user.getGroupname());
+        values.put(SQLiteHelper.COLUMN_USER_PHONENO, user.getPhoneNo());
 
+        values.put(SQLiteHelper.COLUMN_USER_GOOGLEID, user.getGoogle_id());
         Log.d(TAG, "DB_updateUserInfo - Updating User... - "+ user.getEmail());
         // updating row
         return db.update(SQLiteHelper.TABLE_USER, values, SQLiteHelper.COLUMN_USER_EMAIL + " = ?",
@@ -208,10 +222,14 @@ public class UserInfoDAOImpl implements UserInfoDAO {
         Cursor c = db.rawQuery("SELECT " + SQLiteHelper.COLUMN_USER_FBID + "," +
                 SQLiteHelper.COLUMN_USER_EMAIL + "," +
                 SQLiteHelper.COLUMN_USER_NAME + "," +
-                SQLiteHelper.COLUMN_USER_BIRTHDAY + "," +
+//                SQLiteHelper.COLUMN_USER_BIRTHDAY + "," +
                 SQLiteHelper.COLUMN_USER_LOGGEDIN + "," +
-                SQLiteHelper.COLUMN_USER_LOCATION +
+                SQLiteHelper.COLUMN_USER_LOCATION +"," +
+                SQLiteHelper.COLUMN_USER_GROUPNAME + "," +
+                SQLiteHelper.COLUMN_USER_PHONENO + "," +
+                SQLiteHelper.COLUMN_USER_GOOGLEID +
                 " FROM user where logged = 1 ORDER BY last_edit DESC ", null);
+        Log.d(TAG,"LOGGEDIN CURSOR - "+c.toString());
 
         if (c != null && c.moveToFirst()) {
 
@@ -221,17 +239,23 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             String fb_id = c.getString(0);
             String email = c.getString(1);
             String name = c.getString(2);
-            String birthday = c.getString(3);
-            int loggedIn = c.getInt(4);
-            String location = c.getString(5);
+//            String birthday = c.getString(3);
+            int loggedIn = c.getInt(3);
+            String location = c.getString(4);
 
+            String groupname = c.getString(5);
+            String mobile = c.getString(6);
+            String googleid = c.getString(7);
             user.setFb_id(fb_id);
             user.setEmail(email);
             user.setName(name);
-            user.setBirthday(birthday);
+//            user.setBirthday(birthday);
             user.setLoggedIn(loggedIn);
             user.setLocation(location);
-
+            user.setGroupname(groupname);
+            user.setPhoneNo(mobile);
+            user.setGoogle_id(googleid);
+            c.close();
         }
 
         return user;

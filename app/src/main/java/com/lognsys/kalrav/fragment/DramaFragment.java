@@ -59,6 +59,7 @@ public class DramaFragment extends Fragment {
             DramaInfo item = new DramaInfo();
             item.setDrama_name(Constants.dramaNames[i]);
             item.setImageResourceId(Constants.dramaImages[i]);
+            item.setGroup_name(Constants.dramaGroupNames[i]);
             listitems.add(item);
 
         }
@@ -100,6 +101,7 @@ public class DramaFragment extends Fragment {
         public ImageView coverImageView;
         public ImageView likeImageView;
         public ImageView shareImageView;
+        public TextView textGroupname;
 
         public MyViewHolder(View v) {
             super(v);
@@ -107,6 +109,7 @@ public class DramaFragment extends Fragment {
             coverImageView = (ImageView) v.findViewById(R.id.coverImageView);
             likeImageView = (ImageView) v.findViewById(R.id.likeImageView);
             shareImageView = (ImageView) v.findViewById(R.id.shareImageView);
+            textGroupname= (TextView) v.findViewById(R.id.textGroupname);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -148,6 +151,7 @@ public class DramaFragment extends Fragment {
             holder.coverImageView.setImageResource(list.get(position).getImageResourceId());
             // holder.coverImageView.setTag(list.get(position).getImageResourceId());
             holder.likeImageView.setTag(R.drawable.ic_like);
+            holder.textGroupname.setText(list.get(position).getGroup_name());
 
             holder.shareImageView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -35,6 +35,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_USER_LOGGEDIN = "logged";
     public static final String COLUMN_USER_LOCATION = "location";
     public static final String COLUMN_USER_FBID = "fb_id";
+    public static final String COLUMN_USER_GROUPNAME = "groupname";
+    public static final String COLUMN_USER_PHONENO = "phoneno";
+    public static final String COLUMN_USER_GOOGLEID = "google_id";
 
     private static final String DATABASE_CREATE_USER = "create table if not exists "
             + TABLE_USER + "(" + COLUMN_ID + " integer primary key autoincrement, "
@@ -43,6 +46,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_USER_EMAIL + " TEXT, "
             + COLUMN_USER_BIRTHDAY + " TEXT, "
             + COLUMN_USER_LOCATION + " TEXT, "
+            + COLUMN_USER_GROUPNAME + " TEXT, "
+            + COLUMN_USER_PHONENO + " TEXT, "
+            + COLUMN_USER_GOOGLEID + " TEXT, "
             + COLUMN_USER_LOGGEDIN + " BOOLEAN NOT NULL CHECK ("+COLUMN_USER_LOGGEDIN+" IN (0,1)), "
             + COLUMN_TIMESTAMP+ " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 

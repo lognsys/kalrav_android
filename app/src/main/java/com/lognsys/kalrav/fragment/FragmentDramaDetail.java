@@ -11,10 +11,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
@@ -27,6 +33,7 @@ import com.lognsys.kalrav.adapter.ExpadableListAdapter;
 import com.lognsys.kalrav.adapter.HorizontalAdapterCriticsReview;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
 import com.lognsys.kalrav.adapter.SlidingImage_Adapter;
+import com.lognsys.kalrav.model.MySpannable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +75,7 @@ public class FragmentDramaDetail extends Fragment  {
         horizontal_recycler_view_users = (RecyclerView) view.findViewById(R.id.rvUsersReview);
         SnapHelper helper = new LinearSnapHelper();
         helper.attachToRecyclerView(horizontal_recycler_view_users);
+
         horizontalListUsers = new ArrayList<>();
         horizontalListUsers.add("Radhe Singh");
         horizontalListUsers.add("horizontal 2");
@@ -94,6 +102,7 @@ public class FragmentDramaDetail extends Fragment  {
         horizontalListCritics.add("horizontal 8");
         horizontalListCritics.add("horizontal 9");
         horizontalListCritics.add("horizontal 10");
+
         horizontalListReview = new ArrayList<>();
         horizontalListReview.add("Really third class drama");
         horizontalListReview.add("horizontal 2");
@@ -105,7 +114,9 @@ public class FragmentDramaDetail extends Fragment  {
         horizontalListReview.add("horizontal 8");
         horizontalListReview.add("horizontal 9");
         horizontalListReview.add("horizontal 10");
+
         horizontalAdapterUsers = new HorizontalAdapterUsersReview(horizontalListUsers, horizontalListReview);
+
         horizontalAdapterCritics = new HorizontalAdapterCriticsReview(horizontalListCritics);
         LinearLayoutManager horizontalLayoutManagaer
                 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -167,12 +178,14 @@ public class FragmentDramaDetail extends Fragment  {
 
             }
         });
+
 // get the listview
         expListView = (ExpandableListView) view.findViewById(R.id.elSynopsis);
 
         // preparing list data
         prepareListData();
-
+        TextView tv = (TextView) view.findViewById(R.id.textsynopsys);
+        makeTextViewResizable(tv, 2, "View More", true);
         listAdapter = new ExpadableListAdapter(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
@@ -249,6 +262,81 @@ public class FragmentDramaDetail extends Fragment  {
 
         return view;
     }
+
+    private static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
+
+        if (tv.getTag() == null) {
+            tv.setTag(tv.getText());
+        }
+        ViewTreeObserver vto = tv.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onGlobalLayout() {
+
+                ViewTreeObserver obs = tv.getViewTreeObserver();
+                obs.removeGlobalOnLayoutListener(this);
+                if (maxLine == 0) {
+                    int lineEndIndex = tv.getLayout().getLineEnd(0);
+                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    tv.setText(text);
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setText(
+                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
+                                    viewMore), TextView.BufferType.SPANNABLE);
+                } else if (maxLine > 0 && tv.getLineCount() >= maxLine) {
+                    int lineEndIndex = tv.getLayout().getLineEnd(maxLine - 1);
+                    String text = tv.getText().subSequence(0, lineEndIndex - expandText.length() + 1) + " " + expandText;
+                    tv.setText(text);
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setText(
+                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, maxLine, expandText,
+                                    viewMore), TextView.BufferType.SPANNABLE);
+                } else {
+                    int lineEndIndex = tv.getLayout().getLineEnd(tv.getLayout().getLineCount() - 1);
+                    String text = tv.getText().subSequence(0, lineEndIndex) + " " + expandText;
+                    tv.setText(text);
+                    tv.setMovementMethod(LinkMovementMethod.getInstance());
+                    tv.setText(
+                            addClickablePartTextViewResizable(Html.fromHtml(tv.getText().toString()), tv, lineEndIndex, expandText,
+                                    viewMore), TextView.BufferType.SPANNABLE);
+                }
+            }
+        });
+
+    }
+
+    private static SpannableStringBuilder addClickablePartTextViewResizable(final Spanned strSpanned, final TextView tv,
+                                                                            final int maxLine, final String spanableText, final boolean viewMore) {
+        String str = strSpanned.toString();
+        SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
+
+        if (str.contains(spanableText)) {
+
+
+            ssb.setSpan(new MySpannable(false){
+                @Override
+                public void onClick(View widget) {
+                    if (viewMore) {
+                        tv.setLayoutParams(tv.getLayoutParams());
+                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
+                        tv.invalidate();
+                        makeTextViewResizable(tv, -1, "View Less", false);
+                    } else {
+                        tv.setLayoutParams(tv.getLayoutParams());
+                        tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
+                        tv.invalidate();
+                        makeTextViewResizable(tv, 3, ".. View More", true);
+                    }
+                }
+            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length(), 0);
+
+        }
+        return ssb;
+
+    }
+
 
 
     /*

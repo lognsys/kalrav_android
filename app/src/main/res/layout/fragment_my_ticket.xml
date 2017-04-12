@@ -7,54 +7,115 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="5dip"
         android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/dramaImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/gujjubhai_ghode_chadhiya" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_corner"
+            android:layout_gravity="center_vertical"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:orientation="vertical">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvDramaNameLabel"
+            <ImageView
+                android:id="@+id/dramaImage"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="left|center"
+                android:src="@drawable/gujjubhai_ghode_chadhiya" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Drama Name :"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_margin="5dip"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvDramaName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="gujjubhai_ghode_chadhiya"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvDramaName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Gujjubhai ghode chadhiya"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvDramaLength"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2h 28min "
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:id="@+id/view"
+                        android:layout_width="1dip"
+                        android:layout_height="match_parent"
+                        android:layout_margin="2dip"
+                        android:background="#d3d3d3" />
+
+                    <TextView
+                        android:id="@+id/tvDramaDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="April 15, 2017"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDramaTiming"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10:00 Am"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvDramaLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hindi"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvDramaGenera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thriller,Action"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:orientation="vertical">
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:background="@drawable/round_corner"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvAuditoriumNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Auditorium :"
-                android:textSize="20sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -62,23 +123,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Laxmi Plaza Kandivali"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:background="@drawable/round_corner"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
+        <TextView
                 android:id="@+id/tvGroupNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Group Name :"
-                android:textSize="20sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -86,23 +148,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gujarati Masala"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:background="@drawable/round_corner"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
+        <TextView
                 android:id="@+id/tvticketNumberLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ticket Number:"
-                android:textSize="20sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -110,49 +173,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gj123446"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
         </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dip"
+        android:layout_marginBottom="5dip"
+        android:background="@drawable/round_corner"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvDramaTimingLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Drama Timing:" />
-
-            <TextView
-                android:id="@+id/tvDramaTiming"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="12/04/2017 ,10:00 Am" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvDramaLanguageLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Language :" />
-
-            <TextView
-                android:id="@+id/tvDramaLanguage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bhojpuri" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/textviewScancode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please show your scann code:"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -161,6 +199,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_below="@+id/button"
             android:layout_centerHorizontal="true" />
-
+</LinearLayout>
     </LinearLayout>
 </ScrollView>

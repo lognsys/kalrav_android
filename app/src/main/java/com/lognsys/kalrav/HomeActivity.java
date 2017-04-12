@@ -136,7 +136,6 @@ public class HomeActivity extends AppCompatActivity {
 
         // load nav menu header data
 //        loadNavHeader();
-
         // initializing navigation menu
         setUpNavigationView();
 
@@ -302,27 +301,27 @@ public class HomeActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.logout :
-
                         KalravApplication.getInstance().getPrefs().setIsLogin(false);
                         FirebaseAuth.getInstance().signOut();
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         mGoogleApiClient.disconnect();
                         mGoogleApiClient=null;
-                     UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
-                        u.setLoggedIn(Constants.LOG_OUT);
+//                        UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
+//                        u.setLoggedIn(Constants.LOG_OUT);
 
                         //set log_out in database
-                        userDaoImpl.logOut(u); //pass UserInfo object
+//                        userDaoImpl.logOut(u); //pass UserInfo object
 
                         //set global Object to null
-                        u = null;
-                        KalravApplication.getInstance().setGlobalUserObject(u);
+//                        u = null;
+//                        KalravApplication.getInstance().setGlobalUserObject(u);
                         LoginManager.getInstance().logOut();
                         // finish();
                         Intent i = new Intent(HomeActivity.this, LoginActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(i);
                         finish();
+
                         return true;
                     case R.id.my_ticket :
                         Fragment fragment = new MyTicketFragment();
