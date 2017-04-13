@@ -23,9 +23,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.util.Constants;
@@ -41,8 +47,8 @@ import java.util.ArrayList;
 public class DramaFragment extends Fragment {
     ArrayList<DramaInfo> listitems = new ArrayList<>();
     RecyclerView myRecyclerView;
-   static Bitmap bm;
-
+    static Bitmap bm;
+    AdView mAdView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,6 +78,51 @@ public class DramaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
+
+        mAdView = (AdView)view.findViewById(R.id.listener_av_main);
+
+        mAdView.setAdListener(new AdListener() {
+            private void showToast(String message) {
+                View view = mAdView;
+                if (view != null) {
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onAdLoaded() {
+                showToast("Ad loaded.");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                showToast(String.format("Ad failed to load with error code %d.", errorCode));
+            }
+
+            @Override
+            public void onAdOpened() {
+                showToast("Ad opened.");
+            }
+
+            @Override
+            public void onAdClosed() {
+                showToast("Ad closed.");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                showToast("Ad left application.");
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .setContentUrl("THIS is kalrav app")
+                .build();
+
+
+
+        mAdView.loadAd(adRequest);
 
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -133,15 +184,20 @@ public class DramaFragment extends Fragment {
             list = Data;
         }
 
+
         @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
             // create a new view
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recycle_items, parent, false);
-            MyViewHolder holder = new MyViewHolder(view);
+            View view=null;
+
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recycle_items, parent, false);
+                MyViewHolder holder = new MyViewHolder(view);
 
 
-            return holder;
+                return holder;
+
+
         }
 
         @Override
@@ -159,7 +215,6 @@ public class DramaFragment extends Fragment {
                     bm=BitmapFactory.decodeResource(getResources(),list.get(position).getImageResourceId());
                     checkPermission();
 
-                    //shareIt();
                 }
             });
         }

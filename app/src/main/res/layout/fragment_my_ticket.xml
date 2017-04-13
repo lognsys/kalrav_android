@@ -2,12 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dip"
+        android:padding="6dip"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,106 +101,109 @@
 
 
         </LinearLayout>
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="5dip"
+            android:layout_margin="5dp"
             android:background="@drawable/round_corner"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvAuditoriumNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Auditorium :"
-                android:textSize="14sp"
-                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvAuditorium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Laxmi Plaza Kandivali"
-                android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvAuditoriumNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auditorium :"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvAuditorium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Laxmi Plaza Kandivali"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvGroupNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dip"
+                    android:text="Group Name :"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvGroupName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gujarati Masala"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvticketNumberLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ticket Number:"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvticketNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gj123446"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="2dip"
+                android:background="@drawable/round_corner"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="5dip"
-            android:background="@drawable/round_corner"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/textviewScancode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dip"
+                    android:text="Please show your scann code:"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-        <TextView
-                android:id="@+id/tvGroupNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Group Name :"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_below="@+id/button"
+                    android:layout_centerHorizontal="true" />
 
-            <TextView
-                android:id="@+id/tvGroupName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gujarati Masala"
-                android:textSize="14sp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="5dip"
-            android:background="@drawable/round_corner"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
-
-        <TextView
-                android:id="@+id/tvticketNumberLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ticket Number:"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvticketNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gj123446"
-                android:textSize="14sp" />
-        </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dip"
-        android:layout_marginBottom="5dip"
-        android:background="@drawable/round_corner"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/textviewScancode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Please show your scann code:"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/button"
-            android:layout_centerHorizontal="true" />
-</LinearLayout>
     </LinearLayout>
 </ScrollView>
