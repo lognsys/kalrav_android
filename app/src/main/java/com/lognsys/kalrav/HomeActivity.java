@@ -306,9 +306,26 @@ public class HomeActivity extends AppCompatActivity {
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         mGoogleApiClient.disconnect();
                         mGoogleApiClient=null;
-//                        UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
-//                        u.setLoggedIn(Constants.LOG_OUT);
 
+                        Log.d("","Logout getGlobalUserObject() "+KalravApplication.getInstance().getGlobalUserObject());
+//                      retrieve userinfo obj from global object
+                        if(KalravApplication.getInstance().getGlobalUserObject()!=null){
+                            UserInfo userInfo = KalravApplication.getInstance().getGlobalUserObject();
+                            Log.d("","Logout userInfo "+userInfo);
+                            if(userInfo!=null){
+                                Log.d("","Logout userInfo Constants.LOG_OUT "+Constants.LOG_OUT);
+                                userInfo.setLoggedIn(Constants.LOG_OUT);
+                                Log.d("","Logout userInfo userInfo.getLoggedIn() "+userInfo.getLoggedIn());
+                                if(userDaoImpl!=null){
+                                    Log.d("","Logout userDaoImpl "+userDaoImpl);
+                                    userDaoImpl.logOut(userInfo);
+                                    Log.d("","Logout userDaoImpl lastUserLoggedIn "+userDaoImpl.lastUserLoggedIn());
+                                    Log.d("","Logout userDaoImpl toString "+userDaoImpl.toString());
+                                    KalravApplication.getInstance().setGlobalUserObject(userInfo);
+                                }
+                            }
+
+                        }
                         //set log_out in database
 //                        userDaoImpl.logOut(u); //pass UserInfo object
 

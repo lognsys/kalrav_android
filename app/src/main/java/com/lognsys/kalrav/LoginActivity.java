@@ -14,6 +14,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -81,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements
     private static final int RC_NETWORK_DIALOG = 101;
     Timer timer;
     TimerTask timerTask;
+    Button btnSkipLogin;
     //login_activity UI variable
     private ImageView fbSignIn, googSignIn;
     private LoginButton loginButton;
@@ -130,8 +132,9 @@ public class LoginActivity extends AppCompatActivity implements
 
             Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
 
-            Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(i);
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+
+            startActivity(intent);
             finish();
 
         }
@@ -144,8 +147,8 @@ public class LoginActivity extends AppCompatActivity implements
 
             //setting layout activity_login
             setContentView(R.layout.activity_login);
-
-
+            btnSkipLogin=(Button)findViewById(R.id.btnSkipLogin);
+            btnSkipLogin.setOnClickListener(this);
             hTextView = (HTextView) findViewById(R.id.text);
             hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
             // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
@@ -307,6 +310,10 @@ public class LoginActivity extends AppCompatActivity implements
             case R.id.google_image:
                 signIn();
                 break;
+            case R.id.btnSkipLogin:
+               Intent intent =new Intent(LoginActivity.this,HomeActivity.class);
+                startActivity(intent);
+                break;
             default:
                 return;
         }
@@ -410,12 +417,23 @@ public class LoginActivity extends AppCompatActivity implements
                                             }
 
                                         userInfo.setLoggedIn(Constants.LOG_IN);
-                                        ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
-                                        userInfos.add(userInfo);
-                                        Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-                                        i.putExtra("userInfos",userInfos);
-                                        startActivity(i);
-                                        finish();
+                                        if(userInfo!=null){
+                                            UserInfo userInfo1=userDaoImpl.findUserBy(userInfo);
+                                            if(userInfo1 !=null){
+                                                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                                                startActivity(i);
+
+                                            }
+                                        }
+                                        else{
+                                            ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
+                                            userInfos.add(userInfo);
+                                            Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+                                            i.putExtra("userInfos",userInfos);
+                                            startActivity(i);
+                                            finish();
+                                        }
+
 
 
                                     } catch (Exception e) {

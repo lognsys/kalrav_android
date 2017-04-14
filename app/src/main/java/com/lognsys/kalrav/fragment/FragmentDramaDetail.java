@@ -1,5 +1,6 @@
 package com.lognsys.kalrav.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -17,23 +18,29 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.adapter.CustomGridArrayAdapter;
 import com.lognsys.kalrav.adapter.ExpadableListAdapter;
 import com.lognsys.kalrav.adapter.HorizontalAdapterCriticsReview;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
 import com.lognsys.kalrav.adapter.SlidingImage_Adapter;
 import com.lognsys.kalrav.model.MySpannable;
+import com.lognsys.kalrav.model.TimeSlot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +50,7 @@ import java.util.List;
  * Created by admin on 02-04-2017.
  */
 
-public class FragmentDramaDetail extends Fragment  {
+public class FragmentDramaDetail extends Fragment implements View.OnClickListener {
 //for dots
    static TextView mDotsText[];
     private int mDotsCount;
@@ -57,12 +64,11 @@ public class FragmentDramaDetail extends Fragment  {
     private ArrayList<String> horizontalListCritics;
     private HorizontalAdapterUsersReview horizontalAdapterUsers;
     private HorizontalAdapterCriticsReview horizontalAdapterCritics;
-    ExpadableListAdapter listAdapter;
-    ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    private List<TimeSlot> timeSlotArrayList;
+
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics;
     AlertDialog dialog;
+    Button btnbook;
     private static final Integer[] IMAGES= {R.drawable.gujjubhai_ghode_chadhiya,R.drawable.gujjubhai_great,R.drawable.google,R.drawable.com_facebook_button_background};
     ViewPager viewPager;
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
@@ -71,6 +77,8 @@ public class FragmentDramaDetail extends Fragment  {
 
          View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
          viewPager=(ViewPager)view.findViewById(R.id.viewpager);
+        btnbook=(Button)view.findViewById(R.id.btnbook);
+        btnbook.setOnClickListener(this);
         //recycler view for users review
         horizontal_recycler_view_users = (RecyclerView) view.findViewById(R.id.rvUsersReview);
         SnapHelper helper = new LinearSnapHelper();
@@ -179,45 +187,8 @@ public class FragmentDramaDetail extends Fragment  {
             }
         });
 
-// get the listview
-        expListView = (ExpandableListView) view.findViewById(R.id.elSynopsis);
-
-        // preparing list data
-        prepareListData();
         TextView tv = (TextView) view.findViewById(R.id.textsynopsys);
         makeTextViewResizable(tv, 2, "View More", true);
-        listAdapter = new ExpadableListAdapter(getActivity(), listDataHeader, listDataChild);
-
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
-        // Listview on child click listener
-        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                Toast.makeText(
-                        getActivity(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();
-                return false;
-            }
-        });
-        // Listview Group collasped listener
-        expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
-            @Override
-            public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getActivity(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
         //here we create the dots
         //as you can see the dots are nothing but "."  of large size
@@ -338,26 +309,57 @@ public class FragmentDramaDetail extends Fragment  {
     }
 
 
+    @Override
+    public void onClick(View v) {
 
-    /*
-    * Preparing the list data
-    */
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+// Created a new Dialog
+        Dialog dialog = new Dialog(getActivity());
 
-        // Adding child data
-        listDataHeader.add("Nice drama go to watch it");
+// Set the title
+        dialog.setTitle("Booking Details");
+
+// inflate the layout
+        dialog.setContentView(R.layout.dialog_timealot);
+//        Log.d("","Dialog open ");
+//        Log.d("","Dialog open ");
+//        Log.d("","Dialog open ");
+//        Log.d("","Dialog open ");
+//        Log.d("","Dialog open ");
+
+        timeSlotArrayList =new ArrayList<TimeSlot>();
+        for(int i=0;i<3;i++){
+            TimeSlot timeSlot=new TimeSlot();
+            timeSlot.setDramaId("1"+i);
+            timeSlot.setDateSlot("April 14, 2017 ");
+            timeSlot.setTimeSlot("2:00pm "+i);
+            Log.d("","Dialog open timeSlot "+timeSlot);
+            Log.d("","Dialog open timeSlot getDramaId "+timeSlot.getDramaId());
+            Log.d("","Dialog open timeSlot getDateSlot "+timeSlot.getDateSlot());
+            Log.d("","Dialog open timeSlot getTimeSlot "+timeSlot.getTimeSlot());
+            timeSlotArrayList.add(timeSlot);
+
+        }
+        Log.d("","Dialog open timeSlotArrayList "+timeSlotArrayList);
+        Log.d("","Dialog open timeSlotArrayList size "+timeSlotArrayList.size());
+
+   CustomGridArrayAdapter arrayAdapter=
+                new CustomGridArrayAdapter(getActivity(), (ArrayList<TimeSlot>) timeSlotArrayList);
+        GridView gridView = (GridView)dialog.findViewById(R.id.gridview);
+        gridView.setAdapter(arrayAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new BookingSeatsFragment();
 
 
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("Its really great drama");
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+//                Log.i("RecyclerView Item ", String.valueOf(getLayoutPosition()));
 
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-
+            }
+        });
+// Display the dialog
+        dialog.show();
     }
-
 }
 

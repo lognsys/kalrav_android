@@ -29,6 +29,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="first_row">First Row Seat</string>
+    <string name="middle_row">Middle Row Seat</string>
+    <string name="last_row">Last Row Seat</string>
 
 
     <string name="openDrawer">open_drawer</string>

@@ -159,6 +159,7 @@
         android:layout_centerVertical="true"
         android:text="Register"
         android:layout_margin="5dip"
+        android:background="@drawable/round_btn"
         android:textColor="@android:color/holo_red_dark"
         android:textStyle="bold" />
 

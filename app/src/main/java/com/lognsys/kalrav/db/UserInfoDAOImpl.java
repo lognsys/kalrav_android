@@ -79,6 +79,9 @@ public class UserInfoDAOImpl implements UserInfoDAO {
                 SQLiteHelper.COLUMN_USER_PHONENO + "," +
                 SQLiteHelper.COLUMN_USER_GOOGLEID +
                 " FROM user where email=? ", new String[]{userArg.getEmail()});
+        Log.d(TAG,"LOGGEDIN findUserBy userArg.getEmail() - "+userArg.getEmail());
+        if(c!=null)
+            Log.d(TAG,"LOGGEDIN findUserBy getCount - "+c.getCount());
 
         if (c != null && c.moveToFirst()) {
 //            do {
@@ -94,6 +97,7 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             String groupname = c.getString(5);
             String mobile = c.getString(6);
             String google_id = c.getString(7);
+            Log.d(TAG,"LOGGEDIN findUserBy mobile - "+mobile+" groupname - "+groupname+" location - "+location+" name - "+name);
 
             user.setFb_id(fb_id);
             user.setEmail(email);
@@ -229,7 +233,8 @@ public class UserInfoDAOImpl implements UserInfoDAO {
                 SQLiteHelper.COLUMN_USER_PHONENO + "," +
                 SQLiteHelper.COLUMN_USER_GOOGLEID +
                 " FROM user where logged = 1 ORDER BY last_edit DESC ", null);
-        Log.d(TAG,"LOGGEDIN CURSOR - "+c.toString());
+        if(c!=null)
+        Log.d(TAG,"LOGGEDIN lastUserLoggedIn getCount - "+c.getCount());
 
         if (c != null && c.moveToFirst()) {
 

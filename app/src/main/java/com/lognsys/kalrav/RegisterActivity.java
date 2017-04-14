@@ -62,8 +62,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     String[] groupName = new String[]{
             "Select Group Name",
             "Youth",
-            "Medium",
-            "Comedy",
+            "Couple",
+            "Ladies",
     };
     ArrayList<UserInfo> userInfos;
     UserInfoDAOImpl userDaoImpl;
@@ -77,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         userInfos = (ArrayList<UserInfo>) getIntent().getSerializableExtra("userInfos");
 
           for (UserInfo userInfo : userInfos) {
+
             populateData(userInfo);
 
         }
@@ -115,11 +116,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     // TODO Auto-generated method stub
                 }
             });
-            final List<String> plantsList = new ArrayList<>(Arrays.asList(groupName));
+            final List<String> groupList = new ArrayList<>(Arrays.asList(groupName));
 
             // Initializing an ArrayAdapter
             final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
-                    this, R.layout.spinner_list_item, plantsList) {
+                    this, R.layout.spinner_list_item, groupList) {
                 @Override
                 public boolean isEnabled(int position) {
                     if (position == 0) {
