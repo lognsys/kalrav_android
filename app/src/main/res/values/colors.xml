@@ -15,5 +15,9 @@
     <color name="colorPrimary">#125688</color>
     <color name="colorPrimaryDark">#125688</color>
     <color name="colorAccent">#c8e8ff</color>
+    <color name="startcolorAccent">#c8e8ff</color>
+    <color name="endcolorAccent">#c8e8ff</color>
+    <color name="rect_row_hover_start_color">#666666</color>
+    <color name="rect_row_hover_end_color">#666666</color>
 </resources>
 

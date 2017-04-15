@@ -498,6 +498,15 @@ public class HomeActivity extends AppCompatActivity {
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Now Learn Android with AndroidSolved clicke here to visit https://androidsolved.wordpress.com/ ");
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
+
+    public void switchContent(Fragment fff) {
+        Fragment fragment = fff;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+        fragmentTransaction.commit();
+    }
 }
 
 

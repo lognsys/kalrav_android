@@ -33,6 +33,10 @@
     <string name="middle_row">Middle Row Seat</string>
     <string name="last_row">Last Row Seat</string>
 
+    <string name="last_row_price">350</string>
+    <string name="middle_row_price">250</string>
+    <string name="first_row_price">180</string>
+    <string name="confirm_seats">Confirm Seats</string>
 
     <string name="openDrawer">open_drawer</string>
     <string name="closeDrawer">close_drawer</string>

@@ -313,7 +313,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     public void onClick(View v) {
 
 // Created a new Dialog
-        Dialog dialog = new Dialog(getActivity());
+        final Dialog dialog = new Dialog(getActivity());
 
 // Set the title
         dialog.setTitle("Booking Details");
@@ -355,7 +355,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 //                Log.i("RecyclerView Item ", String.valueOf(getLayoutPosition()));
-
+                dialog.dismiss();
             }
         });
 // Display the dialog

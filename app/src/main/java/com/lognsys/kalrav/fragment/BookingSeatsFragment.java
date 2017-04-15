@@ -1,6 +1,7 @@
 package com.lognsys.kalrav.fragment;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.MyRecyclerViewAdapter;
@@ -21,7 +23,7 @@ import com.lognsys.kalrav.adapter.MyRecyclerViewAdapter;
  * Use the {@link BookingSeatsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BookingSeatsFragment extends Fragment {
+public class BookingSeatsFragment extends Fragment  {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -76,28 +78,65 @@ public class BookingSeatsFragment extends Fragment {
         RecyclerView recycleFirstRow = (RecyclerView)view.findViewById(R.id.recycleFirstRow);
         RecyclerView recycleMiddleRow = (RecyclerView)view.findViewById(R.id.recycleMiddleRow);
         RecyclerView recycleLastRow = (RecyclerView)view.findViewById(R.id.recycleLastRow);
+//      setup price
+        TextView textFirstRowPrice = (TextView)view.findViewById(R.id.textFirstRowPrice);
+        TextView textMiddleRowPrice = (TextView)view.findViewById(R.id.textMiddleRowPrice);
+        TextView textLastRowPrice = (TextView)view.findViewById(R.id.textLastRowPrice);
 
-        int numberOfColumns = 6;
+        TextView confirm = (TextView)view.findViewById(R.id.confirm);
+
+        int numberOfColumns = 10;
+
+        int firstRowPrice = Integer.parseInt(textFirstRowPrice.getText().toString());
+        int middleRowPrice = Integer.parseInt(textMiddleRowPrice.getText().toString());
+        int lastRowPrice = Integer.parseInt(textLastRowPrice.getText().toString());
+
         recycleFirstRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
         recycleMiddleRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
         recycleLastRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
 
-        adapterFirstrow = new MyRecyclerViewAdapter(getActivity(), data);
-        adapterFirstrow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getContext());
+//        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
+//        recycleLastRow.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+
+
+
+        adapterFirstrow = new MyRecyclerViewAdapter(getActivity(), data,firstRowPrice,confirm);
+//        adapterFirstrow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getContext());
         recycleFirstRow.setAdapter(adapterFirstrow);
 
-        adapterMiddlerow = new MyRecyclerViewAdapter(getActivity(), data);
+//        adapterMiddlerow = new MyRecyclerViewAdapter(getActivity(), data,middleRowPrice,confirm);
 //        adapterMiddlerow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getActivity());
-        recycleMiddleRow.setAdapter(adapterMiddlerow);
+        recycleMiddleRow.setAdapter(adapterFirstrow);
 
-        adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data);
+//        adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data,lastRowPrice,confirm);
 //        adapterLastrow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getActivity());
-        recycleLastRow.setAdapter(adapterLastrow);
+        recycleLastRow.setAdapter(adapterFirstrow);
 
         return view ;
 
     }
+    public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+        private int space;
 
+        public SpacesItemDecoration(int space) {
+            this.space = space;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view,
+                                   RecyclerView parent, RecyclerView.State state) {
+            outRect.left = space;
+            outRect.right = space;
+            outRect.bottom = space;
+
+            // Add top margin only for the first item to avoid double space between items
+            if (parent.getChildLayoutPosition(view) == 0) {
+                outRect.top = space;
+            } else {
+                outRect.top = 0;
+            }
+        }
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

@@ -83,7 +83,7 @@
                     android:textSize="14sp"
                     android:textColor="@color/cardview_dark_background"
                      />
-                <Button
+             <!--   <Button
                     android:id="@+id/btnbook"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                     android:background="@drawable/round_btn"
                     android:textColor="@color/cardview_dark_background"
                     />
-
+-->
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"

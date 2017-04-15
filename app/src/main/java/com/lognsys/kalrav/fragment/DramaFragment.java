@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -134,7 +135,6 @@ public class DramaFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Fragment fragment = new FragmentDramaDetail();
-
 
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
