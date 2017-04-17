@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.MyRecyclerViewAdapter;
+import com.lognsys.kalrav.model.TimeSlot;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +34,7 @@ public class BookingSeatsFragment extends Fragment  {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    TimeSlot timeSlot;
     private OnFragmentInteractionListener mListener;
 
     public BookingSeatsFragment() {
@@ -72,45 +74,34 @@ public class BookingSeatsFragment extends Fragment  {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_booking_seats, container, false);
         // data to populate the RecyclerView with
-        String[] data = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48"};
+        String[] data = {"A","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "B","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "C","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "D","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "E","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "F","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "G","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "H","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        timeSlot= (TimeSlot) getArguments().getSerializable("timeSlot");
+        Log.d("","Dialog onItemClick timeSlot "+timeSlot);
+        Log.d("","Dialog onItemClick timeSlot getDramaId "+timeSlot.getDramaId());
+        Log.d("","Dialog onItemClick timeSlot getDateSlot "+timeSlot.getDateSlot());
+        Log.d("","Dialog onItemClick timeSlot getTimeSlot "+timeSlot.getTimeSlot());
 
-        // set up the RecyclerView
-        RecyclerView recycleFirstRow = (RecyclerView)view.findViewById(R.id.recycleFirstRow);
-        RecyclerView recycleMiddleRow = (RecyclerView)view.findViewById(R.id.recycleMiddleRow);
+
         RecyclerView recycleLastRow = (RecyclerView)view.findViewById(R.id.recycleLastRow);
 //      setup price
-        TextView textFirstRowPrice = (TextView)view.findViewById(R.id.textFirstRowPrice);
-        TextView textMiddleRowPrice = (TextView)view.findViewById(R.id.textMiddleRowPrice);
+        TextView texttimeDate = (TextView)view.findViewById(R.id.texttimeDate);
         TextView textLastRowPrice = (TextView)view.findViewById(R.id.textLastRowPrice);
-
+        texttimeDate.setText(timeSlot.getDateSlot() +" | "+timeSlot.getTimeSlot());
         TextView confirm = (TextView)view.findViewById(R.id.confirm);
 
-        int numberOfColumns = 10;
-
-        int firstRowPrice = Integer.parseInt(textFirstRowPrice.getText().toString());
-        int middleRowPrice = Integer.parseInt(textMiddleRowPrice.getText().toString());
+        int numberOfColumns = 11;
         int lastRowPrice = Integer.parseInt(textLastRowPrice.getText().toString());
-
-        recycleFirstRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
-        recycleMiddleRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
+        adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data,lastRowPrice,confirm);
         recycleLastRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
+        recycleLastRow.setAdapter(adapterLastrow);
 
-//        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.spacing);
-//        recycleLastRow.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
-
-
-
-        adapterFirstrow = new MyRecyclerViewAdapter(getActivity(), data,firstRowPrice,confirm);
-//        adapterFirstrow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getContext());
-        recycleFirstRow.setAdapter(adapterFirstrow);
-
-//        adapterMiddlerow = new MyRecyclerViewAdapter(getActivity(), data,middleRowPrice,confirm);
-//        adapterMiddlerow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getActivity());
-        recycleMiddleRow.setAdapter(adapterFirstrow);
-
-//        adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data,lastRowPrice,confirm);
-//        adapterLastrow.setClickListener((MyRecyclerViewAdapter.ItemClickListener) getActivity());
-        recycleLastRow.setAdapter(adapterFirstrow);
 
         return view ;
 

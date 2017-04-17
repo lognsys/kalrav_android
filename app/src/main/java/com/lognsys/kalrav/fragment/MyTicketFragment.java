@@ -3,12 +3,15 @@ package com.lognsys.kalrav.fragment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +35,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.RegisterActivity;
+import com.lognsys.kalrav.model.UserInfo;
+import com.lognsys.kalrav.util.Constants;
+import com.lognsys.kalrav.util.KalravApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -95,28 +103,51 @@ public class MyTicketFragment extends Fragment {
         DateAndTime = tvDateAndTime.getText().toString().trim();
         TicketNumber = tvTicketNumber.getText().toString().trim();
         DramaLanguage = tvDramaLanguage.getText().toString().trim();
-        String qrText = DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage;
-        try {
-            File file = new File(getDataFolder(getActivity()), "QRCode.jpg");
-            if (file.exists()) {
-                //Do action
-                File dataFile = new File(getDataFolder(getActivity()), "QRCode.jpg");
-                try {
-                    InputStream fileInputStream = new FileInputStream(dataFile);
-                    BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-                    bitmapOptions.inJustDecodeBounds = false;
-                    Bitmap Bitmap = BitmapFactory.decodeStream(fileInputStream);
-                    if (detectBarCode(Bitmap).equals(qrText)) {
-                        imageView.setImageBitmap(Bitmap);
-                    } else {
-                        //bitmap= TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage);
-                        imageView.setImageBitmap(createBitmapOfQRCode());
-                    }
-                } catch (FileNotFoundException fnf) {
-                    fnf.printStackTrace();
-                }
+       new RegisteredTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,DramaLanguage,imageView).execute();
 
-            } else {
+        return view;
+    }
+
+    //Register and inserting  user records
+    private class RegisteredTask extends AsyncTask<Void, Bitmap, Bitmap> {
+        String DramaName, Auditorium, GroupName, DateAndTime, TicketNumber,DramaLanguage;
+        ImageView imageView;
+        String qrText;
+        ProgressDialog dialog;
+
+        public RegisteredTask(String DramaName, String Auditorium, String GroupName, String DateAndTime,
+                              String TicketNumber,String DramaLanguage,ImageView imageView) {
+            this.DramaName = DramaName;
+            this.Auditorium = Auditorium;
+            this.GroupName = GroupName;
+            this.DateAndTime = DateAndTime;
+            this.TicketNumber = TicketNumber;
+            this.DramaLanguage = DramaLanguage;
+            this.imageView=imageView;
+
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+             qrText = this.DramaName + "\n\r" + this.Auditorium + "\n\r" + this.GroupName +
+                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber + "\n\r" + this.DramaLanguage;
+            try {
+                File file = new File(getDataFolder(getActivity()), "QRCode.jpg");
+                if (file.exists()) {
+                    //Do action
+                    File dataFile = new File(getDataFolder(getActivity()), "QRCode.jpg");
+                    try {
+                        InputStream fileInputStream = new FileInputStream(dataFile);
+                        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+                        bitmapOptions.inJustDecodeBounds = false;
+                        Bitmap Bitmap = BitmapFactory.decodeStream(fileInputStream);
+                        return  Bitmap;
+
+                    } catch (FileNotFoundException fnf) {
+                        fnf.printStackTrace();
+                    }
+
+                } else {
               /*  bitmap = TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage);
                 File cacheDir = getDataFolder(getContext());
                 File cacheFile = new File(cacheDir, "localFileName.jpg");
@@ -133,18 +164,55 @@ public class MyTicketFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }*/
-                imageView.setImageBitmap(createBitmapOfQRCode());
+//                    imageView.setImageBitmap(createBitmapOfQRCode());
+                }
+
+
+                // bitmap = TextToImageEncode(DramaName+"\n\r"+Auditorium+"\n\r"+GroupName+"\n\r"+DateAndTime+"\n\r"+TicketNumber+"\n\r"+DramaLanguage);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-
-            // bitmap = TextToImageEncode(DramaName+"\n\r"+Auditorium+"\n\r"+GroupName+"\n\r"+DateAndTime+"\n\r"+TicketNumber+"\n\r"+DramaLanguage);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
-        return view;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Loading");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            dialog.dismiss();
+            qrText = this.DramaName + "\n\r" + this.Auditorium + "\n\r" + this.GroupName +
+                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber + "\n\r" + this.DramaLanguage;
+          if(bitmap!=null) {
+              if (detectBarCode(bitmap).equals(qrText)) {
+                  this.imageView.setImageBitmap(bitmap);
+              } else {
+                  //bitmap= TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage);
+                  this.imageView.setImageBitmap(createBitmapOfQRCode());
+              }
+          }
+          else{
+              this.imageView.setImageBitmap(createBitmapOfQRCode());
+
+          }
+//            Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
+//            i.putExtra("groupname", this.groupname);
+//            startActivity(i);
+//            finish();
+
+        }
     }
+
+
 
     public Bitmap createBitmapOfQRCode() {
         File cacheDir = getDataFolder(getContext());

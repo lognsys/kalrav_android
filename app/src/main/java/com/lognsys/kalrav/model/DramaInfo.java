@@ -1,10 +1,12 @@
 package com.lognsys.kalrav.model;
 
+import java.io.Serializable;
+
 /**
  * Created by pdoshi on 27/12/16.
  */
 
-public class DramaInfo {
+public class DramaInfo implements Serializable {
 
 
     private String group_name;

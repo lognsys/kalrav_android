@@ -12,6 +12,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -35,7 +36,9 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.TimeSlot;
 import com.lognsys.kalrav.util.Constants;
+import com.lognsys.kalrav.util.KalravApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class DramaFragment extends Fragment {
@@ -50,7 +54,7 @@ public class DramaFragment extends Fragment {
     RecyclerView myRecyclerView;
     static Bitmap bm;
     AdView mAdView;
-
+//    http://www.json-generator.com/api/json/get/cadobiccvC?indent=2
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +74,7 @@ public class DramaFragment extends Fragment {
             listitems.add(item);
 
         }
+
     }
 
     @Override
@@ -207,6 +212,22 @@ public class DramaFragment extends Fragment {
             holder.coverImageView.setImageResource(list.get(position).getImageResourceId());
             // holder.coverImageView.setTag(list.get(position).getImageResourceId());
             holder.likeImageView.setTag(R.drawable.ic_like);
+            holder.likeImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DramaInfo dramaInfo=list.get(position);
+                   List<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
+                    dramaInfos.add(dramaInfo);
+//                    FavouritesDrama fragment1 = new FavouritesDrama();
+//                    Bundle args = new Bundle();
+//                    args.putSerializable("dramaInfo",dramaInfo);
+//                   Fragment fragment=fragment1;
+//                    fragment.setArguments(args);
+//                    getActivity().getSupportFragmentManager().beginTransaction()
+//                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+//
+                }
+            });
             holder.textGroupname.setText(list.get(position).getGroup_name());
 
             holder.shareImageView.setOnClickListener(new View.OnClickListener() {

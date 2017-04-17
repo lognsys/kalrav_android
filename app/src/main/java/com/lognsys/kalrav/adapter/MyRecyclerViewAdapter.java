@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
 
 import java.lang.reflect.Array;
@@ -31,7 +32,7 @@ import java.util.List;
  */
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
-
+    String [] seatName={"A","B","C","D","E","F","G","H","I","J","K"};
     private List<String> mSeats = new ArrayList<String>();
     private String[] mData = new String[0];
     private LayoutInflater mInflater;
@@ -61,8 +62,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the textview in each cell
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        String animal = mData[position];
-        holder.myTextView.setText(animal);
+
+        String seatnumber =  mData[position];
+
+                holder.myTextView.setText(seatnumber);
+
         this.confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +74,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                   ((Activity) mcontext).getFragmentManager();//use this
                 Toast.makeText(v.getContext(), "You selected position = "
                         +" totalPrice = "+totalPrice+" mSeats.size() ="+mSeats.size(), Toast.LENGTH_SHORT).show();
-                  Fragment fff=new MyTicketFragment();
+                  Fragment fff=new ConfirmFragment();
                      Bundle args = new Bundle();
                     args.putInt("totalPrice", totalPrice);
                     args.putStringArrayList("seats", (ArrayList<String>) mSeats);
@@ -104,7 +108,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView myTextView;
+        public TextView myTextView,textseatLetter;
+        public int position;
         public ViewHolder(View itemView) {
             super(itemView);
             myTextView = (TextView) itemView.findViewById(R.id.info_text);

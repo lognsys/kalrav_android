@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -333,13 +334,9 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
             timeSlot.setDateSlot("April 14, 2017 ");
             timeSlot.setTimeSlot("2:00pm "+i);
             Log.d("","Dialog open timeSlot "+timeSlot);
-            Log.d("","Dialog open timeSlot getDramaId "+timeSlot.getDramaId());
-            Log.d("","Dialog open timeSlot getDateSlot "+timeSlot.getDateSlot());
-            Log.d("","Dialog open timeSlot getTimeSlot "+timeSlot.getTimeSlot());
             timeSlotArrayList.add(timeSlot);
 
         }
-        Log.d("","Dialog open timeSlotArrayList "+timeSlotArrayList);
         Log.d("","Dialog open timeSlotArrayList size "+timeSlotArrayList.size());
 
    CustomGridArrayAdapter arrayAdapter=
@@ -349,9 +346,11 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment fragment = new BookingSeatsFragment();
-
-
+                TimeSlot timeSlot = (TimeSlot) parent.getItemAtPosition(position);
+                 Fragment fragment = new BookingSeatsFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("timeSlot",timeSlot);
+                fragment.setArguments(args);
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 //                Log.i("RecyclerView Item ", String.valueOf(getLayoutPosition()));

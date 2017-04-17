@@ -49,4 +49,28 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_basic_banner">BasicBannerActivity</string>
 
+    <!--Confirm Screen -->
+    <string name="hint_name">Enter Name</string>
+    <string name="hint_email">Enter Email id</string>
+    <string name="hint_phone_no">Enter Phone Number</string>
+    <string name="hint_confirm_code">Confirmation Code</string>
+    <string name="hint_seat_no">Seat Number</string>
+    <string name="hint_no_of_booked_seats">Total Number of Seats</string>
+    <string name="hint_time_slot">Time Slot</string>
+    <string name="hint_audi_name">Auditorium Name</string>
+    <string name="hint_total_price">Total Price</string>
+
+
+
+
+    <!-- validation Message -->
+    <string name="error_emailid">Email is not valid</string>
+    <string name="error_mobile_no_required">Mobile number is Required</string>
+    <string name="error_valid_mobile_no">Please enter valid mobile no</string>
+    <string name="error_conformationCode">Please Book Your Ticket</string>
+    <string name="error_seats">You have not Selected Seats</string>
+    <string name="error_timeslot">Time Slot is not available </string>
+    <string name="error_auditorium">Please enter auditorium name</string>
+    <string name="error_total_price">Total Price is not available</string>
+
 </resources>

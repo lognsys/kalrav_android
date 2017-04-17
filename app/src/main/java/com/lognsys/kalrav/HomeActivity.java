@@ -213,8 +213,10 @@ public class HomeActivity extends AppCompatActivity {
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null);
                 fragmentTransaction.commitAllowingStateLoss();
+
+
             }
         };
 
@@ -270,12 +272,20 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
+                Fragment fragment=null;
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.nav_drama:
                         navItemIndex = 0;
                         CURRENT_TAG = TAG_DRAMA;
+                        fragment = new DramaFragment();
+
+
+                        HomeActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+
                         break;
                     case R.id.nav_notifications:
                         navItemIndex = 1;
@@ -341,11 +351,12 @@ public class HomeActivity extends AppCompatActivity {
 
                         return true;
                     case R.id.my_ticket :
-                        Fragment fragment = new MyTicketFragment();
+                        fragment = new MyTicketFragment();
 
 
                     HomeActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).commit();
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
                     default:
                         navItemIndex = 0;
                 }
@@ -504,7 +515,7 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                 android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null);
         fragmentTransaction.commit();
     }
 }

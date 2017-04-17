@@ -1,10 +1,12 @@
 package com.lognsys.kalrav.model;
 
+import java.io.Serializable;
+
 /**
  * Created by admin on 4/14/2017.
  */
 
-public class TimeSlot {
+public class TimeSlot implements Serializable {
     private String dramaId;
     private String dateSlot;
     private String timeSlot;

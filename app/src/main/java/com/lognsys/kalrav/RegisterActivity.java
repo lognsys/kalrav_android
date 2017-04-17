@@ -241,7 +241,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
 //        RegisteredTask task =new RegisteredTast().execute();
         if (editName.getText().toString().length() == 0) {
-            editName.setError("Name not entered");
+            editName.setError(getString(R.string.hint_name));
             editName.requestFocus();
         } else {
             if (editUsername.getText().toString().length() == 0) {
@@ -269,6 +269,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 city = autoCities.getText().toString();
                 groupname = spninnerGroupName.getSelectedItem().toString();
                 mobile = editMobileNumber.getText().toString();
+                KalravApplication.getInstance().getPrefs().setName(name);
+                KalravApplication.getInstance().getPrefs().setEmail(username);
+                KalravApplication.getInstance().getPrefs().setMobile(mobile);
 
                 RegisteredTask task = new RegisteredTask(username, name, city, groupname, mobile);
                 task.execute();
