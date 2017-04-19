@@ -1,6 +1,9 @@
 package com.lognsys.kalrav.util;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -22,17 +25,20 @@ public class KalravApplication extends Application {
     Preference prefs;
     private static KalravApplication mInstance;
 
-
+    ConnectivityManager cm;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
         prefs = new Preference(this);
+         cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     }
     public Preference getPrefs() {
         return prefs;
     }
+
     public static synchronized KalravApplication getInstance() {
         return mInstance;
     }
@@ -79,6 +85,14 @@ public class KalravApplication extends Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+    public boolean isConnectedToInternet() {
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+    return isConnected;
     }
 
 }

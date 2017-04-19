@@ -58,7 +58,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DRAMA_NAME = "drama_name";
     public static final String COLUMN_LINK_PHOTO = "photo_link";
     public static final String COLUMN_DATETIME = "datetime";
-
+    public static final String COLUMN_DRAMA_LENGTH = "drama_length";
+    public static final String COLUMN_DRAMA_LANGUAGE = "drama_language";
+    public static final String COLUMN_DRAMA_GENRE = "drama_genre";
+    public static final String COLUMN_DRAMA_TIME = "time";
+    public static final String COLUMN_DRAMA_DESCRIPTION = "briefDescription";
     //drama table
     private static final String DATABASE_CREATE_DRAMA = "create table if not exists "
             + TABLE_DRAMA + "(" + COLUMN_ID + " integer primary key autoincrement, "
@@ -66,7 +70,43 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_DRAMA_NAME + " TEXT, "
             + COLUMN_LINK_PHOTO + " TEXT, "
             + COLUMN_DATETIME + " TEXT, "
+            + COLUMN_DRAMA_LENGTH + " TEXT, "
+            + COLUMN_DRAMA_LANGUAGE + " TEXT, "
+            + COLUMN_DRAMA_GENRE + " TEXT, "
+            + COLUMN_DRAMA_TIME + " TEXT, "
+            + COLUMN_DRAMA_DESCRIPTION + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
+
+
+
+    //favourite Column
+    public static final String TABLE_FAVOURITE = "favourite";
+//    public static final String COLUMN_GROUP_NAME = "group_name";
+    public static final String COLUMN_FAVOURITE_ID = "_id";
+    public static final String COLUMN_DRAMA_ID = "drama_id";
+    /* public static final String COLUMN_DRAMA_NAME = "drama_name";
+     public static final String COLUMN_LINK_PHOTO = "photo_link";
+     public static final String COLUMN_DATETIME = "datetime";
+     public static final String COLUMN_DRAMA_LENGTH = "drama_length";
+     public static final String COLUMN_DRAMA_LANGUAGE = "drama_language";
+     public static final String COLUMN_DRAMA_GENRE = "drama_genre";
+     public static final String COLUMN_DRAMA_TIME = "time";
+     public static final String COLUMN_DRAMA_DESCRIPTION = "briefDescription";*/
+    //drama table
+    private static final String DATABASE_CREATE_FAVOURITE = "create table if not exists "
+            + TABLE_FAVOURITE + "(" + COLUMN_FAVOURITE_ID + " integer primary key autoincrement, "
+            + COLUMN_DRAMA_ID +  " integer, "/*
+            + COLUMN_GROUP_NAME + " TEXT, "
+            + COLUMN_DRAMA_NAME + " TEXT, "
+            + COLUMN_LINK_PHOTO + " TEXT, "
+            + COLUMN_DATETIME + " TEXT, "
+            + COLUMN_DRAMA_LENGTH + " TEXT, "
+            + COLUMN_DRAMA_LANGUAGE + " TEXT, "
+            + COLUMN_DRAMA_GENRE + " TEXT, "
+            + COLUMN_DRAMA_TIME + " TEXT, "
+            + COLUMN_DRAMA_DESCRIPTION + " TEXT, "*/
+            + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL , "
+            + " FOREIGN KEY ("+COLUMN_DRAMA_ID+") REFERENCES "+TABLE_DRAMA+"("+COLUMN_ID+"));";
 
 
     @Override
@@ -75,6 +115,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         db.execSQL(DATABASE_CREATE_USER);
         db.execSQL(DATABASE_CREATE_DRAMA);
+        db.execSQL(DATABASE_CREATE_FAVOURITE);
 
     }
 

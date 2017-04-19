@@ -17,6 +17,16 @@ public class UserInfo implements Serializable {
     private String state;
     private String zipcode;
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    private String picture;
+
     public String getGroupname() {
         return groupname;
     }

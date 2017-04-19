@@ -11,9 +11,9 @@
             android:icon="@mipmap/ic_launcher_notif"
             android:title="@string/nav_notifications" />
         <item
-            android:id="@+id/nav_photos"
-            android:icon="@drawable/photos"
-            android:title="@string/nav_photos" />
+            android:id="@+id/nav_bookmark"
+            android:icon="@mipmap/ic_like"
+            android:title="@string/nav_bookmark" />
         <item
             android:id="@+id/my_ticket"
             android:icon="@drawable/photos"

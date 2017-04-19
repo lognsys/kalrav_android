@@ -10,6 +10,7 @@
     <string name="nav_drama">Drama</string>
     <string name="nav_notifications">Notification</string>
     <string name="nav_photos">Photo</string>
+    <string name="nav_bookmark">Bookmarks</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_about_us">About Us</string>
     <string name="my_tickets">My Tickets</string>
@@ -59,8 +60,6 @@
     <string name="hint_time_slot">Time Slot</string>
     <string name="hint_audi_name">Auditorium Name</string>
     <string name="hint_total_price">Total Price</string>
-
-
 
 
     <!-- validation Message -->

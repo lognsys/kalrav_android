@@ -2,6 +2,7 @@ package com.lognsys.kalrav.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 
 /**
  * Created by admin on 3/22/2017.
@@ -10,7 +11,12 @@ import android.content.SharedPreferences;
 public class Preference {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-
+    public void getClear()
+    {
+        editor = sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+    }
     public Preference(Context context) {
         // TODO Auto-generated constructor stub
         sharedPreferences = context.getSharedPreferences("Cache", Context.MODE_PRIVATE);
@@ -112,7 +118,7 @@ public class Preference {
     public void setImage(String image)
     {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("image", image);
+        editor.putString("image", (String.valueOf(image)));
         editor.commit();
     }
 

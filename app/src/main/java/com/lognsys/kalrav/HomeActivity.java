@@ -3,14 +3,10 @@ package com.lognsys.kalrav;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +32,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.fragment.DramaFragment;
-import com.lognsys.kalrav.fragment.FragmentDramaDetail;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
 import com.lognsys.kalrav.fragment.NotificationFragment;
 import com.lognsys.kalrav.fragment.PhotoFragment;
@@ -46,10 +40,7 @@ import com.lognsys.kalrav.util.CircleTransform;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
 
-import java.util.ArrayList;
-import java.util.List;
-import com.lognsys.kalrav.R;
-
+import com.squareup.picasso.Picasso;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -76,6 +67,7 @@ public class HomeActivity extends AppCompatActivity {
     // tags used to attach the fragments
     private static final String TAG_DRAMA = "drama";
     private static final String TAG_PHOTO = "photo";
+    private static final String TAG_BOOKMARK = "bookmark";
     private static final String TAG_NOTIFICATIONS = "notification";
 //    private static final String TAG_SETTINGS = "settings";
     public static String CURRENT_TAG = TAG_DRAMA;
@@ -115,14 +107,32 @@ public class HomeActivity extends AppCompatActivity {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-
+        fab.setVisibility(View.GONE);
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
-        txtName = (TextView) navHeader.findViewById(R.id.name);
+        TextView textHeaderName = (TextView) navHeader.findViewById(R.id.textHeaderName);
+        if(KalravApplication.getInstance().getPrefs().getName()!=null)
+        textHeaderName.setText("Welcome \n "+KalravApplication.getInstance().getPrefs().getName());
+        else{
+            textHeaderName.setText("Guest");
+
+        }
+//        txtName = (TextView) navHeader.findViewById(R.id.name);
         //txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
 //        imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
+        if(KalravApplication.getInstance().getPrefs().getIsFacebookLogin()==true){
+            if(KalravApplication.getInstance().getPrefs().getImage()!=null){
+                String imgUrl = "https://graph.facebook.com/" + KalravApplication.getInstance().getPrefs().getImage() + "/picture?type=large";
+                Picasso.with(getApplicationContext()).load(imgUrl).into(imgNavHeaderBg);
+            }
+        }
+        else{
+            if(KalravApplication.getInstance().getPrefs().getImage()!=null){
+                Picasso.with(getApplicationContext()).load(KalravApplication.getInstance().getPrefs().getImage()).into(imgNavHeaderBg);
+            }
+        }
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
 
@@ -291,9 +301,13 @@ public class HomeActivity extends AppCompatActivity {
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_NOTIFICATIONS;
                         break;
-                    case R.id.nav_photos:
+                    case R.id.nav_bookmark:
                         navItemIndex = 2;
-                        CURRENT_TAG = TAG_PHOTO;
+                        CURRENT_TAG = TAG_BOOKMARK;
+                        fragment = new BookmarkFragment();
+                        HomeActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
                         break;
 //                    case R.id.nav_settings:
 //                        navItemIndex = 3;
@@ -316,7 +330,7 @@ public class HomeActivity extends AppCompatActivity {
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         mGoogleApiClient.disconnect();
                         mGoogleApiClient=null;
-
+                        KalravApplication.getInstance().getPrefs().getClear();
                         Log.d("","Logout getGlobalUserObject() "+KalravApplication.getInstance().getGlobalUserObject());
 //                      retrieve userinfo obj from global object
                         if(KalravApplication.getInstance().getGlobalUserObject()!=null){
@@ -519,149 +533,3 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 }
-
-
-
-
-
-
-//public class HomeActivity extends AppCompatActivity{
-//
-//
-//    private static final String TITLE_DRAMA = "DRAMA";
-//    private static final String TITLE_NEWS = "NEWS";
-//    private KalravApplication globalObj;
-//    private UserInfoDAOImpl userDaoImpl;
-//
-//    /**
-//     *
-//     */
-//    private Toolbar toolbar;
-//    private TabLayout tabLayout;
-//    private ViewPager viewPager;
-//    private int[] tabIcons = {
-//            R.mipmap.ic_launcher_theatre,
-//            R.mipmap.ic_launcher_notif
-//    };
-//
-//
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_home);
-//
-//        //Initialize Facebook
-//
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//
-//        //Instantiating global obj
-//        globalObj = ((KalravApplication) getApplicationContext());
-//        userDaoImpl = new UserInfoDAOImpl(this);
-//
-//
-//        //set toolbar
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//        //set viewpager
-//        viewPager = (ViewPager) findViewById(R.id.viewPager);
-//        setupViewPager(viewPager);
-//
-//        tabLayout = (TabLayout) findViewById(R.id.tabs);
-//        tabLayout.setupWithViewPager(viewPager);
-//        setupTabIcons();
-//
-//    }
-//
-//    /**
-//     * Get Icon values
-//     */
-//    private void setupTabIcons() {
-//        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-//        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-//
-//    }
-//
-//
-//    /**
-//     * @param viewPager
-//     */
-//    private void setupViewPager(ViewPager viewPager) {
-//        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        adapter.addFragment(new DramaFragment(), TITLE_DRAMA);
-//        adapter.addFragment(new NotificationFragment(), TITLE_NEWS);
-//        viewPager.setAdapter(adapter);
-//
-//
-//    }
-//
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_home, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.logout:
-//
-//
-//               UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
-//                u.setLoggedIn(Constants.LOG_OUT);
-//
-//                //set log_out in database
-//                userDaoImpl.logOut(u); //pass UserInfo object
-//
-//                //set global Object to null
-//                u = null;
-//                KalravApplication.getInstance().setGlobalUserObject(u);
-//                LoginManager.getInstance().logOut();
-//
-//                Intent i = new Intent(HomeActivity.this, LoginActivity.class);
-//                startActivity(i);
-//                break;
-//
-//        }
-//        return true;
-//    }
-//
-//
-//    public static class ViewPagerAdapter extends FragmentPagerAdapter {
-//        private final List<Fragment> mFragmentList = new ArrayList<>();
-//        private final List<String> mFragmentTitleList = new ArrayList<>();
-//
-//
-//        public ViewPagerAdapter(FragmentManager fragmentManager) {
-//            super(fragmentManager);
-//        }
-//
-//        // Returns total number of pages
-//        @Override
-//        public int getCount() {
-//            return mFragmentList.size();
-//        }
-//
-//        // Returns the fragment to display for that page
-//        @Override
-//        public Fragment getItem(int position) {
-//            return mFragmentList.get(position);
-//        }
-//
-//
-//        public void addFragment(Fragment fragment, String title) {
-//            mFragmentList.add(fragment);
-//            mFragmentTitleList.add(title);
-//        }
-//
-//
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            return mFragmentTitleList.get(position);
-//        }
-//
-//    }
-//
-//}

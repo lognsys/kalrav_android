@@ -1,6 +1,7 @@
 package com.lognsys.kalrav.fragment;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,8 +9,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -23,6 +26,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -35,16 +39,29 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.db.DramaInfoDAOImpl;
+import com.lognsys.kalrav.db.FavouritesInfoDAO;
+import com.lognsys.kalrav.db.FavouritesInfoDAOImpl;
+import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.FavouritesInfo;
 import com.lognsys.kalrav.model.TimeSlot;
+import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,27 +71,147 @@ public class DramaFragment extends Fragment {
     RecyclerView myRecyclerView;
     static Bitmap bm;
     AdView mAdView;
-//    http://www.json-generator.com/api/json/get/cadobiccvC?indent=2
+    ArrayList<DramaInfo> dramaInfos;
+    DramaInfoDAOImpl dramaInfoDAO;
+    FavouritesInfoDAOImpl favouritesInfoDAOImpl;
+//   http://www.json-generator.com/api/json/get/bYJqZHImiG?indent=2
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeList();
         getActivity().setTitle("Kalrav Arts");
     }
 
     public void initializeList() {
         listitems.clear();
+        dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
+        favouritesInfoDAOImpl = new FavouritesInfoDAOImpl(getActivity());
+        dramaInfos = new ArrayList<DramaInfo>() ;
+        if(KalravApplication.getInstance().isConnectedToInternet()) {
+            new JSONParse().execute("http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2");
+        }
+        else{
+          Toast.makeText(getContext(),"Please check  your network connection",Toast.LENGTH_SHORT).show();
+        }
+    }
+    private class JSONParse extends AsyncTask<String, String, String> {
+        private ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-        for (int i = 0; i < 3; i++) {
-
-            DramaInfo item = new DramaInfo();
-            item.setDrama_name(Constants.dramaNames[i]);
-            item.setImageResourceId(Constants.dramaImages[i]);
-            item.setGroup_name(Constants.dramaGroupNames[i]);
-            listitems.add(item);
+            Log.d("","Test onpre ");
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Getting Data ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
 
         }
 
+        @Override
+        protected String doInBackground(String... params) {
+
+            try{
+
+//                Log.d("","Test Doin ");
+
+                Log.d("","Test Doin params[0] "+params[0]);
+                URL u = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                conn.setRequestMethod("GET");
+                conn.connect();
+                InputStream is = conn.getInputStream();
+
+            // Read the stream
+                byte[] b = new byte[1024];
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                while ( is.read(b) != -1)
+                    baos.write(b);
+
+                String JSONResp = new String(baos.toByteArray());
+//                Log.d("","Test Doin JSONResp "+JSONResp);
+
+                JSONArray arr = new JSONArray(JSONResp);
+                Log.d("","Test Doin arr.length() "+arr.length());
+
+                for (int i=0; i<arr.length(); i++) {
+                    DramaInfo dramaInfo=new DramaInfo();
+
+                    JSONObject jsonObject=(arr.getJSONObject(i));
+                    String id=jsonObject.getString("id");
+                    dramaInfo.setId(Integer.parseInt(id));
+//                    Log.d("","Test Doin id) "+id);
+
+                    String drama_name=jsonObject.getString("drama_name");
+                    dramaInfo.setDrama_name(drama_name);
+                    Log.d("","Test Doin drama_name "+drama_name);
+
+                    String datetime=jsonObject.getString("datetime");
+                    dramaInfo.setDatetime(datetime);
+//                    Log.d("","Test Doin datetime "+datetime);
+
+                    String photo_link=jsonObject.getString("photo_link");
+                    dramaInfo.setLink_photo(photo_link);
+//                    Log.d("","Test Doin photo_link "+photo_link);
+
+                    String group_name=jsonObject.getString("group_name");
+                    dramaInfo.setGroup_name(group_name);
+
+                    String drama_length=jsonObject.getString("drama_length");
+                    dramaInfo.setDrama_length(drama_length);
+
+                    String drama_time=jsonObject.getString("time");
+                    dramaInfo.setTime(drama_time);
+                    StringBuilder sb;
+
+                    JSONArray jsonArray=jsonObject.getJSONArray("drama_language");
+                    if(jsonArray!=null && jsonArray.length()>0){
+                        sb=new StringBuilder();
+                        for(int j =0;j<jsonArray.length();j++){
+                            sb.append(jsonArray.getString(j)+" , ");
+                        }
+                        dramaInfo.setDrama_language(sb.toString());
+                    }
+
+                    JSONArray jsonArrayGenre=jsonObject.getJSONArray("drama_genre");
+                    if(jsonArrayGenre!=null && jsonArrayGenre.length()>0){
+                        sb=new StringBuilder();
+                        for(int j =0;j<jsonArrayGenre.length();j++){
+                            {
+
+                                sb.append(jsonArrayGenre.getString(j)+" , ");
+                            }
+                        }
+                        dramaInfo.setGenre(sb.toString());
+                    }
+                    String briefDescription=jsonObject.getString("briefDescription");
+                    dramaInfo.setBriefDescription(briefDescription);
+
+//                    Log.d("","Test Doin group_name "+group_name);
+                    dramaInfoDAO.addDrama(dramaInfo);
+                }
+
+                return null;
+            }
+            catch(Exception t) {
+              Log.d("","Test Throwable "+t);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String json) {
+            pDialog.dismiss();
+
+            Log.d("","Test onPost ");
+            dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+            Log.d("","Test onPost dramaInfos.size "+dramaInfos.size());
+            if (dramaInfos.size() > 0 & dramaInfos != null) {
+                MyAdapter adapter=new MyAdapter(dramaInfos);
+                myRecyclerView.setAdapter(adapter);
+            }
+        }
     }
 
     @Override
@@ -130,16 +267,18 @@ public class DramaFragment extends Fragment {
 
         mAdView.loadAd(adRequest);
 
+        initializeList();
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (listitems.size() > 0 & myRecyclerView != null) {
-            myRecyclerView.setAdapter(new MyAdapter(listitems));
-        }
+
         myRecyclerView.setLayoutManager(MyLayoutManager);
+
         myRecyclerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = new FragmentDramaDetail();
+
+                        DramaInfo dramaInfo=(DramaInfo)view.getTag();
+                        Fragment fragment = new FragmentDramaDetail();
 
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
@@ -151,51 +290,27 @@ public class DramaFragment extends Fragment {
     }
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView titleTextView;
-        public ImageView coverImageView;
-        public ImageView likeImageView;
-        public ImageView shareImageView;
-        public TextView textGroupname;
-
-        public MyViewHolder(View v) {
-            super(v);
-            titleTextView = (TextView) v.findViewById(R.id.titleTextView);
-            coverImageView = (ImageView) v.findViewById(R.id.coverImageView);
-            likeImageView = (ImageView) v.findViewById(R.id.likeImageView);
-            shareImageView = (ImageView) v.findViewById(R.id.shareImageView);
-            textGroupname= (TextView) v.findViewById(R.id.textGroupname);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Fragment fragment = new FragmentDramaDetail();
-
-
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-                    Log.i("RecyclerView Item ", String.valueOf(getLayoutPosition()));
-
-                }
-            });
-        }
-    }
-
-
-    public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private ArrayList<DramaInfo> list;
 
         public MyAdapter(ArrayList<DramaInfo> Data) {
+            Log.d("", "MyAdapter constructore Data"+Data+"   Size ===" +Data.size());
+
             list = Data;
+            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
+
         }
 
 
         @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
+        public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
             // create a new view
+            Log.d("", "MyAdapter onCreateViewHolder ");
             View view=null;
+            DramaInfo dramaInfo =list.get(position);
 
-                view = LayoutInflater.from(parent.getContext())
+            view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.recycle_items, parent, false);
                 MyViewHolder holder = new MyViewHolder(view);
 
@@ -206,29 +321,52 @@ public class DramaFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        public void onBindViewHolder(final MyAdapter.MyViewHolder holder, final int position) {
+            Log.d("", "MyAdapter onBindViewHolder ");
 
-            holder.titleTextView.setText(list.get(position).getDrama_name());
-            holder.coverImageView.setImageResource(list.get(position).getImageResourceId());
+            final DramaInfo[] dramaInfo = {list.get(position)};
+            holder.titleTextView.setText(dramaInfo[0].getDrama_name());
+//            holder.coverImageView.setImageResource(Integer.parseInt(list.get(position).getLink_photo()));
+            Picasso.with(getContext()).load(dramaInfo[0].getLink_photo()).into(holder.coverImageView);
+
+
             // holder.coverImageView.setTag(list.get(position).getImageResourceId());
-            holder.likeImageView.setTag(R.drawable.ic_like);
-            holder.likeImageView.setOnClickListener(new View.OnClickListener() {
+           holder.bookmarkImageView.setOnClickListener(new View.OnClickListener() {
+                private boolean stateChanged;
                 @Override
                 public void onClick(View v) {
-                    DramaInfo dramaInfo=list.get(position);
-                   List<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-                    dramaInfos.add(dramaInfo);
-//                    FavouritesDrama fragment1 = new FavouritesDrama();
-//                    Bundle args = new Bundle();
-//                    args.putSerializable("dramaInfo",dramaInfo);
-//                   Fragment fragment=fragment1;
-//                    fragment.setArguments(args);
-//                    getActivity().getSupportFragmentManager().beginTransaction()
-//                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-//
+                   dramaInfo[0] =list.get(position);
+                    FavouritesInfo favouritesInfo=new FavouritesInfo();
+
+                    Log.d("","Bookmark  dramaInfo.getId() "+ dramaInfo[0].getId());
+
+                    dramaInfos.add(dramaInfo[0]);
+                    if(stateChanged) {
+                       Toast.makeText(v.getContext(), "Remove from Favourite", Toast.LENGTH_SHORT).show();
+                        if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
+
+                            favouritesInfo.setDrama_id(dramaInfo[0].getId());
+                        }
+                       int count= favouritesInfoDAOImpl.deleteFav(favouritesInfo);
+                        Log.d("","Bookmark  dramaInfo count"+count);
+                        holder.bookmarkImageView.setImageResource(R.mipmap.ic_unlike);
+                    }
+                    else {
+                        holder.bookmarkImageView.setImageResource(R.mipmap.ic_like);
+                        Toast.makeText(v.getContext(), "Added to Favourite ", Toast.LENGTH_SHORT).show();
+                        if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
+
+                            favouritesInfo.setDrama_id(dramaInfo[0].getId());
+                        }
+                        favouritesInfoDAOImpl.addFav(favouritesInfo);
+
+                    }
+                    stateChanged = !stateChanged;
+
+
                 }
             });
-            holder.textGroupname.setText(list.get(position).getGroup_name());
+            holder.textGroupname.setText(dramaInfo[0].getGroup_name());
 
             holder.shareImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -243,6 +381,47 @@ public class DramaFragment extends Fragment {
         @Override
         public int getItemCount() {
             return list.size();
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            public TextView titleTextView;
+            public ImageView coverImageView;
+            public ImageView bookmarkImageView;
+            public ImageView shareImageView;
+            public TextView textGroupname;
+
+
+            public MyViewHolder(View itemView) {
+                super(itemView);
+                titleTextView = (TextView) itemView.findViewById(R.id.titleTextView);
+                coverImageView = (ImageView) itemView.findViewById(R.id.coverImageView);
+                bookmarkImageView = (ImageView) itemView.findViewById(R.id.likeImageView);
+                shareImageView = (ImageView) itemView.findViewById(R.id.shareImageView);
+                textGroupname= (TextView) itemView.findViewById(R.id.textGroupname);
+                Log.d("", "MyAdapter MyViewHolder ");
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                int position = getAdapterPosition(); // gets item position
+                if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
+                    DramaInfo dramaInfo = list.get(position);
+                    // We can access the data within the views
+                    Log.d("", "MyAdapter getAdapterPosition list.get(position) "+ list.get(position));
+                    Log.d("", "MyAdapter getAdapterPosition MyViewHolder dramaInfo "+dramaInfo);
+                    Log.d("", "MyAdapter getAdapterPositionMyViewHolder dramaInfo.getName "+dramaInfo.getDrama_name());
+                   if(dramaInfo!=null) {
+                       Bundle bundle = new Bundle();
+                       bundle.putSerializable("dramaInfo", dramaInfo);
+                       Fragment fragment = new FragmentDramaDetail();
+                       fragment.setArguments(bundle);
+                       getActivity().getSupportFragmentManager().beginTransaction()
+                               .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                   }
+                }
+            }
         }
     }
 
@@ -318,15 +497,6 @@ public class DramaFragment extends Fragment {
 
     }
 
-   /* private boolean isPackageInstalled(String packagename, Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }*/
 
     private void checkPermission(){
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);

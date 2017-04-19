@@ -13,11 +13,10 @@
         android:id="@+id/kalrav_logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_above="@+id/fb_image"
-        android:layout_centerHorizontal="true"
-        android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@drawable/kalrav_logo" />
+        android:src="@drawable/kalrav_logo"
+        android:layout_above="@+id/text"
+        android:layout_centerHorizontal="true" />
 
     <com.hanks.htextview.HTextView
         android:id="@+id/text"
@@ -35,31 +34,37 @@
     <com.facebook.login.widget.LoginButton
         xmlns:fb="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fb_image"
-        android:layout_width="88dp"
-        android:layout_height="90dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         fb:login_text=""
         fb:logout_text=""
+        android:layout_marginTop="30dip"
 
-        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dip"
+        android:layout_below="@+id/text"
         android:background="@drawable/fb" />
 
     <ImageView
         android:id="@+id/google_image"
         android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_alignTop="@+id/fb_image"
+        android:layout_height="75dp"
+        android:layout_below="@+id/text"
+        android:layout_marginLeft="30dip"
+        android:layout_marginTop="30dip"
+        android:layout_marginRight="20dip"
         android:layout_toEndOf="@+id/kalrav_logo"
-        android:src="@drawable/google" />
-    <Button
-        android:id="@+id/btnSkipLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Skip login"
+        android:background="@drawable/google" />
 
-        android:background="@drawable/round_btn"
-        android:textColor="@android:color/holo_red_dark"
+    <TextView
+        android:id="@+id/textSkipLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:layout_below="@+id/google_image"
-        android:layout_centerHorizontal="true" />
+        android:text="Skip login"
+        android:autoLink="web"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 </RelativeLayout>
 
 

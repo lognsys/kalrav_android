@@ -6,9 +6,19 @@ import java.io.Serializable;
  * Created by pdoshi on 27/12/16.
  */
 
-public class DramaInfo implements Serializable {
+public class FavouritesInfo implements Serializable {
 
+    private int id;
 
+    public int getDrama_id() {
+        return drama_id;
+    }
+
+    public void setDrama_id(int drama_id) {
+        this.drama_id = drama_id;
+    }
+
+    private int drama_id;
     private String group_name;
     private String drama_name;
     private String link_photo;
@@ -55,7 +65,6 @@ public class DramaInfo implements Serializable {
         this.id = id;
     }
 
-    private int id;
 
     public String[] getCast() {
         return cast;

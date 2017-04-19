@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +33,7 @@ import java.util.List;
  */
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
-    String [] seatName={"A","B","C","D","E","F","G","H","I","J","K"};
-    private List<String> mSeats = new ArrayList<String>();
+     private List<String> mSeats = new ArrayList<String>();
     private String[] mData = new String[0];
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
@@ -62,11 +62,21 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the textview in each cell
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
+        holder.position=position;
         String seatnumber =  mData[position];
-
-                holder.myTextView.setText(seatnumber);
-
+        if(position==0 || position==11 || position==22 || position==33 || position==44 || position==55 || position==66
+                || position==77 ){
+            holder.myTextView.setBackgroundColor(Color.WHITE);
+            holder.myTextView.setTextColor(Color.BLACK);
+            holder.myTextView.setText(seatnumber);
+            holder.myTextView.setClickable(false);
+            holder.myTextView.setTextSize(10.5f);
+            holder.myTextView.setPadding(2,2,2,2);
+            holder.linearLayout.setBackgroundColor(Color.WHITE);
+        }
+        else {
+            holder.myTextView.setText(seatnumber);
+        }
         this.confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,10 +119,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView myTextView,textseatLetter;
+        LinearLayout linearLayout;
         public int position;
         public ViewHolder(View itemView) {
             super(itemView);
             myTextView = (TextView) itemView.findViewById(R.id.info_text);
+            linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
             myTextView.setOnClickListener(new View.OnClickListener() {
                 private boolean stateChanged;
 
@@ -123,8 +135,23 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                         count--;
                         if(count!=0) {
                          totalPrice = totalPrice - price ;
-                        }myTextView.setBackgroundColor(Color.parseColor("#c8e8ff"));
-                        myTextView.setTextColor(Color.BLACK);
+
+                        }
+                        if(position==0 || position==11 || position==22 || position==33 || position==44 || position==55 || position==66
+                                || position==77 ){
+                            myTextView.setBackgroundColor(Color.WHITE);
+                            myTextView.setTextColor(Color.BLACK);
+
+                            myTextView.setClickable(false);
+                            myTextView.setTextSize(10.5f);
+                            myTextView.setPadding(2,2,2,2);
+                            linearLayout.setBackgroundColor(Color.WHITE);
+                        }
+                        else{
+                            myTextView.setBackgroundColor(Color.parseColor("#c8e8ff"));
+                            myTextView.setTextColor(Color.BLACK);
+
+                        }
                         mSeats.remove(myTextView.getText().toString());
                         Log.d("","Rest mSeats onremove size   "+mSeats.size());
                       Toast.makeText(v.getContext(), "You unselected seat no. = " +myTextView.getText().toString()+" totalPrice = "+totalPrice, Toast.LENGTH_SHORT).show();

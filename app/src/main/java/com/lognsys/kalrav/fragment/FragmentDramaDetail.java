@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -40,8 +41,10 @@ import com.lognsys.kalrav.adapter.ExpadableListAdapter;
 import com.lognsys.kalrav.adapter.HorizontalAdapterCriticsReview;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
 import com.lognsys.kalrav.adapter.SlidingImage_Adapter;
+import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.MySpannable;
 import com.lognsys.kalrav.model.TimeSlot;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +56,7 @@ import java.util.List;
 
 public class FragmentDramaDetail extends Fragment implements View.OnClickListener {
 //for dots
-   static TextView mDotsText[];
+   static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaDate,tvDramaTiming,tvDramaLanguage,tvDramaGenre,textsynopsys;
     private int mDotsCount;
     private LinearLayout mDotsLayout;
     int position;
@@ -66,18 +69,61 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private HorizontalAdapterUsersReview horizontalAdapterUsers;
     private HorizontalAdapterCriticsReview horizontalAdapterCritics;
     private List<TimeSlot> timeSlotArrayList;
-
+    DramaInfo dramaInfo;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics;
     AlertDialog dialog;
     Button btnbook;
     private static final Integer[] IMAGES= {R.drawable.gujjubhai_ghode_chadhiya,R.drawable.gujjubhai_great,R.drawable.google,R.drawable.com_facebook_button_background};
     ViewPager viewPager;
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
+    ImageView dramaImage;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        dramaInfo = (DramaInfo) getArguments().getSerializable("dramaInfo");
+        Log.d("","Detail Fragment dramaInfo "+dramaInfo);
 
-         View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
-         viewPager=(ViewPager)view.findViewById(R.id.viewpager);
+        View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
+        dramaImage=(ImageView) view.findViewById(R.id.dramaImage);
+        tvDramaName=(TextView) view.findViewById(R.id.tvDramaName);
+        tvDramaLength=(TextView) view.findViewById(R.id.tvDramaLength);
+        tvDramaDate=(TextView) view.findViewById(R.id.tvDramaDate);
+        tvDramaTiming=(TextView) view.findViewById(R.id.tvDramaTiming);
+        tvDramaLanguage=(TextView) view.findViewById(R.id.tvDramaLanguage);
+        tvDramaGenre=(TextView) view.findViewById(R.id.tvDramaGenre);
+        textsynopsys=(TextView) view.findViewById(R.id.textsynopsys);
+
+      if(dramaInfo!= null){
+          if(dramaInfo.getLink_photo()!=null){
+              Picasso.with(getContext()).load(dramaInfo.getLink_photo()).into(dramaImage);
+            }
+            else{
+              Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(dramaImage);
+          }
+         if(dramaInfo.getDrama_name()!=null){
+              tvDramaName.setText(dramaInfo.getDrama_name());
+          }
+          if(dramaInfo.getDrama_length()!=null){
+              tvDramaLength.setText(dramaInfo.getDrama_length());
+          }
+          if(dramaInfo.getDatetime()!=null){
+              tvDramaDate.setText(dramaInfo.getDatetime());
+          }
+          if(dramaInfo.getTime()!=null){
+              tvDramaTiming.setText(dramaInfo.getTime());
+          }
+          if(dramaInfo.getDrama_language()!=null){
+              tvDramaLanguage.setText(dramaInfo.getDrama_language());
+          }
+          if(dramaInfo.getGenre()!=null){
+              tvDramaGenre.setText(dramaInfo.getGenre());
+          }
+          if(dramaInfo.getBriefDescription()!=null){
+              textsynopsys.setText(dramaInfo.getBriefDescription());
+          }
+
+
+      }
+        viewPager=(ViewPager)view.findViewById(R.id.viewpager);
         btnbook=(Button)view.findViewById(R.id.btnbook);
         btnbook.setOnClickListener(this);
         //recycler view for users review

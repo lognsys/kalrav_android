@@ -18,7 +18,7 @@
             android:autoLink="all"
             android:background="@drawable/round_btn"
             android:text="@string/confirm_seats"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="20dp"
             android:padding="5dip"
 
             android:layout_alignParentTop="true"

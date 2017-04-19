@@ -11,23 +11,24 @@ import java.util.Map;
  * Created by pdoshi on 27/12/16.
  */
 
-public interface DramaInfoDAO {
+public interface FavouritesInfoDAO {
 
 
 
 //    boolean addDrama(DramaInfo dramaInfo);
-    void addDrama(DramaInfo dramaInfo);
+    void addFav(FavouritesInfo favouritesInfo);
 
 //    boolean updateDrama();
-    int updateDrama(DramaInfo dramaInfo);
+    int updateFav(FavouritesInfo favouritesInfo);
 
-    boolean deleteDrama();
+//    boolean deleteDrama();
+    int deleteFav(FavouritesInfo favouritesInfo);
 
-    List<DramaInfo> getAllDrama();
+    List<FavouritesInfo> getAllFav();
 
 //    List<DramaInfo> findDramaBy(String date);
-List<DramaInfo>  getDramaListByFavId(int id);
+FavouritesInfo findfavBy(FavouritesInfo favouritesInfo);
 
-    boolean isDramaExist(DramaInfo dramaInfo);
+    boolean isFavExist(FavouritesInfo favouritesInfo);
 
 }

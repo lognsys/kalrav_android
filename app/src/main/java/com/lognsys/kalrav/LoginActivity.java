@@ -1,23 +1,40 @@
 package com.lognsys.kalrav;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -56,9 +73,14 @@ import com.lognsys.kalrav.util.KalravApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -69,6 +91,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import static android.R.attr.bitmap;
+import static com.lognsys.kalrav.R.id.imageView;
 
 
 public class LoginActivity extends AppCompatActivity implements
@@ -82,7 +107,8 @@ public class LoginActivity extends AppCompatActivity implements
     private static final int RC_NETWORK_DIALOG = 101;
     Timer timer;
     TimerTask timerTask;
-    Button btnSkipLogin;
+   TextView textSkipLogin;
+    ProgressDialog progressDialog;
     //login_activity UI variable
     private ImageView fbSignIn, googSignIn;
     private LoginButton loginButton;
@@ -95,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements
     //firebase variable declaration
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
+private  String facebookImageUrl;
     //Google API variable
     private GoogleApiClient mGoogleApiClient;
 
@@ -147,8 +173,8 @@ public class LoginActivity extends AppCompatActivity implements
 
             //setting layout activity_login
             setContentView(R.layout.activity_login);
-            btnSkipLogin=(Button)findViewById(R.id.btnSkipLogin);
-            btnSkipLogin.setOnClickListener(this);
+            textSkipLogin=(TextView)findViewById(R.id.textSkipLogin);
+            textSkipLogin.setOnClickListener(this);
             hTextView = (HTextView) findViewById(R.id.text);
             hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
             // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
@@ -157,20 +183,14 @@ public class LoginActivity extends AppCompatActivity implements
 
 
             loginButton = (LoginButton) findViewById(R.id.fb_image);
-            loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
-            //loginButton.setReadPermissions(Arrays.asList("read_stream, public_profile, email, user_birthday, user_friends, user_about_me, user_location, user_likes"));
+            loginButton.setBackgroundResource(R.drawable.fb);
+            loginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            loginButton.setReadPermissions("email", "public_profile");
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
 
                     requestData();
-
-                    //start home activity
-
-                    loginButton.setVisibility(View.INVISIBLE);
-
-                    //close current activity
-
 
                 }
 
@@ -183,7 +203,17 @@ public class LoginActivity extends AppCompatActivity implements
                 public void onError(FacebookException e) {
 
                     Toast.makeText(getApplicationContext(), "Login Error: Check network connection...", Toast.LENGTH_SHORT).show();
-
+                    Log.e(TAG,"Exception isAppInstalled " +isAppInstalled(getApplicationContext(), "com.facebook.katana"));
+                    if(isAppInstalled(getApplicationContext(), "com.facebook.katana")) {
+                        // Do something
+                        Intent receiverIntent = new Intent(Intent.ACTION_VIEW);
+                        receiverIntent.setData(Uri.parse("com.facebook.katana"));
+                        startActivity(receiverIntent);
+                    }else {
+                        Intent i = new Intent(android.content.Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.facebook.katana"));
+                        startActivity(i);
+                    }
                     //log facebook Error
                     Log.e(TAG,"Exception" +e);
                 }
@@ -250,6 +280,16 @@ public class LoginActivity extends AppCompatActivity implements
 
     }
 
+    private boolean isAppInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+
     private void requestData() {
         Log.d(TAG, "Requesting facebook data...");
 
@@ -269,11 +309,16 @@ public class LoginActivity extends AppCompatActivity implements
                         Log.v(TAG, " Facebook API response id- " + json.getString("id"));
 
                         userInfo.setFb_id(json.getString("id"));
+                        KalravApplication.getInstance().getPrefs().setImage(userInfo.getFb_id());
+                        KalravApplication.getInstance().getPrefs().setIsFacebookLogin(true);
                         userInfo.setEmail(json.getString("email"));
+                        KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
                         userInfo.setName(json.getString("name"));
                         userInfo.setLoggedIn(Constants.LOG_IN);
+                        KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
                         ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
                         userInfos.add(userInfo);
+
                         Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
                         i.putExtra("userInfos",userInfos);
                         startActivity(i);
@@ -298,6 +343,7 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
 
+
     /**
      * CLick On Google IMAGE
      * View a root element used to call sub elements
@@ -310,7 +356,8 @@ public class LoginActivity extends AppCompatActivity implements
             case R.id.google_image:
                 signIn();
                 break;
-            case R.id.btnSkipLogin:
+            case R.id.textSkipLogin:
+                KalravApplication.getInstance().getPrefs().setIsLogin(true);
                Intent intent =new Intent(LoginActivity.this,HomeActivity.class);
                 startActivity(intent);
                 break;
@@ -403,17 +450,23 @@ public class LoginActivity extends AppCompatActivity implements
                             Log.d(TAG, "Google Login Success...");
                             Log.d(TAG, "Google Login Success getDisplayName ..."+mAuth.getCurrentUser().getDisplayName());
                             Log.d(TAG, "Google Login Success getEmail..."+mAuth.getCurrentUser().getEmail());
-                            Log.d(TAG, "Requesting facebook data...");
+                            Log.d(TAG, "Google Login Success getPhotoUrl..."+mAuth.getCurrentUser().getPhotoUrl());
 
-                                    try {
+                            try {
+                                            if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
+                                                KalravApplication.getInstance().getPrefs().setImage(String.valueOf(mAuth.getCurrentUser().getPhotoUrl()));
+                                                KalravApplication.getInstance().getPrefs().setIsFacebookLogin(false);
+                                            }
                                             if( mAuth.getCurrentUser().getUid()!=null) {
                                                 userInfo.setGoogle_id(mAuth.getCurrentUser().getUid());
                                             }
                                             if( mAuth.getCurrentUser().getEmail()!=null) {
                                                 userInfo.setEmail(mAuth.getCurrentUser().getEmail());
+                                                KalravApplication.getInstance().getPrefs().setEmail(mAuth.getCurrentUser().getEmail());
                                             }
                                             if( mAuth.getCurrentUser().getDisplayName()!=null) {
                                                 userInfo.setName(mAuth.getCurrentUser().getDisplayName());
+                                                KalravApplication.getInstance().getPrefs().setName(mAuth.getCurrentUser().getDisplayName());
                                             }
 
                                         userInfo.setLoggedIn(Constants.LOG_IN);
@@ -539,333 +592,6 @@ public class LoginActivity extends AppCompatActivity implements
             }
 
         });
-
-
-
-                            /*fbuser.setId(json.getString("id"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_ID.name(), fbuser.getId());
-
-                            fbuser.setEmail(json.getString("email"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_EMAIL_ID.name(), fbuser.getEmail());
-
-                            fbuser.setName(json.getString("name"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_NAME.name(), fbuser.getName());
-
-                            fbuser.setFirst_name(json.getString("first_name"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_FIRST_NAME.name(), fbuser.getFirst_name());
-
-                            fbuser.setLast_name(json.getString("last_name"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_LAST_NAME.name(), fbuser.getLast_name());
-
-                            fbuser.setLink(json.getString("link"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_LINK.name(), fbuser.getLink());
-
-                            fbuser.setPicture(json.getJSONObject("picture").getJSONObject("data").getString("url"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_PICTURE.name(), fbuser.getPicture());
-
-                            fbuser.setTimezone(json.getString("timezone"));
-                            sharedPrefEditor.putString(Constants.FacebookFields.FB_TIME_ZONE.name(), fbuser.getTimezone());
-
-                            sharedPrefEditor.commit();
-
-                           // Log.d(TAG, "Facebook User : " + fbuser);
-
-                        } else {
-                            Log.e(TAG, "Could not retrieve data from facebook graphapi...");
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            });
-
-            Bundle parameters = new Bundle();
-            parameters.putString("fields", "id, cover, name, first_name, last_name, link, " +
-                    "gender, picture, timezone, updated_time, email");
-            request.setParameters(parameters);
-
-            AsyncTask.Status status = request.executeAsync().getStatus();
-            return status;
-        }
-
-        @Override
-        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-            // be available.
-            Log.e(TAG, "onConnectionFailed:" + connectionResult);
-            Toast.makeText(this, "Google Unresolved Error occurred....", Toast.LENGTH_SHORT).show();
-        }
-
-
-        @Override
-        protected void onResume() {
-            super.onResume();
-        }
-
-        @Override
-        public void onStart() {
-            super.onStart();
-            mAuth.addAuthStateListener(mAuthListener);
-        }
-
-        @Override
-        public void onStop() {
-            super.onStop();
-            if (mAuthListener != null) {
-                mAuth.removeAuthStateListener(mAuthListener);
-
-            }
-        }
-
-   /* private final String TAG = getClass().getSimpleName();
-    private CallbackManager facebookCallbackManager;
-    private LoginButton loginButton;
-    private UserInfoDAOImpl userDaoImpl;
-    private HTextView hTextView;
-
-
-    Timer timer;
-    TimerTask timerTask;
-
-    //we are going to use a handler to be able to run in our TimerTask
-    final Handler handler = new Handler();
-
-    Handler mHtHandler;
-    Handler mUiHandler;
-
-    public LoginActivity() {
-        //Create database
-        Log.d(TAG, "Instantiating Login Authentication");
-
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-        //creating database sqlite and storing user pojo
-        SQLiteHelper database = new SQLiteHelper(this);
-        userDaoImpl = new UserInfoDAOImpl(this);
-        //Instantiating global obj
-       // globalObj = ((KalravApplication) getApplicationContext());
-
-        //LOGIN MODULE Step 1: Check if last user loggedIN
-        UserInfo user = userDaoImpl.lastUserLoggedIn();
-
-        if (null != user) {
-            Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
-
-            //setting global variable
-            KalravApplication.getInstance().setGlobalUserObject(user);
-
-            Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
-
-
-        } else {
-
-            Log.d(TAG, "Case2: OnCreate method - Login through Facebook Auth and saving to database.");
-            //Initialize Facebook sdk
-            FacebookSdk.sdkInitialize(getApplicationContext());
-            facebookCallbackManager = CallbackManager.Factory.create();
-
-            //setting layout activity_login
-            setContentView(R.layout.activity_login);
-
-
-            hTextView = (HTextView) findViewById(R.id.text);
-            hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
-            // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
-            hTextView.setAnimateType(HTextViewType.TYPER);
-            hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
-
-
-            loginButton = (LoginButton) findViewById(R.id.login_button);
-            loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_location"));
-            //loginButton.setReadPermissions(Arrays.asList("read_stream, public_profile, email, user_birthday, user_friends, user_about_me, user_location, user_likes"));
-            loginButton.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-
-                    requestData();
-
-                    //start home activity
-                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(i);
-
-                    loginButton.setVisibility(View.INVISIBLE);
-
-                    //close current activity
-                    finish();
-
-                }
-
-                @Override
-                public void onCancel() {
-                    Toast.makeText(getApplicationContext(), "Login Cancelled...", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onError(FacebookException e) {
-
-                    Toast.makeText(getApplicationContext(), "Login Error: Check network connection...", Toast.LENGTH_SHORT).show();
-
-                    //log facebook Error
-                    Log.e(TAG, e.getMessage());
-                }
-            });
-        }
-
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        boolean isFacebookLogin = facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
-
-
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        stoptimertask(getWindow().getDecorView().getRootView());
-
-    }
-
-    @Override
-    protected void onResume() {
-
-        Log.d(TAG, "OnResume method called...");
-        super.onResume();
-
-
-        //onResume we start our timer so it can start when the app comes from the background
-        startTimer();
-
-        //Check if user is loggedIn
-        UserInfo user =  KalravApplication.getInstance().getGlobalUserObject();
-        if (null != user) {
-
-            Log.v(TAG, "OnResume method - Starting HOME_ACTIVITY FROM ");
-            //start home activity
-            Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(i);
-
-            this.finish();
-
-        } else {
-            Log.v(TAG, "OnResume method - global Object user - NULL");
-        }
-
-    }
-
-
-    public void startTimer() {
-
-        //set a new Timer
-        timer = new Timer();
-
-        //initialize the TimerTask's job
-        initializeTimerTask();
-
-        //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-
-        timer.schedule(timerTask, 5000, 9000); //
-
-    }
-
-    public void stoptimertask(View v) {
-        Log.d(TAG, "OnResume method called...");
-        //stop the timer, if it's not already null
-        if (timer != null) {
-
-
-            Log.d(TAG, "Stopping timer HTextView animated text...");
-            timer.cancel();
-            timer.purge();
-            timer = null;
-        }
-    }
-
-
-    public void initializeTimerTask() {
-        timerTask = new TimerTask() {
-
-            public void run() {
-
-                //use a handler to run a toast that shows the current timestamp
-                handler.post(new Runnable() {
-
-                    public void run() {
-                        hTextView = (HTextView) findViewById(R.id.text);
-                        hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
-                        // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
-                        hTextView.setAnimateType(HTextViewType.TYPER);
-                        hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
-
-                    }
-                });
-            }
-        };
-    }
-
-
-    *//**
-         * Request data from facebook api
-         *//*
-    public void requestData() {
-
-        Log.d(TAG, "Requesting facebook data...");
-
-        final UserInfo userInfo = new UserInfo();
-
-        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-            @Override
-            public void onCompleted(JSONObject object, GraphResponse response) {
-
-                Log.v(TAG, " Facebook API response - " + response.toString());
-
-                JSONObject json = response.getJSONObject();
-
-                try {
-                    if (json != null) {
-
-                        userInfo.setFb_id(json.getString("id"));
-                        userInfo.setEmail(json.getString("email"));
-                        userInfo.setName(json.getString("name"));
-                        userInfo.setBirthday(json.getString("birthday"));
-                        userInfo.setLocation(json.getJSONObject("location").getString("name"));
-                        userInfo.setLoggedIn(Constants.LOG_IN);
-
-                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
-}                        //save to the database
-                        userDaoImpl.addUser(userInfo);
-
-                    } else {
-                        Log.e(TAG, "Could not retrieve data from facebook graphapi...");
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        });
-
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, name, email, birthday, location");
-        request.setParameters(parameters);
-        request.executeAsync();
-
-    }*/
         AsyncTask.Status status = request.executeAsync().getStatus();
         return status;
     }
@@ -877,17 +603,11 @@ public class LoginActivity extends AppCompatActivity implements
         Toast.makeText(this, "Google Unresolved Error occurred....", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startTimer();
-
-
-    }
 
     @Override
     public void onStart() {
         super.onStart();
+        startTimer();
         mAuth.addAuthStateListener(mAuthListener);
     }
 

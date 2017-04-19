@@ -31,8 +31,7 @@
                     android:id="@+id/dramaImage"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:layout_gravity="left|center"
-                    android:src="@drawable/gujjubhai_ghode_chadhiya" />
+                    android:layout_gravity="left|center"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -45,7 +44,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Gujjubhai ghode chadhiya"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -98,10 +96,9 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/tvDramaGenera"
+                        android:id="@+id/tvDramaGenre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thriller,Action"
                         android:textColor="@color/black"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -227,7 +224,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:padding="2dp"
+                        android:padding="5dp"
                         android:textSize="14sp"
                         android:text="Book"
                         android:background="@drawable/round_btn"
@@ -260,18 +257,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:gravity="left|center"
-                android:text="Stack Overflow is a community of 7.0 million programmers, just like you, helping each other.
-Join them; it only takes a minute: Stack Overflow is a community of 7.0 million programmers, just like you, helping each other.
-Join them; it only takes a minute: "
                 android:textColor="@color/black"
                 android:textSize="14sp" />
         </LinearLayout>
-
-        <ExpandableListView
-            android:id="@+id/elSynopsis"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"></ExpandableListView>
 
 
         <LinearLayout
