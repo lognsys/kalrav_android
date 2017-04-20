@@ -1,33 +1,24 @@
-package com.lognsys.kalrav;
+package com.lognsys.kalrav.fragment;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.lognsys.kalrav.db.DramaInfoDAOImpl;
-import com.lognsys.kalrav.db.FavouritesInfoDAOImpl;
-import com.lognsys.kalrav.model.DramaInfo;
-import com.lognsys.kalrav.model.FavouritesInfo;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.lognsys.kalrav.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BookmarkFragment.OnFragmentInteractionListener} interface
+ * {@link FavFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link BookmarkFragment#newInstance} factory method to
+ * Use the {@link FavFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BookmarkFragment extends Fragment {
+public class FavFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -37,13 +28,9 @@ public class BookmarkFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    RecyclerView myRecyclerView;
     private OnFragmentInteractionListener mListener;
-    List<FavouritesInfo> favouritesInfos;
-    List<DramaInfo> dramaInfos;
-    FavouritesInfoDAOImpl favouritesInfoDAOimpl;
-    DramaInfoDAOImpl dramaInfoDAOimpl;
-    public BookmarkFragment() {
+
+    public FavFragment() {
         // Required empty public constructor
     }
 
@@ -53,11 +40,11 @@ public class BookmarkFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment BookmarkFragment.
+     * @return A new instance of fragment FavFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BookmarkFragment newInstance(String param1, String param2) {
-        BookmarkFragment fragment = new BookmarkFragment();
+    public static FavFragment newInstance(String param1, String param2) {
+        FavFragment fragment = new FavFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -78,41 +65,7 @@ public class BookmarkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_bookmark, container, false);
-        myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
-        myRecyclerView.setHasFixedSize(true);
-        initializeList();
-        return view;
-
-
-    }
-
-    private void initializeList() {
-        try {
-            favouritesInfoDAOimpl =new FavouritesInfoDAOImpl(getContext());
-            favouritesInfos=favouritesInfoDAOimpl.getAllFav();
-            dramaInfoDAOimpl =new DramaInfoDAOImpl(getContext());
-
-            if(favouritesInfos!=null && favouritesInfos.size()>0){
-                Log.d("","Test initializeList favouritesInfos "+favouritesInfos);
-                Log.d("","Test initializeList favouritesInfos size "+favouritesInfos.size());
-
-
-
-                for (FavouritesInfo favouritesInfo: favouritesInfos) {
-                    Log.d("","Test getDramaListByFavId favouritesInfo.getDrama_id() "+favouritesInfo.getDrama_id());
-
-                    dramaInfos=dramaInfoDAOimpl.getDramaListByFavId(favouritesInfo.getDrama_id());
-                    Log.d("","Test getDramaListByFavId dramaInfos "+dramaInfos);
-                    Log.d("","Test getDramaListByFavId dramaInfos size "+dramaInfos.size());
-
-                }
-            }
-        }
-        catch (Exception e){
-            Log.d("","Test initializeList Exception "+ e);
-
-        }
+        return inflater.inflate(R.layout.fragment_fav2, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -122,11 +75,16 @@ public class BookmarkFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
 
     @Override
     public void onDetach() {

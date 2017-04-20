@@ -174,17 +174,18 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
 
 
-    public List<DramaInfo> getDramaListByFavId(int favouritesInfo) {
+    public ArrayList<DramaInfo> getDramaListByFavId(int favouritesInfo) {
         SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
         DramaInfo dramaInfo = null;
-        Log.d("","Test getDramaListByFavId  ");
+        Log.d("","Test getDramaListByFavId drama favouritesInfo "+favouritesInfo);
 
 
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
         Cursor c = db.rawQuery("SELECT * FROM drama where "+ SQLiteHelper.COLUMN_ID +" = ? ",
-                new String[favouritesInfo]);
+                new String[]{String.valueOf(favouritesInfo)});
+
         if(c!=null)
-            Log.d("","Test getDramaListByFavId  c.getCount() "+ c.getCount());
+            Log.d("","Test getDramaListByFavId drama c.getCount() "+ c.getCount());
 
         if (c != null && c.getCount()>0) {
 

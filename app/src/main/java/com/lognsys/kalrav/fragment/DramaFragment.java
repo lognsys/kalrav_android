@@ -34,6 +34,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -52,6 +63,7 @@ import com.lognsys.kalrav.util.KalravApplication;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -65,6 +77,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.facebook.FacebookSdk.getCacheDir;
+
 
 public class DramaFragment extends Fragment {
     ArrayList<DramaInfo> listitems = new ArrayList<>();
@@ -74,7 +88,7 @@ public class DramaFragment extends Fragment {
     ArrayList<DramaInfo> dramaInfos;
     DramaInfoDAOImpl dramaInfoDAO;
     FavouritesInfoDAOImpl favouritesInfoDAOImpl;
-//   http://www.json-generator.com/api/json/get/bYJqZHImiG?indent=2
+    private static final String JSON_URL="http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2";
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,13 +100,216 @@ public class DramaFragment extends Fragment {
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         favouritesInfoDAOImpl = new FavouritesInfoDAOImpl(getActivity());
         dramaInfos = new ArrayList<DramaInfo>() ;
-        if(KalravApplication.getInstance().isConnectedToInternet()) {
-            new JSONParse().execute("http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2");
-        }
-        else{
-          Toast.makeText(getContext(),"Please check  your network connection",Toast.LENGTH_SHORT).show();
-        }
+//        if(KalravApplication.getInstance().isConnectedToInternet()) {
+//            new JSONParse().execute("http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2");
+//        }
+//        else{
+//          Toast.makeText(getContext(),"Please check  your network connection",Toast.LENGTH_SHORT).show();
+//        }
+        RequestQueue mRequestQueue;
+
+// Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+
+// Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+
+// Instantiate the RequestQueue with the cache and network.
+        mRequestQueue = new RequestQueue(cache, network);
+
+// Start the queue
+        mRequestQueue.start();
+        JsonArrayRequest req = new JsonArrayRequest(JSON_URL,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("","Volly Response"+ response.toString());
+
+                        try {
+                            Log.d("","Test Doin response.length() "+response.length());
+
+                            for (int i=0; i<response.length(); i++) {
+                                DramaInfo dramaInfo=new DramaInfo();
+
+                                JSONObject jsonObject= null;
+                                try {
+                                    jsonObject = (response.getJSONObject(i));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getContext(),
+                                            "Error: 1 " + e.getMessage(),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                                String id=jsonObject.getString("id");
+                                dramaInfo.setId(Integer.parseInt(id));
+//                    Log.d("","Test Doin id) "+id);
+
+                                String drama_name=jsonObject.getString("drama_name");
+                                dramaInfo.setDrama_name(drama_name);
+                                Log.d("","Test Doin drama_name "+drama_name);
+
+                                String datetime=jsonObject.getString("datetime");
+                                dramaInfo.setDatetime(datetime);
+//                    Log.d("","Test Doin datetime "+datetime);
+
+                                String photo_link=jsonObject.getString("photo_link");
+                                dramaInfo.setLink_photo(photo_link);
+//                    Log.d("","Test Doin photo_link "+photo_link);
+
+                                String group_name=jsonObject.getString("group_name");
+                                dramaInfo.setGroup_name(group_name);
+
+                                String drama_length=jsonObject.getString("drama_length");
+                                dramaInfo.setDrama_length(drama_length);
+
+                                String drama_time=jsonObject.getString("time");
+                                dramaInfo.setTime(drama_time);
+                                StringBuilder sb;
+
+                                JSONArray jsonArray=jsonObject.getJSONArray("drama_language");
+                                if(jsonArray!=null && jsonArray.length()>0){
+                                    sb=new StringBuilder();
+                                    for(int j =0;j<jsonArray.length();j++){
+                                        sb.append(jsonArray.getString(j)+" , ");
+                                    }
+                                    dramaInfo.setDrama_language(sb.toString());
+                                }
+
+                                JSONArray jsonArrayGenre=jsonObject.getJSONArray("drama_genre");
+                                if(jsonArrayGenre!=null && jsonArrayGenre.length()>0){
+                                    sb=new StringBuilder();
+                                    for(int j =0;j<jsonArrayGenre.length();j++){
+                                        {
+
+                                            sb.append(jsonArrayGenre.getString(j)+" , ");
+                                        }
+                                    }
+                                    dramaInfo.setGenre(sb.toString());
+                                }
+                                String briefDescription=jsonObject.getString("briefDescription");
+                                dramaInfo.setBriefDescription(briefDescription);
+
+//                    Log.d("","Test Doin group_name "+group_name);
+                                dramaInfoDAO.addDrama(dramaInfo);
+                                dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+                                Log.d("","Test onPost dramaInfos.size "+dramaInfos.size());
+                                if (dramaInfos.size() > 0 & dramaInfos != null) {
+                                    MyAdapter adapter=new MyAdapter(dramaInfos);
+                                    myRecyclerView.setAdapter(adapter);
+                                }
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(),
+                                    "Error: 2 " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+//                        hidepDialog();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),
+                        "Error: volly " + error,
+                        Toast.LENGTH_LONG).show();
+//                hidepDialog();
+            }
+        });
+
+
+/*        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, JSON_URL, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("","Test Doin onResponse "+response);
+                        try{
+                            JSONArray arr = new JSONArray(response);
+                            Log.d("","Test Doin arr.length() "+arr.length());
+
+                            for (int i=0; i<arr.length(); i++) {
+                                DramaInfo dramaInfo=new DramaInfo();
+
+                                JSONObject jsonObject=(arr.getJSONObject(i));
+                                String id=jsonObject.getString("id");
+                                dramaInfo.setId(Integer.parseInt(id));
+//                    Log.d("","Test Doin id) "+id);
+
+                                String drama_name=jsonObject.getString("drama_name");
+                                dramaInfo.setDrama_name(drama_name);
+                                Log.d("","Test Doin drama_name "+drama_name);
+
+                                String datetime=jsonObject.getString("datetime");
+                                dramaInfo.setDatetime(datetime);
+//                    Log.d("","Test Doin datetime "+datetime);
+
+                                String photo_link=jsonObject.getString("photo_link");
+                                dramaInfo.setLink_photo(photo_link);
+//                    Log.d("","Test Doin photo_link "+photo_link);
+
+                                String group_name=jsonObject.getString("group_name");
+                                dramaInfo.setGroup_name(group_name);
+
+                                String drama_length=jsonObject.getString("drama_length");
+                                dramaInfo.setDrama_length(drama_length);
+
+                                String drama_time=jsonObject.getString("time");
+                                dramaInfo.setTime(drama_time);
+                                StringBuilder sb;
+
+                                JSONArray jsonArray=jsonObject.getJSONArray("drama_language");
+                                if(jsonArray!=null && jsonArray.length()>0){
+                                    sb=new StringBuilder();
+                                    for(int j =0;j<jsonArray.length();j++){
+                                        sb.append(jsonArray.getString(j)+" , ");
+                                    }
+                                    dramaInfo.setDrama_language(sb.toString());
+                                }
+
+                                JSONArray jsonArrayGenre=jsonObject.getJSONArray("drama_genre");
+                                if(jsonArrayGenre!=null && jsonArrayGenre.length()>0){
+                                    sb=new StringBuilder();
+                                    for(int j =0;j<jsonArrayGenre.length();j++){
+                                        {
+
+                                            sb.append(jsonArrayGenre.getString(j)+" , ");
+                                        }
+                                    }
+                                    dramaInfo.setGenre(sb.toString());
+                                }
+                                String briefDescription=jsonObject.getString("briefDescription");
+                                dramaInfo.setBriefDescription(briefDescription);
+
+//                    Log.d("","Test Doin group_name "+group_name);
+                                dramaInfoDAO.addDrama(dramaInfo);
+                                dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+                                Log.d("","Test onPost dramaInfos.size "+dramaInfos.size());
+                                if (dramaInfos.size() > 0 & dramaInfos != null) {
+                                    MyAdapter adapter=new MyAdapter(dramaInfos);
+                                    myRecyclerView.setAdapter(adapter);
+                                }
+                            }
+
+                        }
+                        catch(Exception t) {
+                            Log.d("","Test Doin Exception "+t);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("","Test Doin onErrorResponse "+error);
+
+                    }
+                });*/
+        KalravApplication.getInstance().addToRequestQueue(req);
     }
+
     private class JSONParse extends AsyncTask<String, String, String> {
         private ProgressDialog pDialog;
         @Override
@@ -329,7 +546,17 @@ public class DramaFragment extends Fragment {
 //            holder.coverImageView.setImageResource(Integer.parseInt(list.get(position).getLink_photo()));
             Picasso.with(getContext()).load(dramaInfo[0].getLink_photo()).into(holder.coverImageView);
 
+         /*   FavouritesInfo favouritesInfo=new FavouritesInfo();
+            favouritesInfo.setDrama_id(dramaInfo[0].getId());
+            boolean isfav =favouritesInfoDAOImpl.isFavExist(favouritesInfo);
+            Log.d("","Bookmark  isfav "+isfav);
+            if(isfav){
+                holder.bookmarkImageView.setImageResource(R.mipmap.ic_like);
+            }
+            else{
+                holder.bookmarkImageView.setImageResource(R.mipmap.ic_unlike);
 
+            }*/
             // holder.coverImageView.setTag(list.get(position).getImageResourceId());
            holder.bookmarkImageView.setOnClickListener(new View.OnClickListener() {
                 private boolean stateChanged;
@@ -344,8 +571,10 @@ public class DramaFragment extends Fragment {
                     if(stateChanged) {
                        Toast.makeText(v.getContext(), "Remove from Favourite", Toast.LENGTH_SHORT).show();
                         if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
-
+                            favouritesInfo.setId(dramaInfo[0].getId());
                             favouritesInfo.setDrama_id(dramaInfo[0].getId());
+                            favouritesInfo.setFav(stateChanged);
+
                         }
                        int count= favouritesInfoDAOImpl.deleteFav(favouritesInfo);
                         Log.d("","Bookmark  dramaInfo count"+count);
@@ -355,11 +584,14 @@ public class DramaFragment extends Fragment {
                         holder.bookmarkImageView.setImageResource(R.mipmap.ic_like);
                         Toast.makeText(v.getContext(), "Added to Favourite ", Toast.LENGTH_SHORT).show();
                         if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
-
                             favouritesInfo.setDrama_id(dramaInfo[0].getId());
+                            favouritesInfo.setFav(stateChanged);
                         }
-                        favouritesInfoDAOImpl.addFav(favouritesInfo);
+                        if(favouritesInfo!=null) {
+                            Log.d("","Bookmark  dramaInfo favouritesInfo"+favouritesInfo);
 
+                            favouritesInfoDAOImpl.addFav(favouritesInfo);
+                        }
                     }
                     stateChanged = !stateChanged;
 

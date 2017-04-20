@@ -38,9 +38,12 @@ import com.google.zxing.qrcode.QRCodeReader;
 import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.RegisterActivity;
+import com.lognsys.kalrav.db.TicketInfoDAOImpl;
+import com.lognsys.kalrav.model.TicketsInfo;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,89 +51,124 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by admin on 05-04-2017.
  */
 
 public class MyTicketFragment extends Fragment {
-    ImageView imageView;
+    ImageView imageView,dramaImage;
     // Button button;
     //EditText editText;
-    TextView tvDramaName, tvAuditorium, tvGroupName, tvDateAndTime, tvTicketNumber, tvDramaLanguage;
-    String DramaName, Auditorium, GroupName, DateAndTime, TicketNumber, DramaLanguage;
+    TextView tvDramaName, tvAuditorium, textGroupName, textDramaTiming,textUserName,textTotalnoofticket,textTotalprice,
+            tvTicketNumber, tvDramaLanguage,textDramaDate,textBookingDate,textBookingTime;
+    String DramaName, Auditorium,TotalPrice, GroupName, DateAndTime, TicketNumber,BookingDateTime,UserName,TotalTicketBooked;
     String EditTextValue;
     Thread thread;
     public final static int QRcodeWidth = 500;
     Bitmap bitmap;
-
+TicketsInfo ticketsInfo;
+    TicketInfoDAOImpl ticketInfoDAO;
+    ArrayList<TicketsInfo> ticketInfos;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_my_ticket, container, false);
+//        ticketsInfo=(TicketsInfo) getArguments().getSerializable("ticketsInfo");
+        ticketInfoDAO=new TicketInfoDAOImpl(getContext());
+        ticketInfos=ticketInfoDAO.getAllTicket();
 
+        dramaImage = (ImageView) view.findViewById(R.id.dramaImage);
 
         imageView = (ImageView) view.findViewById(R.id.imageView);
         tvDramaName = (TextView) view.findViewById(R.id.tvDramaName);
+
         tvAuditorium = (TextView) view.findViewById(R.id.tvAuditorium);
-        tvGroupName = (TextView) view.findViewById(R.id.tvGroupName);
-        tvDateAndTime = (TextView) view.findViewById(R.id.tvDramaTiming);
+        textGroupName = (TextView) view.findViewById(R.id.textGroupName);
+
+        textDramaDate = (TextView) view.findViewById(R.id.textDramaDate);
+        textDramaTiming = (TextView) view.findViewById(R.id.textDramaTiming);
+
+        textBookingDate = (TextView) view.findViewById(R.id.textBookingDate);
+        textBookingTime = (TextView) view.findViewById(R.id.textBookingTime);
+
+        textUserName = (TextView) view.findViewById(R.id.textUserName);
+
         tvTicketNumber = (TextView) view.findViewById(R.id.tvticketNumber);
+        textTotalnoofticket = (TextView) view.findViewById(R.id.textTotalnoofticket);
+        textTotalprice    = (TextView) view.findViewById(R.id.textTotalprice);
+
+
         tvDramaLanguage = (TextView) view.findViewById(R.id.tvDramaLanguage);
-        // editText = (EditText) view.findViewById(R.id.editText);
-        //button = (Button) view.findViewById(R.id.button);
-
-     /*   button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                EditTextValue = editText.getText().toString();
-
-                try {
-                    bitmap = TextToImageEncode(EditTextValue);
-
-                    imageView.setImageBitmap(bitmap);
-
-                } catch (WriterException e) {
-                    e.printStackTrace();
+        for(int i=0;i<ticketInfos.size();i++){
+            ticketsInfo=ticketInfos.get(i);
+            if(ticketsInfo!=null){
+                tvDramaName.setText(ticketsInfo.getDrama_name());
+                textDramaDate.setText(ticketsInfo.getDrama_date());
+                textDramaTiming.setText(ticketsInfo.getDrama_time());
+                textBookingDate.setText(ticketsInfo.getBooked_date());
+                textBookingTime.setText(ticketsInfo.getBooked_time());
+                textUserName.setText(ticketsInfo.getUser_name());
+                tvAuditorium.setText(ticketsInfo.getAuditorium_name());
+                textGroupName.setText(ticketsInfo.getDrama_name());
+                textTotalnoofticket.setText(ticketsInfo.getSeats_no_of_seats_booked());
+                tvTicketNumber.setText(ticketsInfo.getSeart_seat_no());
+                textTotalprice.setText(ticketsInfo.getSeats_total_price());
+                if(ticketsInfo.getDrama_photo()!=null){
+                    Picasso.with(getContext()).load(ticketsInfo.getDrama_photo()).into(dramaImage);
+                }
+            else{
+                    Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(dramaImage);
                 }
             }
-        });*/
-        DramaName = tvDramaName.getText().toString().trim();
-        Auditorium = tvAuditorium.getText().toString().trim();
-        GroupName = tvGroupName.getText().toString().trim();
-        DateAndTime = tvDateAndTime.getText().toString().trim();
-        TicketNumber = tvTicketNumber.getText().toString().trim();
-        DramaLanguage = tvDramaLanguage.getText().toString().trim();
-       new RegisteredTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,DramaLanguage,imageView).execute();
+        }
+
+        DramaName = "Drama Name : "+tvDramaName.getText().toString().trim();
+        Auditorium = "Auditorium Name" +tvAuditorium.getText().toString().trim();
+        GroupName = "Group Name : "+textGroupName.getText().toString().trim();
+        DateAndTime = "Drama Date and Time : "+ textDramaDate.getText().toString().trim()+" " +textDramaTiming.getText().toString();
+        BookingDateTime ="Booking Date and Time :"+ textBookingDate.getText().toString().trim()+" " +textBookingTime.getText().toString();
+        UserName="Booked by : "+ textUserName.getText().toString().trim();
+        TicketNumber ="Ticket numbers :"+ tvTicketNumber.getText().toString().trim();
+        TotalTicketBooked ="Total Ticket numbers :"+ textTotalnoofticket.getText().toString().trim();
+        TotalPrice="TotalPrice Rs : "+ textTotalprice.getText().toString();
+        new RegisteredTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,BookingDateTime,UserName,
+                imageView,TotalTicketBooked,TotalPrice).execute();
 
         return view;
     }
 
+
     //Register and inserting  user records
     private class RegisteredTask extends AsyncTask<Void, Bitmap, Bitmap> {
-        String DramaName, Auditorium, GroupName, DateAndTime, TicketNumber,DramaLanguage;
+        String DramaName, Auditorium, GroupName, DateAndTime, TicketNumber,BookingDateTime,UserName,TotalTicketBooked,TotalPrice;
         ImageView imageView;
         String qrText;
         ProgressDialog dialog;
 
         public RegisteredTask(String DramaName, String Auditorium, String GroupName, String DateAndTime,
-                              String TicketNumber,String DramaLanguage,ImageView imageView) {
+                              String TicketNumber,String BookingDateTime,String UserName,ImageView imageView,
+                              String TotalTicketBooked,String TotalPrice) {
             this.DramaName = DramaName;
             this.Auditorium = Auditorium;
             this.GroupName = GroupName;
             this.DateAndTime = DateAndTime;
             this.TicketNumber = TicketNumber;
-            this.DramaLanguage = DramaLanguage;
+            this.BookingDateTime = BookingDateTime;
+            this.UserName = UserName;
             this.imageView=imageView;
+            this.TotalTicketBooked=TotalTicketBooked;
+            this.TotalPrice=TotalPrice;
 
         }
 
         @Override
         protected Bitmap doInBackground(Void... params) {
              qrText = this.DramaName + "\n\r" + this.Auditorium + "\n\r" + this.GroupName +
-                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber + "\n\r" + this.DramaLanguage;
+                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber+ "\n\r" + this.BookingDateTime +
+                     "\n\r" + this.UserName+ "\n\r" + this.TotalTicketBooked+ "\n\r" + this.TotalPrice;
             try {
                 File file = new File(getDataFolder(getActivity()), "QRCode.jpg");
                 if (file.exists()) {
@@ -191,9 +229,10 @@ public class MyTicketFragment extends Fragment {
             super.onPostExecute(bitmap);
             dialog.dismiss();
             qrText = this.DramaName + "\n\r" + this.Auditorium + "\n\r" + this.GroupName +
-                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber + "\n\r" + this.DramaLanguage;
+                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber + "\n\r" + this.BookingDateTime+
+                    "\n\r" + this.UserName+ "\n\r" + this.TotalTicketBooked+ "\n\r" + this.TotalPrice;
           if(bitmap!=null) {
-              if (detectBarCode(bitmap).equals(qrText)) {
+              if (detectBarCode(bitmap) !=null && detectBarCode(bitmap).equals(qrText)) {
                   this.imageView.setImageBitmap(bitmap);
               } else {
                   //bitmap= TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage);
@@ -218,7 +257,8 @@ public class MyTicketFragment extends Fragment {
         File cacheDir = getDataFolder(getContext());
         File cacheFile = new File(cacheDir, "QRCode.jpg");
         try {
-            bitmap = TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage);
+            bitmap = TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber +
+                    "\n\r" + BookingDateTime+ "\n\r" +UserName+ "\n\r" + TotalTicketBooked + "\n\r" +TotalPrice);
 
             FileOutputStream outputStream = new FileOutputStream(cacheFile);
             byte buffer[] = new byte[1024];

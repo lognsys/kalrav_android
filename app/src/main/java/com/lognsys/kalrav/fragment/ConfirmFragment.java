@@ -14,18 +14,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.db.DramaInfoDAOImpl;
+import com.lognsys.kalrav.db.SQLiteHelper;
+import com.lognsys.kalrav.db.TicketInfoDAOImpl;
+import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.TicketsInfo;
+import com.lognsys.kalrav.model.TimeSlot;
+import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.Services;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ConfirmFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ConfirmFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ConfirmFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,7 +40,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     private EditText editName;
-    private EditText editPhoneNo;
+    private EditText editGroupname;
     private EditText editemailid;
     private EditText editConfirmationCode;
     private EditText editSeatNumber;
@@ -51,7 +52,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     private Button btnTicket;
 
     private TextInputLayout input_layout_name;
-    private TextInputLayout input_layout_phone_no;
+    private TextInputLayout input_layout_groupname;
     private TextInputLayout input_layout_emailid;
     private TextInputLayout input_layout_confirmationcode;
     private TextInputLayout input_layout_seat_numbers;
@@ -59,10 +60,14 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout input_layout_time_slot;
     private TextInputLayout input_layout_audi_name;
     private TextInputLayout input_layout_total_price;
-
+    TimeSlot timeSlot;
+    DramaInfo dramaInfo;
     int totalPrice;
     ArrayList<String> mSeats;
 
+    ArrayList<TicketsInfo> dramaInfos;
+    TicketInfoDAOImpl ticketInfoDAO;
+    TicketsInfo ticketsInfo;
     public ConfirmFragment() {
         // Required empty public constructor
     }
@@ -101,6 +106,12 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         final View view = inflater.inflate(R.layout.fragment_confirm, container, false);
 
         totalPrice = getArguments().getInt("totalPrice");
+        timeSlot= (TimeSlot) getArguments().getSerializable("timeSlot");
+        dramaInfo= (DramaInfo) getArguments().getSerializable("dramaInfo");
+        ticketInfoDAO =new TicketInfoDAOImpl(getContext());
+        ticketsInfo=new TicketsInfo();
+        Log.d("","Dialog onItemClick timeSlot "+timeSlot);
+        Log.d("","Dialog onItemClick dramaInfo "+dramaInfo);
 
         mSeats = getArguments().getStringArrayList("seats");
        populateView(view);
@@ -109,7 +120,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
 
     private void populateView(View view) {
         input_layout_name=(TextInputLayout)view.findViewById(R.id.input_layout_name);
-        input_layout_phone_no=(TextInputLayout)view.findViewById(R.id.input_layout_phone_no);
+        input_layout_groupname=(TextInputLayout)view.findViewById(R.id.input_layout_groupname);
         input_layout_emailid=(TextInputLayout)view.findViewById(R.id.input_layout_emailid);
         input_layout_confirmationcode=(TextInputLayout)view.findViewById(R.id.input_layout_confirmationcode);
         input_layout_seat_numbers=(TextInputLayout)view.findViewById(R.id.input_layout_seat_numbers);
@@ -119,7 +130,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         input_layout_total_price=(TextInputLayout)view.findViewById(R.id.input_layout_total_price);
 
         editName=(EditText)view.findViewById(R.id.editName);
-        editPhoneNo=(EditText)view.findViewById(R.id.editPhoneNo);
+        editGroupname=(EditText)view.findViewById(R.id.editGroupname);
         editemailid=(EditText)view.findViewById(R.id.editemailid);
         editConfirmationCode=(EditText)view.findViewById(R.id.editConfirmationCode);
         editSeatNumber=(EditText)view.findViewById(R.id.editSeatNumber);
@@ -127,7 +138,20 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         editTimeSlot=(EditText)view.findViewById(R.id.editTimeSlot);
         editAuditoriumName=(EditText)view.findViewById(R.id.editAuditoriumName);
         editTotalPrice=(EditText)view.findViewById(R.id.editTotalPrice);
+    if(dramaInfo!=null ){
+        editGroupname.setText(dramaInfo.getGroup_name());
+    }
+        if(KalravApplication.getInstance().getPrefs().getName()!=null){
+            editName.setText(KalravApplication.getInstance().getPrefs().getName());
+        }
+        if(KalravApplication.getInstance().getPrefs().getEmail()!=null){
+            editemailid.setText(KalravApplication.getInstance().getPrefs().getEmail());
+        }
 
+        editAuditoriumName.setText("Kalrav");
+        if(dramaInfo!=null && timeSlot!=null){
+            editTimeSlot.setText(timeSlot.getDateSlot()+" | "+timeSlot.getTimeSlot());
+        }
 
         btnTicket=(Button) view.findViewById(R.id.btnTicket);
         btnTicket.setOnClickListener(this);
@@ -177,30 +201,14 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
             input_layout_name.setError(getString(R.string.hint_name));
             editName.requestFocus();
         } else {
-            if (editPhoneNo.getText().toString().length() == 0) {
-                input_layout_phone_no.setError(getString(R.string.error_mobile_no_required));
-                editPhoneNo.requestFocus();
-                input_layout_name.setErrorEnabled(false);
-            } else if (!Services.isValidMobileNo(editPhoneNo.getText().toString())
-                    && editPhoneNo.getText().toString().length()<10) {
-                input_layout_phone_no.setError(getString(R.string.error_valid_mobile_no));
-                editPhoneNo.requestFocus();
-                input_layout_name.setErrorEnabled(false);
-            }
-            else if (editemailid.getText().toString().length() == 0) {
+
+             if (editemailid.getText().toString().length() == 0) {
                 input_layout_emailid.setError(getString(R.string.hint_email));
                 editemailid.requestFocus();
-                input_layout_phone_no.setErrorEnabled(false);
             } else if (!Services.isEmailValid(editemailid.getText().toString())) {
                 input_layout_emailid.setError(getString(R.string.error_emailid));
                 editemailid.requestFocus();
-                input_layout_phone_no.setErrorEnabled(false);
-            }
-/*            else if (Services.isEmpty(editConfirmationCode.getText().toString())) {
-                input_layout_confirmationcode.setError(getString(R.string.error_conformationCode));
-                editConfirmationCode.requestFocus();
-                input_layout_emailid.setErrorEnabled(false);
-            }*/
+             }
             else if (Services.isEmpty(editSeatNumber.getText().toString())) {
                 input_layout_seat_numbers.setError(getString(R.string.error_seats));
                 editSeatNumber.requestFocus();
@@ -224,21 +232,45 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
             }
             else {
                 input_layout_total_price.setErrorEnabled(false);
+                 if(dramaInfo != null && timeSlot!= null){
 
+
+                     ticketsInfo.setDrama_id(dramaInfo.getId());
+//                     monika added demo userid
+                     ticketsInfo.setUser_id(1);
+                     ticketsInfo.setDrama_name(dramaInfo.getDrama_name());
+                     ticketsInfo.setDrama_group_name(dramaInfo.getGroup_name());
+                     ticketsInfo.setDrama_photo(dramaInfo.getLink_photo());
+                     ticketsInfo.setDrama_date(dramaInfo.getDatetime());
+                     ticketsInfo.setDrama_time(dramaInfo.getTime());
+                     ticketsInfo.setBooked_time(timeSlot.getTimeSlot());
+                     ticketsInfo.setBooked_date(timeSlot.getDateSlot());
+                     ticketsInfo.setConfirmation_code("XII123");
+                     ticketsInfo.setSeats_total_price(String.valueOf(totalPrice));
+                     ticketsInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
+                     ticketsInfo.setSeart_seat_no(editSeatNumber.getText().toString());
+                     ticketsInfo.setAuditorium_name(editAuditoriumName.getText().toString());
+                     ticketsInfo.setUser_name(editName.getText().toString());
+                     ticketsInfo.setUser_emailid(editemailid.getText().toString());
+
+                     ticketInfoDAO.addTicket(ticketsInfo);
+
+
+                 }
+
+//                ticketsInfo.setDrmama_image("");
+                Fragment fragment = new MyTicketFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("ticketsInfo",  ticketsInfo);
+                fragment.setArguments(args);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+//
             }
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

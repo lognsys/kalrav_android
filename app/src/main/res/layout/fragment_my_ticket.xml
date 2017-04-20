@@ -49,10 +49,9 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tvDramaLength"
+                        android:id="@+id/textDramaDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2h 28min "
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
@@ -64,7 +63,7 @@
                         android:background="#d3d3d3" />
 
                     <TextView
-                        android:id="@+id/tvDramaDate"
+                        android:id="@+id/textDramaTiming"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="April 15, 2017"
@@ -74,29 +73,38 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvDramaTiming"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10:00 Am"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvDramaLanguage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hindi"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/textBookingDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/tvDramaGenera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thriller,Action"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    <View
+                        android:id="@+id/view1"
+                        android:layout_width="1dip"
+                        android:layout_height="match_parent"
+                        android:layout_margin="2dip"
+                        android:background="#d3d3d3" />
+
+                    <TextView
+                        android:id="@+id/textBookingTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="April 15, 2017"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+
+
             </LinearLayout>
 
 
@@ -108,6 +116,27 @@
             android:background="@drawable/round_corner"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/texttitleUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Booked by :"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -143,16 +172,14 @@
                     android:id="@+id/tvGroupNameLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dip"
                     android:text="Group Name :"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvGroupName"
+                    android:id="@+id/textGroupName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gujarati Masala"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -175,7 +202,49 @@
                     android:id="@+id/tvticketNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gj123446"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/texttitletotalticket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total no. of ticket :"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textTotalnoofticket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/texttitleTotalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Price Rs :"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textTotalprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>

@@ -84,29 +84,72 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 //    public static final String COLUMN_GROUP_NAME = "group_name";
     public static final String COLUMN_FAVOURITE_ID = "_id";
     public static final String COLUMN_DRAMA_ID = "drama_id";
-    /* public static final String COLUMN_DRAMA_NAME = "drama_name";
-     public static final String COLUMN_LINK_PHOTO = "photo_link";
-     public static final String COLUMN_DATETIME = "datetime";
-     public static final String COLUMN_DRAMA_LENGTH = "drama_length";
-     public static final String COLUMN_DRAMA_LANGUAGE = "drama_language";
-     public static final String COLUMN_DRAMA_GENRE = "drama_genre";
-     public static final String COLUMN_DRAMA_TIME = "time";
-     public static final String COLUMN_DRAMA_DESCRIPTION = "briefDescription";*/
-    //drama table
+    public static final boolean COLUMN_ISFAV = false;
+
+    //fav table
     private static final String DATABASE_CREATE_FAVOURITE = "create table if not exists "
             + TABLE_FAVOURITE + "(" + COLUMN_FAVOURITE_ID + " integer primary key autoincrement, "
-            + COLUMN_DRAMA_ID +  " integer, "/*
-            + COLUMN_GROUP_NAME + " TEXT, "
-            + COLUMN_DRAMA_NAME + " TEXT, "
-            + COLUMN_LINK_PHOTO + " TEXT, "
-            + COLUMN_DATETIME + " TEXT, "
-            + COLUMN_DRAMA_LENGTH + " TEXT, "
-            + COLUMN_DRAMA_LANGUAGE + " TEXT, "
-            + COLUMN_DRAMA_GENRE + " TEXT, "
-            + COLUMN_DRAMA_TIME + " TEXT, "
-            + COLUMN_DRAMA_DESCRIPTION + " TEXT, "*/
+            + COLUMN_DRAMA_ID +  " integer, "
+            + COLUMN_ISFAV + " boolean, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL , "
             + " FOREIGN KEY ("+COLUMN_DRAMA_ID+") REFERENCES "+TABLE_DRAMA+"("+COLUMN_ID+"));";
+
+
+
+
+
+    //Drama Column
+    public static final String TABLE_TICKET = "ticket";
+//    public static final String COLUMN_DRAMA_ID = "drama_id";
+    public static final String COLUMN_USER_ID = "user_id";
+//    public static final String COLUMN_DRAMA_NAME = "drama_name";
+//    public static final String COLUMN_GROUP_NAME = "group_name";
+//    public static final String COLUMN_LINK_PHOTO = "drama_photo";
+//    public static final String COLUMN_DATETIME = "drama_time";
+//    public static final String COLUMN_DRAMA_TIME = "drama_time";
+
+    public static final String COLUMN_BOOKED_TIME = "booked_time";
+    public static final String COLUMN_BOOKED_DATE = "booked_date";
+    public static final String COLUMN_CONFIRMATION_CODE = "confirmation_code";
+    public static final String COLUMN_SEAT_TOTAL_PRICE = "seats_total_price";
+    public static final String COLUMN_NO_OF_SEATS_BOOKED = "seats_no_of_seats_booked";
+    public static final String COLUMN_SEAT_NO = "seat_seat_no";
+    public static final String COLUMN_AUDITORIUM_NAME = "auditorium_name";
+//    public static final String COLUMN_USER_NAME = "user_name";
+    public static final String COLUMN_USER_EMAIL_ID = "user_emailid";
+
+    //drama table
+    private static final String DATABASE_CREATE_TICKET = "create table if not exists "
+            + TABLE_TICKET + "(" + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_DRAMA_ID +  " integer, "
+            + COLUMN_USER_ID +  " integer, "
+            + COLUMN_DRAMA_NAME + " TEXT, "
+            + COLUMN_GROUP_NAME + " TEXT, "
+            + COLUMN_LINK_PHOTO + " TEXT, "
+            + COLUMN_DATETIME + " TEXT, "
+            + COLUMN_DRAMA_TIME + " TEXT, "
+            + COLUMN_BOOKED_TIME + " TEXT, "
+            + COLUMN_BOOKED_DATE + " TEXT, "
+            + COLUMN_CONFIRMATION_CODE + " TEXT, "
+            + COLUMN_SEAT_TOTAL_PRICE + " TEXT, "
+            + COLUMN_NO_OF_SEATS_BOOKED + " TEXT, "
+            + COLUMN_SEAT_NO + " TEXT, "
+            + COLUMN_AUDITORIUM_NAME + " TEXT, "
+            + COLUMN_USER_NAME + " TEXT, "
+            + COLUMN_USER_EMAIL_ID + " TEXT, "
+            + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Override
@@ -116,6 +159,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(DATABASE_CREATE_USER);
         db.execSQL(DATABASE_CREATE_DRAMA);
         db.execSQL(DATABASE_CREATE_FAVOURITE);
+        db.execSQL(DATABASE_CREATE_TICKET);
 
     }
 

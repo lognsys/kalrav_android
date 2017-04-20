@@ -36,18 +36,23 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
     @Override
     public void addFav(FavouritesInfo favouritesInfo) {
         db = sqLiteHelper.getWritableDatabase();
-        Log.d("","Test addDrama isDramaExist(dramaInfo) "+isFavExist(favouritesInfo));
+        Log.d("","Bookmark  dramaInfo isFavExist(favouritesInfo) "+isFavExist(favouritesInfo));
 
-        // If user exists update user
-        if (isFavExist(favouritesInfo)) {
+        /*// If user exists update user
+        if (isFavExist(favouritesInfo) && favouritesInfo.getId()!=0) {
 
-            updateFav(favouritesInfo);
+            int updateCount =updateFav(favouritesInfo);
+            Log.d("","Bookmark  dramaInfo updateCount"+updateCount);
 
-        } else {  //Create user if new
+        } else */{  //Create user if new
 
             ContentValues values = new ContentValues();
             values.put(SQLiteHelper.COLUMN_ID, favouritesInfo.getId());
-            values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());/*
+            values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
+            values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV),favouritesInfo.isFav());
+
+            /*
+
             values.put(SQLiteHelper.COLUMN_GROUP_NAME, favouritesInfo.getGroup_name());
             values.put(SQLiteHelper.COLUMN_DRAMA_NAME, favouritesInfo.getDrama_name());
             values.put(SQLiteHelper.COLUMN_LINK_PHOTO, favouritesInfo.getLink_photo());
@@ -66,41 +71,30 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
 
     @Override
     public boolean isFavExist(FavouritesInfo favouritesInfo) {
-            db = sqLiteHelper.getReadableDatabase();
-            Cursor cur = db.rawQuery("SELECT COUNT(*) FROM favourite", null);
-            if (cur != null) {
-                cur.moveToFirst();                       // Always one row returned.
-                if (cur.getInt(0) == 0) {               // Zero count means empty table.
-                    Log.d(TAG, "DB_isUserExists - NOT FOUND...");
-                    return false;
-                }
-            }
-
-            if (findfavBy(favouritesInfo) == null) {
+        db = sqLiteHelper.getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT COUNT(*) FROM favourite", null);
+        Log.d("", "Bookmark  dramaInfo isFavExist cur.getCount()) " + (cur.getCount()));
+        if (cur != null && cur.getCount() < 0) {
+            cur.moveToFirst();                       // Always one row returned.
+            if (cur.getInt(0) == 0) {               // Zero count means empty table.
                 Log.d(TAG, "DB_isUserExists - NOT FOUND...");
                 return false;
             }
 
+        } else {
             return true;
-
+        }
+        return false;
     }
     @Override
     public int updateFav(FavouritesInfo favouritesInfo) {
-
-        Log.d(TAG, "Update User - " );
+        Log.d("","Bookmark  dramaInfo updateFav(favouritesInfo) "+(favouritesInfo));
+        Log.d("","Bookmark  dramaInfo updateFav (favouritesInfo).getId() "+(favouritesInfo).getId());
 
         db = sqLiteHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());/*
-        values.put(SQLiteHelper.COLUMN_GROUP_NAME, favouritesInfo.getGroup_name());
-        values.put(SQLiteHelper.COLUMN_DRAMA_NAME, favouritesInfo.getDrama_name());
-        values.put(SQLiteHelper.COLUMN_LINK_PHOTO, favouritesInfo.getLink_photo());
-        values.put(SQLiteHelper.COLUMN_DATETIME, favouritesInfo.getDatetime());
-        values.put(SQLiteHelper.COLUMN_DRAMA_LENGTH, favouritesInfo.getDrama_length());
-        values.put(SQLiteHelper.COLUMN_DRAMA_LANGUAGE, favouritesInfo.getDrama_language());
-        values.put(SQLiteHelper.COLUMN_DRAMA_GENRE, favouritesInfo.getGenre());
-        values.put(SQLiteHelper.COLUMN_DRAMA_TIME, favouritesInfo.getTime());
-        values.put(SQLiteHelper.COLUMN_DRAMA_DESCRIPTION, favouritesInfo.getBriefDescription());*/
+        values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
+        values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV),favouritesInfo.isFav());
         // updating row
         return db.update(SQLiteHelper.TABLE_FAVOURITE, values, SQLiteHelper.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(favouritesInfo.getId())});
@@ -122,13 +116,13 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
     public List<FavouritesInfo> getAllFav() {
         SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
         FavouritesInfo favouritesInfo = null;
-        Log.d("","Test getAllDrama  ");
+        Log.d("","Test getAllFav  ");
 
 
         ArrayList<FavouritesInfo> favouritesInfos=new ArrayList<FavouritesInfo>();
         Cursor c = db.rawQuery("SELECT " + SQLiteHelper.COLUMN_ID + "," +
-                SQLiteHelper.COLUMN_DRAMA_ID + /*
-                SQLiteHelper.COLUMN_GROUP_NAME + "," +
+                SQLiteHelper.COLUMN_DRAMA_ID + "," +
+                SQLiteHelper.COLUMN_ISFAV + /*"," +
                 SQLiteHelper.COLUMN_DRAMA_NAME + "," +
                 SQLiteHelper.COLUMN_LINK_PHOTO + "," +
                 SQLiteHelper.COLUMN_DATETIME +"," +
@@ -139,38 +133,27 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
                 SQLiteHelper.COLUMN_DRAMA_DESCRIPTION +*/
                 " FROM favourite", null);
         if(c!=null)
-        Log.d("","Test getAllDrama  c.getCount() "+ c.getCount());
+        Log.d("","Test getAllFav  c.getCount() "+ c.getCount());
 
         if (c != null && c.getCount()>0) {
 
             while (c.moveToNext()){
                 favouritesInfo = new FavouritesInfo();
                 String id = c.getString(0);
-                String drama_id = c.getString(1);/*
-                String groupname = c.getString(2);
-                String dramaname = c.getString(3);
-                String linkphoto = c.getString(4);
-                String datatime = c.getString(5);
-                String dramaLength = c.getString(6);
-                String dramaLanguage = c.getString(7);
-                String dramaGenre = c.getString(8);
-                String dramaTime= c.getString(9);
-                String briefDescription= c.getString(10);
-
+                String drama_id = c.getString(1);
+                Boolean isFav = Boolean.valueOf(c.getString(2));
                 favouritesInfo.setDrama_id(Integer.parseInt(drama_id));
+                               Log.d("","Test getAllFav drama_id "+drama_id);
+                Log.d("","Test getAllFav favouritesInfo.getDrama_id() "+ favouritesInfo.getDrama_id());
+
                 favouritesInfo.setId(Integer.parseInt(id));
-                favouritesInfo.setGroup_name(groupname);
-                favouritesInfo.setDrama_name(dramaname);
-                favouritesInfo.setLink_photo(linkphoto);
-                favouritesInfo.setDatetime(datatime);;
-                favouritesInfo.setDrama_length(dramaLength);;
-                favouritesInfo.setDrama_language(dramaLanguage);;
-                favouritesInfo.setGenre(dramaGenre);;
-                favouritesInfo.setTime(dramaTime);
-                favouritesInfo.setBriefDescription(briefDescription);*/
+                Log.d("","Test getAllFav id "+id);
+                Log.d("","Test getAllFav favouritesInfo.getId() "+ favouritesInfo.getId());
+
+                favouritesInfo.setFav(isFav);
                 favouritesInfos.add(favouritesInfo);
             }
-            Log.d("","Test getAllDrama favouritesInfo.size "+ favouritesInfos.size());
+            Log.d("","Test getAllFav favouritesInfo.size "+ favouritesInfos.size());
 
             c.close();
         }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.MyRecyclerViewAdapter;
+import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.TimeSlot;
 
 /**
@@ -35,6 +36,7 @@ public class BookingSeatsFragment extends Fragment  {
     private String mParam1;
     private String mParam2;
     TimeSlot timeSlot;
+    DramaInfo dramaInfo;
     private OnFragmentInteractionListener mListener;
 
     public BookingSeatsFragment() {
@@ -83,7 +85,9 @@ public class BookingSeatsFragment extends Fragment  {
                 "G","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
                 "H","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         timeSlot= (TimeSlot) getArguments().getSerializable("timeSlot");
+        dramaInfo= (DramaInfo) getArguments().getSerializable("dramaInfo");
         Log.d("","Dialog onItemClick timeSlot "+timeSlot);
+        Log.d("","Dialog onItemClick dramaInfo "+dramaInfo);
         Log.d("","Dialog onItemClick timeSlot getDramaId "+timeSlot.getDramaId());
         Log.d("","Dialog onItemClick timeSlot getDateSlot "+timeSlot.getDateSlot());
         Log.d("","Dialog onItemClick timeSlot getTimeSlot "+timeSlot.getTimeSlot());
@@ -98,10 +102,18 @@ public class BookingSeatsFragment extends Fragment  {
 
         int numberOfColumns = 11;
         int lastRowPrice = Integer.parseInt(textLastRowPrice.getText().toString());
-        adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data,lastRowPrice,confirm);
-        recycleLastRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
-        recycleLastRow.setAdapter(adapterLastrow);
+       if(timeSlot !=null && dramaInfo!= null){
+           adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data,lastRowPrice,confirm,timeSlot,dramaInfo);
+           recycleLastRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
+           recycleLastRow.setAdapter(adapterLastrow);
 
+       }
+       else{
+           adapterLastrow = new MyRecyclerViewAdapter(getActivity(), data,lastRowPrice,confirm, null,null);
+           recycleLastRow.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
+           recycleLastRow.setAdapter(adapterLastrow);
+
+       }
 
         return view ;
 

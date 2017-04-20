@@ -70,7 +70,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private HorizontalAdapterCriticsReview horizontalAdapterCritics;
     private List<TimeSlot> timeSlotArrayList;
     DramaInfo dramaInfo;
-    TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics;
+    TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
     AlertDialog dialog;
     Button btnbook;
     private static final Integer[] IMAGES= {R.drawable.gujjubhai_ghode_chadhiya,R.drawable.gujjubhai_great,R.drawable.google,R.drawable.com_facebook_button_background};
@@ -91,8 +91,9 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         tvDramaLanguage=(TextView) view.findViewById(R.id.tvDramaLanguage);
         tvDramaGenre=(TextView) view.findViewById(R.id.tvDramaGenre);
         textsynopsys=(TextView) view.findViewById(R.id.textsynopsys);
+        textGroupname =(TextView) view.findViewById(R.id.textGroupname);
 
-      if(dramaInfo!= null){
+        if(dramaInfo!= null){
           if(dramaInfo.getLink_photo()!=null){
               Picasso.with(getContext()).load(dramaInfo.getLink_photo()).into(dramaImage);
             }
@@ -120,6 +121,9 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
           if(dramaInfo.getBriefDescription()!=null){
               textsynopsys.setText(dramaInfo.getBriefDescription());
           }
+            if(dramaInfo.getGroup_name()!=null){
+                textGroupname.setText(dramaInfo.getGroup_name());
+            }
 
 
       }
@@ -363,7 +367,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         final Dialog dialog = new Dialog(getActivity());
 
 // Set the title
-        dialog.setTitle("Booking Details");
+        dialog.setTitle("Booking Time Slots");
 
 // inflate the layout
         dialog.setContentView(R.layout.dialog_timealot);
@@ -393,9 +397,10 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TimeSlot timeSlot = (TimeSlot) parent.getItemAtPosition(position);
-                 Fragment fragment = new BookingSeatsFragment();
+                Fragment fragment = new BookingSeatsFragment();
                 Bundle args = new Bundle();
                 args.putSerializable("timeSlot",timeSlot);
+                args.putSerializable("dramaInfo",dramaInfo);
                 fragment.setArguments(args);
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();

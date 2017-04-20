@@ -23,6 +23,8 @@ import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
+import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.TimeSlot;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -42,13 +44,18 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     Activity mcontext;
     public int price;
     public int count;
+    TimeSlot timeSlot;
+    DramaInfo dramaInfo;
+
     // data is passed into the constructor
-    public MyRecyclerViewAdapter(Activity context, String[] data,int price,TextView confirm) {
+    public MyRecyclerViewAdapter(Activity context, String[] data, int price, TextView confirm, TimeSlot timeSlot, DramaInfo dramaInfo) {
         this.mcontext=context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.price = price;
         this.confirm=confirm;
+        this.timeSlot=timeSlot;
+        this.dramaInfo=dramaInfo;
     }
 
     // inflates the cell layout from xml when needed
@@ -87,6 +94,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                   Fragment fff=new ConfirmFragment();
                      Bundle args = new Bundle();
                     args.putInt("totalPrice", totalPrice);
+                    args.putSerializable("timeSlot",timeSlot);
+                    args.putSerializable("dramaInfo",dramaInfo);
                     args.putStringArrayList("seats", (ArrayList<String>) mSeats);
                     fff.setArguments(args);
                     if (fff != null)
@@ -177,7 +186,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(view.getContext(), "Clicked Country Position = " + getPosition(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(view.getContext(), "Clicked Country Position = " + getPosition(), Toast.LENGTH_SHORT).show();
 
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }

@@ -31,10 +31,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
+import com.lognsys.kalrav.fragment.BookmarkFragment;
 import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
 import com.lognsys.kalrav.fragment.NotificationFragment;
-import com.lognsys.kalrav.fragment.PhotoFragment;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.CircleTransform;
 import com.lognsys.kalrav.util.Constants;
@@ -66,7 +66,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // tags used to attach the fragments
     private static final String TAG_DRAMA = "drama";
-    private static final String TAG_PHOTO = "photo";
     private static final String TAG_BOOKMARK = "bookmark";
     private static final String TAG_NOTIFICATIONS = "notification";
 //    private static final String TAG_SETTINGS = "settings";
@@ -106,8 +105,8 @@ public class HomeActivity extends AppCompatActivity {
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
+//        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setVisibility(View.GONE);
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
         TextView textHeaderName = (TextView) navHeader.findViewById(R.id.textHeaderName);
@@ -136,14 +135,14 @@ public class HomeActivity extends AppCompatActivity {
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+       /* fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
-
+*/
         // load nav menu header data
 //        loadNavHeader();
         // initializing navigation menu
@@ -207,7 +206,7 @@ public class HomeActivity extends AppCompatActivity {
             drawer.closeDrawers();
 
             // show or hide the fab button
-            toggleFab();
+//            toggleFab();
             return;
         }
 
@@ -236,7 +235,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         // show or hide the fab button
-        toggleFab();
+//        toggleFab();
 
         //Closing drawer on item click
         drawer.closeDrawers();
@@ -257,10 +256,10 @@ public class HomeActivity extends AppCompatActivity {
                 NotificationFragment notificationFragment = new NotificationFragment();
                 return notificationFragment;
             case 2:
-                // photos fragment
-                PhotoFragment photoFragment = new PhotoFragment();
+                // notification
+                BookmarkFragment bookmarkFragment = new BookmarkFragment();
+                return bookmarkFragment;
 
-                return  photoFragment;
             default:
                 return new DramaFragment();
         }
@@ -303,17 +302,17 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_bookmark:
                         navItemIndex = 2;
-                        CURRENT_TAG = TAG_BOOKMARK;
+                        Log.d("","setUpNavigationView nav_bookmark ");
                         fragment = new BookmarkFragment();
+                        Log.d("","setUpNavigationView nav_bookmark fragment.getClass().getSimpleName() "+fragment.getClass().getSimpleName());
+                        Log.d("","setUpNavigationView nav_bookmark fragment "+fragment);
+
+
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                         break;
-//                    case R.id.nav_settings:
-//                        navItemIndex = 3;
-//                        CURRENT_TAG = TAG_SETTINGS;
-//                        break;
-                    case R.id.nav_about_us:
+                  case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
                         drawer.closeDrawers();
@@ -462,58 +461,14 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-            switch (item.getItemId()) {
-            case R.id.logout:
-                Intent i = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(i);
-/*
-              UserInfo u = KalravApplication.getInstance().getGlobalUserObject(); //retrieve userinfo obj from global object
-                u.setLoggedIn(Constants.LOG_OUT);
-
-                //set log_out in database
-                userDaoImpl.logOut(u); //pass UserInfo object
-
-                //set global Object to null
-                u = null;
-                KalravApplication.getInstance().setGlobalUserObject(u);
-                LoginManager.getInstance().logOut();
-
-                Intent i = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(i);*/
-                return true;
-
-        }
-
-
-        // user is in notifications fragment
-        // and selected 'Mark all as Read'
-        if (id == R.id.action_mark_all_read) {
-            Toast.makeText(getApplicationContext(), "All notifications marked as read!", Toast.LENGTH_LONG).show();
-        }
-
-        // user is in notifications fragment
-        // and selected 'Clear All'
-        if (id == R.id.action_clear_notifications) {
-            Toast.makeText(getApplicationContext(), "Clear all notifications!", Toast.LENGTH_LONG).show();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     // show or hide the fab
     private void toggleFab() {
-        if (navItemIndex == 0)
-            fab.show();
-        else
-            fab.hide();
+//        if (navItemIndex == 0)
+//            fab.show();
+//        else
+//            fab.hide();
     }
     private void shareIt() {
 //sharing implementation here
