@@ -1,6 +1,7 @@
 package com.lognsys.kalrav.util;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,6 +25,8 @@ public class KalravApplication extends Application {
     private UserInfo userInfo;
     Preference prefs;
     private static KalravApplication mInstance;
+    // Progress dialog
+    private ProgressDialog pDialog;
 
     ConnectivityManager cm;
 
@@ -32,8 +35,8 @@ public class KalravApplication extends Application {
         super.onCreate();
         mInstance = this;
         prefs = new Preference(this);
-         cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+         cm =  (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
     }
     public Preference getPrefs() {
         return prefs;
@@ -43,6 +46,7 @@ public class KalravApplication extends Application {
         return mInstance;
     }
 
+    //    we initialize all the volley core objects
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -58,16 +62,6 @@ public class KalravApplication extends Application {
                     new LruBitmapCache());
         }
         return this.mImageLoader;
-    }
-
-    public UserInfo getGlobalUserObject() {
-        return this.userInfo;
-    }
-
-    public void setGlobalUserObject(UserInfo userInfo) {
-
-        this.userInfo = userInfo;
-
     }
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
@@ -86,6 +80,16 @@ public class KalravApplication extends Application {
             mRequestQueue.cancelAll(tag);
         }
     }
+    public UserInfo getGlobalUserObject() {
+        return this.userInfo;
+    }
+
+    public void setGlobalUserObject(UserInfo userInfo) {
+
+        this.userInfo = userInfo;
+
+    }
+
     public boolean isConnectedToInternet() {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();

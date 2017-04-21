@@ -1,5 +1,6 @@
 package com.lognsys.kalrav.util;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 public class Preference {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    ProgressDialog pDialog;
     public void getClear()
     {
         editor = sharedPreferences.edit();
@@ -20,8 +22,21 @@ public class Preference {
     public Preference(Context context) {
         // TODO Auto-generated constructor stub
         sharedPreferences = context.getSharedPreferences("Cache", Context.MODE_PRIVATE);
+
+    }
+    public void showpDialog(Context context) {
+        pDialog = new ProgressDialog(context);
+        pDialog.setMessage("Please wait...");
+        pDialog.setCancelable(false);
+        if (!pDialog.isShowing())
+            pDialog.show();
     }
 
+    public void hidepDialog(Context context) {
+
+        if (pDialog !=null && pDialog.isShowing())
+            pDialog.dismiss();
+    }
     public void setCity(String city)
     {
         SharedPreferences.Editor editor = sharedPreferences.edit();

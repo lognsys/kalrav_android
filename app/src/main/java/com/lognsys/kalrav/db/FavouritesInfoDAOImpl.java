@@ -36,55 +36,41 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
     @Override
     public void addFav(FavouritesInfo favouritesInfo) {
         db = sqLiteHelper.getWritableDatabase();
-        Log.d("","Bookmark  dramaInfo isFavExist(favouritesInfo) "+isFavExist(favouritesInfo));
 
-        /*// If user exists update user
-        if (isFavExist(favouritesInfo) && favouritesInfo.getId()!=0) {
+         //Create user if new
+        // If user exists update user
+        if (isFavExits(favouritesInfo)) {
+            Log.d(TAG, "TABLE_FAVOURITE isFavExits(favouritesInfo) "+isFavExits(favouritesInfo));
 
-            int updateCount =updateFav(favouritesInfo);
-            Log.d("","Bookmark  dramaInfo updateCount"+updateCount);
+            deleteFav(favouritesInfo);
 
-        } else */{  //Create user if new
-
+        }
+        else {
             ContentValues values = new ContentValues();
-            values.put(SQLiteHelper.COLUMN_ID, favouritesInfo.getId());
             values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
-            values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV),favouritesInfo.isFav());
+            values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV), favouritesInfo.isFav());
 
-            /*
-
-            values.put(SQLiteHelper.COLUMN_GROUP_NAME, favouritesInfo.getGroup_name());
-            values.put(SQLiteHelper.COLUMN_DRAMA_NAME, favouritesInfo.getDrama_name());
-            values.put(SQLiteHelper.COLUMN_LINK_PHOTO, favouritesInfo.getLink_photo());
-            values.put(SQLiteHelper.COLUMN_DATETIME, favouritesInfo.getDatetime());
-            values.put(SQLiteHelper.COLUMN_DRAMA_LENGTH, favouritesInfo.getDrama_length());
-            values.put(SQLiteHelper.COLUMN_DRAMA_LANGUAGE, favouritesInfo.getDrama_language());
-            values.put(SQLiteHelper.COLUMN_DRAMA_GENRE, favouritesInfo.getGenre());
-            values.put(SQLiteHelper.COLUMN_DRAMA_TIME, favouritesInfo.getTime());
-            values.put(SQLiteHelper.COLUMN_DRAMA_DESCRIPTION, favouritesInfo.getBriefDescription());*/
 
             // Inserting Row
             db.insert(SQLiteHelper.TABLE_FAVOURITE, null, values);
-//            db.close(); // Closing database connection
+            db.close(); // Closing database connection
         }
     }
-
     @Override
-    public boolean isFavExist(FavouritesInfo favouritesInfo) {
-        db = sqLiteHelper.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT COUNT(*) FROM favourite", null);
-        Log.d("", "Bookmark  dramaInfo isFavExist cur.getCount()) " + (cur.getCount()));
-        if (cur != null && cur.getCount() < 0) {
-            cur.moveToFirst();                       // Always one row returned.
-            if (cur.getInt(0) == 0) {               // Zero count means empty table.
-                Log.d(TAG, "DB_isUserExists - NOT FOUND...");
-                return false;
-            }
+    public boolean isFavExits(FavouritesInfo favouritesInfo) {
+        db = sqLiteHelper.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM favourite where "+SQLiteHelper.COLUMN_ID+" = ? ",new String[]{String.valueOf(favouritesInfo.getId())});
+       if(cur != null )
+        Log.d(TAG, "TABLE_FAVOURITE cur "+cur.getCount());
 
-        } else {
-            return true;
+        if (cur != null && cur.getCount()>0) {
+             return true;
+
         }
-        return false;
+        else{
+            return  false;
+        }
+
     }
     @Override
     public int updateFav(FavouritesInfo favouritesInfo) {
@@ -114,24 +100,13 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
 
     @Override
     public List<FavouritesInfo> getAllFav() {
-        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
         FavouritesInfo favouritesInfo = null;
         Log.d("","Test getAllFav  ");
 
 
         ArrayList<FavouritesInfo> favouritesInfos=new ArrayList<FavouritesInfo>();
-        Cursor c = db.rawQuery("SELECT " + SQLiteHelper.COLUMN_ID + "," +
-                SQLiteHelper.COLUMN_DRAMA_ID + "," +
-                SQLiteHelper.COLUMN_ISFAV + /*"," +
-                SQLiteHelper.COLUMN_DRAMA_NAME + "," +
-                SQLiteHelper.COLUMN_LINK_PHOTO + "," +
-                SQLiteHelper.COLUMN_DATETIME +"," +
-                SQLiteHelper.COLUMN_DRAMA_LENGTH +"," +
-                SQLiteHelper.COLUMN_DRAMA_LANGUAGE +"," +
-                SQLiteHelper.COLUMN_DRAMA_GENRE +"," +
-                SQLiteHelper.COLUMN_DRAMA_TIME +"," +
-                SQLiteHelper.COLUMN_DRAMA_DESCRIPTION +*/
-                " FROM favourite", null);
+        Cursor c = db.rawQuery("SELECT * FROM favourite", null);
         if(c!=null)
         Log.d("","Test getAllFav  c.getCount() "+ c.getCount());
 

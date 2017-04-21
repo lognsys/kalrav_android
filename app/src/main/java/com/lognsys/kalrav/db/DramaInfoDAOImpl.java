@@ -3,6 +3,7 @@ package com.lognsys.kalrav.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.FeatureInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -174,50 +175,55 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
 
 
-    public ArrayList<DramaInfo> getDramaListByFavId(int favouritesInfo) {
-        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+    public ArrayList<DramaInfo> getDramaListByFavId(ArrayList<FavouritesInfo> favouritesInfos) {
+        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
         DramaInfo dramaInfo = null;
-        Log.d("","Test getDramaListByFavId drama favouritesInfo "+favouritesInfo);
+        Log.d("","Test getDramaListByFavId drama favouritesInfo "+favouritesInfos.size());
 
 
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-        Cursor c = db.rawQuery("SELECT * FROM drama where "+ SQLiteHelper.COLUMN_ID +" = ? ",
-                new String[]{String.valueOf(favouritesInfo)});
+        for(int i=0;i<favouritesInfos.size();i++){
+            FavouritesInfo fav=favouritesInfos.get(i);
+            Cursor c = db.rawQuery("SELECT * FROM drama where "+ SQLiteHelper.COLUMN_ID +" = ? ",
+                    new String[]{String.valueOf(fav.getDrama_id())});
 
-        if(c!=null)
-            Log.d("","Test getDramaListByFavId drama c.getCount() "+ c.getCount());
+            if(c!=null)
+                Log.d("","Test getDramaListByFavId drama c.getCount() "+ c.getCount());
 
-        if (c != null && c.getCount()>0) {
+            if (c != null && c.getCount()>0) {
 
-            while (c.moveToNext()){
-                dramaInfo = new DramaInfo();
-                String id = c.getString(0);
-                String groupname = c.getString(1);
-                String dramaname = c.getString(2);
-                String linkphoto = c.getString(3);
-                String datatime = c.getString(4);
-                String dramaLength = c.getString(5);
-                String dramaLanguage = c.getString(6);
-                String dramaGenre = c.getString(7);
-                String dramaTime= c.getString(8);
-                String briefDescription= c.getString(9);
+                while (c.moveToNext()){
+                    dramaInfo = new DramaInfo();
+                    String id = c.getString(0);
+                    String groupname = c.getString(1);
+                    String dramaname = c.getString(2);
+                    String linkphoto = c.getString(3);
+                    String datatime = c.getString(4);
+                    String dramaLength = c.getString(5);
+                    String dramaLanguage = c.getString(6);
+                    String dramaGenre = c.getString(7);
+                    String dramaTime= c.getString(8);
+                    String briefDescription= c.getString(9);
 
-                dramaInfo.setId(Integer.parseInt(id));
-                dramaInfo.setGroup_name(groupname);
-                dramaInfo.setDrama_name(dramaname);
-                dramaInfo.setLink_photo(linkphoto);
-                dramaInfo.setDatetime(datatime);;
-                dramaInfo.setDrama_length(dramaLength);;
-                dramaInfo.setDrama_language(dramaLanguage);;
-                dramaInfo.setGenre(dramaGenre);;
-                dramaInfo.setTime(dramaTime);
-                dramaInfo.setBriefDescription(briefDescription);
-                dramaInfos.add(dramaInfo);
+                    dramaInfo.setId(Integer.parseInt(id));
+                    dramaInfo.setGroup_name(groupname);
+                    dramaInfo.setDrama_name(dramaname);
+                    dramaInfo.setLink_photo(linkphoto);
+                    dramaInfo.setDatetime(datatime);;
+                    dramaInfo.setDrama_length(dramaLength);;
+                    dramaInfo.setDrama_language(dramaLanguage);;
+                    dramaInfo.setGenre(dramaGenre);;
+                    dramaInfo.setTime(dramaTime);
+                    dramaInfo.setBriefDescription(briefDescription);
+                    dramaInfos.add(dramaInfo);
+                }
+
+
             }
-            Log.d("","Test getDramaListByFavId dramaInfos.size "+dramaInfos.size());
 
             c.close();
         }
+        Log.d("","Test getDramaListByFavId dramaInfos.size "+dramaInfos.size());
         return dramaInfos;
     }
 

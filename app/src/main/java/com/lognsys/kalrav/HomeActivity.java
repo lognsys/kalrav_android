@@ -109,42 +109,18 @@ public class HomeActivity extends AppCompatActivity {
 //        fab.setVisibility(View.GONE);
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
-        TextView textHeaderName = (TextView) navHeader.findViewById(R.id.textHeaderName);
-        if(KalravApplication.getInstance().getPrefs().getName()!=null)
-        textHeaderName.setText("Welcome \n "+KalravApplication.getInstance().getPrefs().getName());
-        else{
-            textHeaderName.setText("Guest");
 
-        }
 //        txtName = (TextView) navHeader.findViewById(R.id.name);
         //txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
 //        imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
-        if(KalravApplication.getInstance().getPrefs().getIsFacebookLogin()==true){
-            if(KalravApplication.getInstance().getPrefs().getImage()!=null){
-                String imgUrl = "https://graph.facebook.com/" + KalravApplication.getInstance().getPrefs().getImage() + "/picture?type=large";
-                Picasso.with(getApplicationContext()).load(imgUrl).into(imgNavHeaderBg);
-            }
-        }
-        else{
-            if(KalravApplication.getInstance().getPrefs().getImage()!=null){
-                Picasso.with(getApplicationContext()).load(KalravApplication.getInstance().getPrefs().getImage()).into(imgNavHeaderBg);
-            }
-        }
+
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
+        loadNavHeader();
 
-       /* fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
-        // load nav menu header data
-//        loadNavHeader();
+//
         // initializing navigation menu
         setUpNavigationView();
 
@@ -163,30 +139,41 @@ public class HomeActivity extends AppCompatActivity {
     private void loadNavHeader() {
 
 
-        // name, website
-       UserInfo user = globalObj.getGlobalUserObject();
 
-       // profile_photo_url = profile_photo_url.replace("fb_id", user.getFb_id());
+        TextView textHeaderName = (TextView) navHeader.findViewById(R.id.textHeaderName);
+        if(KalravApplication.getInstance().getPrefs().getName()!=null)
+            textHeaderName.setText("Welcome \n "+KalravApplication.getInstance().getPrefs().getName());
+        else{
+            textHeaderName.setText("Guest");
 
-        txtName.setText(user.getName());
-        //txtWebsite.setText("www.androidhive.info");
-
-        // loading header background image
-        Glide.with(this).load(R.drawable.ic_share)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
+        }
+        if(KalravApplication.getInstance().getPrefs().getIsFacebookLogin()==true){
+            if(KalravApplication.getInstance().getPrefs().getImage()!=null){
+                String imgUrl = "https://graph.facebook.com/" + KalravApplication.getInstance().getPrefs().getImage() + "/picture?type=large";
+//                Picasso.with(getApplicationContext()).load(imgUrl).into(imgNavHeaderBg);
+                Glide.with(this).load(imgUrl)
+                        .crossFade()
+                        .thumbnail(0.5f)
+                        .bitmapTransform(new CircleTransform(this))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(imgNavHeaderBg);
+            }
+        }
+        else{
+            if(KalravApplication.getInstance().getPrefs().getImage()!=null){
+//                Picasso.with(getApplicationContext()).load(KalravApplication.getInstance().getPrefs().getImage()).into(imgNavHeaderBg);
+                Glide.with(this).load(KalravApplication.getInstance().getPrefs().getImage())
+                        .crossFade()
+                        .thumbnail(0.5f)
+                        .bitmapTransform(new CircleTransform(this))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(imgNavHeaderBg);
+            }
+        }
 
         // Loading profile image
-        Glide.with(this).load(profile_photo_url).placeholder(R.drawable.person_placeholder)
-                .crossFade()
-                .thumbnail(1)
-                .bitmapTransform(new CircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgProfile);
 
-//        // showing dot next to notifications label
-//        navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
+
     }
 
     /***
@@ -204,10 +191,6 @@ public class HomeActivity extends AppCompatActivity {
         // just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
-
-            // show or hide the fab button
-//            toggleFab();
-            return;
         }
 
         // Sometimes, when fragment has huge data, screen seems hanging
@@ -241,7 +224,7 @@ public class HomeActivity extends AppCompatActivity {
         drawer.closeDrawers();
 
         // refresh toolbar menu
-        //invalidateOptionsMenu();
+        invalidateOptionsMenu();
     }
 
     private Fragment getHomeFragment() {
@@ -289,40 +272,35 @@ public class HomeActivity extends AppCompatActivity {
                         navItemIndex = 0;
                         CURRENT_TAG = TAG_DRAMA;
                         fragment = new DramaFragment();
-
-
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-
-                        break;
+                        drawer.closeDrawers();
+                         break;
                     case R.id.nav_notifications:
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_NOTIFICATIONS;
-                        break;
+                        drawer.closeDrawers();
+                          break;
                     case R.id.nav_bookmark:
                         navItemIndex = 2;
                         Log.d("","setUpNavigationView nav_bookmark ");
+                        CURRENT_TAG = TAG_BOOKMARK;
                         fragment = new BookmarkFragment();
-                        Log.d("","setUpNavigationView nav_bookmark fragment.getClass().getSimpleName() "+fragment.getClass().getSimpleName());
-                        Log.d("","setUpNavigationView nav_bookmark fragment "+fragment);
-
 
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-                        break;
+                        drawer.closeDrawers();
+                          break;
                   case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
                         drawer.closeDrawers();
-                        return true;
-                    case R.id.nav_privacy_policy:
+                   break;
+                  case R.id.nav_privacy_policy:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(HomeActivity.this, PrivacyPolicyActivity.class));
                         drawer.closeDrawers();
-                        return true;
-
+                  break;
                     case R.id.logout :
                         KalravApplication.getInstance().getPrefs().setIsLogin(false);
                         FirebaseAuth.getInstance().signOut();
@@ -361,15 +339,16 @@ public class HomeActivity extends AppCompatActivity {
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(i);
                         finish();
-
-                        return true;
+                        drawer.closeDrawers();
+                        break;
                     case R.id.my_ticket :
                         fragment = new MyTicketFragment();
 
 
                     HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
+                        drawer.closeDrawers();
+                        break;
                     default:
                         navItemIndex = 0;
                 }
@@ -389,7 +368,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+        ActionBarDrawerToggle actionBarDrawerToggle =
+                new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -462,14 +442,35 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    // show or hide the fab
-    private void toggleFab() {
-//        if (navItemIndex == 0)
-//            fab.show();
-//        else
-//            fab.hide();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        // user is in notifications fragment
+        // and selected 'Mark all as Read'
+        if (id == R.id.action_mark_all_read) {
+            Toast.makeText(getApplicationContext(), "All notifications marked as read!", Toast.LENGTH_LONG).show();
+        }
+
+        // user is in notifications fragment
+        // and selected 'Clear All'
+        if (id == R.id.action_clear_notifications) {
+            Toast.makeText(getApplicationContext(), "Clear all notifications!", Toast.LENGTH_LONG).show();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
+
+
     private void shareIt() {
 //sharing implementation here
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);

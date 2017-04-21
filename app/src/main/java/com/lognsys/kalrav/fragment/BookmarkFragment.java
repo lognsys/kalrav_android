@@ -91,11 +91,13 @@ public class BookmarkFragment extends Fragment {
 
             if(favouritesInfos!=null && favouritesInfos.size()>0){
                 Log.d("","Test initializeList favouritesInfos size "+favouritesInfos.size());
-               for (int i=0;i<favouritesInfos.size();i++) {
-                   FavouritesInfo favouritesInfo=favouritesInfos.get(i);
-                    Log.d("","Test getDramaListByFavId favouritesInfo.getDrama_id() "+favouritesInfo.getDrama_id());
 
-                    dramaInfos=  dramaInfoDAOimpl.getDramaListByFavId(favouritesInfo.getDrama_id());
+//               for (int i=0;i<favouritesInfos.size();i++)
+               {
+//                   FavouritesInfo favouritesInfo=favouritesInfos.get(i);
+//                    Log.d("","Test getDramaListByFavId favouritesInfo.getDrama_id() "+favouritesInfo.getDrama_id());
+
+                    dramaInfos=  dramaInfoDAOimpl.getDramaListByFavId((ArrayList<FavouritesInfo>) favouritesInfos);
                     Log.d("","Test getDramaListByFavId dramaInfos "+dramaInfos);
                     Log.d("","Test getDramaListByFavId dramaInfos size "+dramaInfos.size());
 
@@ -226,122 +228,6 @@ public class BookmarkFragment extends Fragment {
         }
     }
 
-
-
-/*
-
-    public class MyAdapter extends RecyclerView.Adapter<BookmarkFragment.MyAdapter.MyViewHolder> {
-        private ArrayList<DramaInfo> list;
-
-        public MyAdapter(ArrayList<DramaInfo> Data) {
-            Log.d("", "MyAdapter constructore Data"+Data+"   Size ===" +Data.size());
-
-            list =  Data;
-            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
-
-        }
-
-
-        @Override
-        public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-            // create a new view
-            Log.d("", "MyAdapter onCreateViewHolder ");
-           DramaInfo dramaInfo =list.get(position);
-
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.bookmarks_items, parent, false);
-
-            return new MyAdapter.MyViewHolder(view);
-
-
-        }
-
-
-        @Override
-        public void onBindViewHolder( MyAdapter.MyViewHolder holder, final int position) {
-            Log.d("", "MyAdapter onBindViewHolder ");
-
-             DramaInfo dramaInfo = list.get(position);
-            Log.d("", "MyAdapter onBindViewHolder dramaInfo.getLink_photo() "+dramaInfo.getLink_photo());
-
-           Picasso.with(getContext()).load(dramaInfo.getLink_photo()).into(holder.dramaImage);
-            holder.textDramaName.setText(dramaInfo.getDrama_name());
-            holder.tvDramaLength.setText(dramaInfo.getDrama_length());
-            holder.textDramaDate.setText(dramaInfo.getDatetime());
-            holder.textDramaTiming.setText(dramaInfo.getTime());
-            holder.textDramaLanguage.setText(dramaInfo.getDrama_language());
-            holder.textDramaGenre.setText(dramaInfo.getGenre());
-            holder.textDramaName.setText(dramaInfo.getDrama_name());
-            holder.textDramaGroupname.setText(dramaInfo.getGroup_name());
-            Log.d("", "MyAdapter onBindViewHolder textDramaGroupname "+ holder.textDramaGroupname.getText().toString());
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-
-        public class MyViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener  {
-
-            public ImageView dramaImage;
-            public TextView textDramaName;
-            public TextView tvDramaLength;
-            public TextView textDramaDate;
-            public TextView textDramaTiming;
-            public TextView textDramaLanguage;
-            public TextView textDramaGenre;
-            public TextView textDramaGroupname;
-
-
-            public MyViewHolder(View itemView) {
-                super(itemView);
-                dramaImage = (ImageView) itemView.findViewById(R.id.dramaImage);
-                textDramaName = (TextView) itemView.findViewById(R.id.textDramaName);
-                tvDramaLength = (TextView) itemView.findViewById(R.id.tvDramaLength);
-                textDramaDate = (TextView) itemView.findViewById(R.id.textDramaDate);
-                textDramaTiming= (TextView) itemView.findViewById(R.id.textDramaTiming);
-                textDramaLanguage= (TextView) itemView.findViewById(R.id.textDramaLanguage);
-                textDramaGenre= (TextView) itemView.findViewById(R.id.textDramaGenre);
-                textDramaGroupname= (TextView) itemView.findViewById(R.id.textDramaGroupname);
-
-                itemView.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View v) {
-                Log.d("","position =================== ");
-            }
-
-           */
-/* @Override
-            public void onClick(View v) {
-                // gets item position
-
-                int position = getAdapterPosition();
-                Log.d("","position "+position);
-                Log.d("","position check "+(position != RecyclerView.NO_POSITION));
-
-                if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
-                    DramaInfo dramaInfo = list.get(position);
-                    Log.d("","position dramaInfo "+dramaInfo);
-
-                    if(dramaInfo!=null) {
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("dramaInfo", dramaInfo);
-                        Fragment fragment = new FragmentDramaDetail();
-                        fragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-                    }
-                }
-            }*//*
-
-        }
-    }
-
-*/
 
 
 
