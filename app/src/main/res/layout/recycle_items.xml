@@ -108,14 +108,16 @@
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="@dimen/icon_height"
                 android:padding="@dimen/icon_padding"
-
+                android:layout_marginTop="5dip"
+                android:layout_marginRight="5dip"
                 android:src="@mipmap/ic_unlike" />
 
             <ImageView
                 android:id="@+id/shareImageView"
                 android:layout_width="@dimen/icon_width"
                 android:layout_height="@dimen/icon_height"
-
+                android:layout_marginTop="5dip"
+                android:layout_marginRight="5dip"
                 android:padding="@dimen/icon_padding"
                 android:src="@drawable/ic_share" />
         </LinearLayout>

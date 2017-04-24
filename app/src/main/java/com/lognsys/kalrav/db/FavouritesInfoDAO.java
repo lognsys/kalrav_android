@@ -27,6 +27,6 @@ public interface FavouritesInfoDAO {
     List<FavouritesInfo> getAllFav();
 
 //    List<DramaInfo> findDramaBy(String date);
-FavouritesInfo findfavBy(FavouritesInfo favouritesInfo);
+String findfavBy(int id);
     boolean isFavExits(FavouritesInfo favouritesInfo);
 }

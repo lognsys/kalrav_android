@@ -20,6 +20,15 @@ public class DramaInfo implements Serializable {
     private String writer;
     private String music,drama_language,time;
 
+    public String getIsfav() {
+        return isfav;
+    }
+
+    public void setIsfav(String isfav) {
+        this.isfav = isfav;
+    }
+
+    private String isfav;
     public String getDrama_language() {
         return drama_language;
     }

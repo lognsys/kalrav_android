@@ -37,15 +37,7 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
     public void addFav(FavouritesInfo favouritesInfo) {
         db = sqLiteHelper.getWritableDatabase();
 
-         //Create user if new
-        // If user exists update user
-        if (isFavExits(favouritesInfo)) {
-            Log.d(TAG, "TABLE_FAVOURITE isFavExits(favouritesInfo) "+isFavExits(favouritesInfo));
-
-            deleteFav(favouritesInfo);
-
-        }
-        else {
+       {
             ContentValues values = new ContentValues();
             values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
             values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV), favouritesInfo.isFav());
@@ -90,10 +82,12 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
     @Override
     public int deleteFav(FavouritesInfo favouritesInfo)
     {
+        Log.d("","Bookmark Delete favouritesInfo.getDrama_id() "+favouritesInfo.getDrama_id());
+
         db = sqLiteHelper.getWritableDatabase();
         int countDelete=db.delete(SQLiteHelper.TABLE_FAVOURITE,
-                SQLiteHelper.COLUMN_ID+" = ? ",
-                new String[]{String.valueOf(favouritesInfo.getId())});
+                SQLiteHelper.COLUMN_DRAMA_ID+" = ? ",
+                new String[]{String.valueOf(favouritesInfo.getDrama_id())});
         Log.d("","Bookmark Delete count "+countDelete);
         return countDelete;
     }
@@ -116,7 +110,7 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
                 favouritesInfo = new FavouritesInfo();
                 String id = c.getString(0);
                 String drama_id = c.getString(1);
-                Boolean isFav = Boolean.valueOf(c.getString(2));
+                String isFav = String.valueOf(c.getString(2));
                 favouritesInfo.setDrama_id(Integer.parseInt(drama_id));
                                Log.d("","Test getAllFav drama_id "+drama_id);
                 Log.d("","Test getAllFav favouritesInfo.getDrama_id() "+ favouritesInfo.getDrama_id());
@@ -136,7 +130,27 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
     }
 
     @Override
-    public FavouritesInfo findfavBy(FavouritesInfo favouritesInfo) {
-        return null;
+    public String findfavBy(int id) {
+        String isFav;
+        SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
+        DramaInfo dramaInfo = null;
+        Log.d("","Test   findfavBy id "+id);
+
+
+        ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
+            Cursor c = db.rawQuery("SELECT * FROM favourite where "+ SQLiteHelper.COLUMN_DRAMA_ID +" = ? ",
+                    new String[]{String.valueOf(id)});
+        if(c != null && c.getCount() > 0)
+        {
+            c.moveToFirst();
+            isFav = c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_ISFAV));
+        }
+        else
+        {
+            isFav = "false";
+        }
+        Log.d("","Test   findfavBy isFav "+isFav);
+
+        return isFav;
     }
 }

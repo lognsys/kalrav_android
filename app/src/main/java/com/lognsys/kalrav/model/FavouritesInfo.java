@@ -18,15 +18,15 @@ public class FavouritesInfo implements Serializable {
         this.drama_id = drama_id;
     }
 
-    public boolean isFav() {
+    public String isFav() {
         return isFav;
     }
 
-    public void setFav(boolean fav) {
+    public void setFav(String fav) {
         isFav = fav;
     }
 
-    private boolean isFav;
+    private String isFav;
     private int drama_id;
     private String group_name;
     private String drama_name;

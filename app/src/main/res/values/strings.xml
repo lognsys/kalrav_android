@@ -72,6 +72,8 @@
     <string name="error_auditorium">Please enter auditorium name</string>
     <string name="error_total_price">Total Price is not available</string>
 
-
+    <string name="network_connection">Please check your network connection</string>
+    <string name="no_data_available">No data available</string>
+    <string name="unknown_error">Unknown Error please Contact to Support Team</string>
 
 </resources>
