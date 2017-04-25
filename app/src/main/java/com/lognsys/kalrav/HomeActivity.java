@@ -34,6 +34,7 @@ import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.fragment.BookmarkFragment;
 import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
+import com.lognsys.kalrav.fragment.MyticketListFragment;
 import com.lognsys.kalrav.fragment.NotificationFragment;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.CircleTransform;
@@ -139,12 +140,11 @@ public class HomeActivity extends AppCompatActivity {
     private void loadNavHeader() {
 
 
-
         TextView textHeaderName = (TextView) navHeader.findViewById(R.id.textHeaderName);
         if(KalravApplication.getInstance().getPrefs().getName()!=null)
             textHeaderName.setText("Welcome \n "+KalravApplication.getInstance().getPrefs().getName());
         else{
-            textHeaderName.setText("Guest");
+            textHeaderName.setText( "Welcome \n Guest");
 
         }
         if(KalravApplication.getInstance().getPrefs().getIsFacebookLogin()==true){
@@ -169,6 +169,7 @@ public class HomeActivity extends AppCompatActivity {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imgNavHeaderBg);
             }
+
         }
 
         // Loading profile image
@@ -242,6 +243,10 @@ public class HomeActivity extends AppCompatActivity {
                 // notification
                 BookmarkFragment bookmarkFragment = new BookmarkFragment();
                 return bookmarkFragment;
+            case 3:
+                // notification
+                MyticketListFragment myticketListFragment = new MyticketListFragment();
+                return myticketListFragment;
 
             default:
                 return new DramaFragment();
@@ -290,7 +295,18 @@ public class HomeActivity extends AppCompatActivity {
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
                         drawer.closeDrawers();
-                          break;
+                        return true;
+//                          break;
+                    case R.id.my_ticket:
+                        navItemIndex = 3;
+                        Log.d("","setUpNavigationView nav_bookmark ");
+                        CURRENT_TAG = TAG_BOOKMARK;
+                        fragment = new MyticketListFragment();
+
+                        HomeActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                        drawer.closeDrawers();
+                        return true;
                   case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
@@ -341,14 +357,7 @@ public class HomeActivity extends AppCompatActivity {
                         finish();
                         drawer.closeDrawers();
                         break;
-                    case R.id.my_ticket :
-                        fragment = new MyTicketFragment();
 
-
-                    HomeActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-                        drawer.closeDrawers();
-                        break;
                     default:
                         navItemIndex = 0;
                 }

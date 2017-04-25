@@ -25,7 +25,7 @@ public interface TicketInfoDAO {
 
     ArrayList<TicketsInfo> getAllTicket();
 
-    List<TicketsInfo>  getTicketListByFavId(int id);
+   // List<TicketsInfo>  getTicketListById(int id);
 
     boolean isTicketExist(TicketsInfo ticketsInfo);
 

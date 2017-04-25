@@ -4,14 +4,14 @@
     android:padding="2dip"
     android:layout_margin="10dip"
     android:layout_height="match_parent">
-   <!-- <TextView
+   <TextView
         android:id="@+id/textTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Booking Time Slots"
         android:layout_margin="8dip"
         android:textColor="@color/black"
-        android:textSize="18sp" />-->
+        android:textSize="18sp" />
     <View
         android:layout_margin="5dip"
         android:paddingLeft="5dip"

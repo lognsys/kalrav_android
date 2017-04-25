@@ -27,6 +27,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
+            android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,12 +56,15 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
+            android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AboutUsActivity"
+            android:hardwareAccelerated="true"
             android:label="@string/activity_title_about_us" />
         <activity
             android:name=".PrivacyPolicyActivity"
+            android:hardwareAccelerated="true"
             android:label="@string/activity_title_privacy_policy" />
         <activity
             android:name=".AdmobActivity"
@@ -73,6 +77,7 @@
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register"
+            android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

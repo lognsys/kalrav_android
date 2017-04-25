@@ -68,7 +68,7 @@ public class MyTicketFragment extends Fragment {
     Thread thread;
     public final static int QRcodeWidth = 500;
     Bitmap bitmap;
-TicketsInfo ticketsInfo;
+    TicketsInfo ticketsInfo;
     TicketInfoDAOImpl ticketInfoDAO;
     ArrayList<TicketsInfo> ticketInfos;
 
@@ -102,6 +102,8 @@ TicketsInfo ticketsInfo;
 
 
         tvDramaLanguage = (TextView) view.findViewById(R.id.tvDramaLanguage);
+        Log.d("","Text ticketInfos.size() ===== "+ticketInfos.size());
+
         for(int i=0;i<ticketInfos.size();i++){
             ticketsInfo=ticketInfos.get(i);
             if(ticketsInfo!=null){
@@ -122,6 +124,11 @@ TicketsInfo ticketsInfo;
             else{
                     Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(dramaImage);
                 }
+                Log.d("","Text ticketsInfo.getBitmat ===== "+ticketsInfo.getBitmapQRCode());
+
+                if(ticketsInfo.getBitmapQRCode()!=null){
+                    imageView.setImageBitmap(ticketsInfo.getBitmapQRCode());
+                }
             }
         }
 
@@ -134,8 +141,8 @@ TicketsInfo ticketsInfo;
         TicketNumber ="Ticket numbers :"+ tvTicketNumber.getText().toString().trim();
         TotalTicketBooked ="Total Ticket numbers :"+ textTotalnoofticket.getText().toString().trim();
         TotalPrice="TotalPrice Rs : "+ textTotalprice.getText().toString();
-        new RegisteredTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,BookingDateTime,UserName,
-                imageView,TotalTicketBooked,TotalPrice).execute();
+//        new RegisteredTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,BookingDateTime,UserName,
+//                imageView,TotalTicketBooked,TotalPrice).execute();
 
         return view;
     }

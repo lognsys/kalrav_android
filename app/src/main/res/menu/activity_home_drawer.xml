@@ -4,22 +4,27 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_drama"
+            android:checked="true"
             android:icon="@mipmap/ic_launcher_theatre"
             android:title="@string/nav_drama" />
         <item
             android:id="@+id/nav_notifications"
+            android:checked="false"
             android:icon="@mipmap/ic_launcher_notif"
             android:title="@string/nav_notifications" />
         <item
             android:id="@+id/nav_bookmark"
+            android:checked="false"
             android:icon="@mipmap/ic_like"
             android:title="@string/nav_bookmark" />
         <item
             android:id="@+id/my_ticket"
+            android:checked="false"
             android:icon="@drawable/photos"
             android:title="@string/my_tickets" />
         <item
             android:id="@+id/nav_settings"
+            android:checked="false"
             android:icon="@drawable/settings"
             android:title="@string/nav_settings" />
     </group>
@@ -28,13 +33,16 @@
         <menu>
             <item
                 android:id="@+id/nav_about_us"
+                android:checked="false"
                 android:title="@string/nav_about_us" />
             <item
                 android:id="@+id/nav_privacy_policy"
+                android:checked="false"
                 android:title="@string/privacy_policy" />
             <item
                 android:id="@+id/logout"
                 android:orderInCategory="100"
+                android:checked="false"
                 android:title="@string/facebook_logout" />
         </menu>
     </item>

@@ -1,5 +1,7 @@
 package com.lognsys.kalrav.model;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 /**
@@ -29,6 +31,17 @@ public class TicketsInfo implements Serializable {
 
     String user_name;
     String user_emailid;
+
+    public Bitmap getBitmapQRCode() {
+        return bitmapQRCode;
+    }
+
+    public void setBitmapQRCode(Bitmap bitmapQRCode) {
+        this.bitmapQRCode = bitmapQRCode;
+    }
+
+    Bitmap bitmapQRCode;
+
 
     public int get_id() {
         return _id;

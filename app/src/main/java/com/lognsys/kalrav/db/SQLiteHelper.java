@@ -3,6 +3,7 @@ package com.lognsys.kalrav.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 /**
@@ -100,17 +101,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
 
-
     //Drama Column
     public static final String TABLE_TICKET = "ticket";
     //    public static final String COLUMN_DRAMA_ID = "drama_id";
     public static final String COLUMN_USER_ID = "user_id";
-//    public static final String COLUMN_DRAMA_NAME = "drama_name";
-//    public static final String COLUMN_GROUP_NAME = "group_name";
-//    public static final String COLUMN_LINK_PHOTO = "drama_photo";
-//    public static final String COLUMN_DATETIME = "drama_time";
-//    public static final String COLUMN_DRAMA_TIME = "drama_time";
-
     public static final String COLUMN_BOOKED_TIME = "booked_time";
     public static final String COLUMN_BOOKED_DATE = "booked_date";
     public static final String COLUMN_CONFIRMATION_CODE = "confirmation_code";
@@ -118,8 +112,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NO_OF_SEATS_BOOKED = "seats_no_of_seats_booked";
     public static final String COLUMN_SEAT_NO = "seat_seat_no";
     public static final String COLUMN_AUDITORIUM_NAME = "auditorium_name";
-    //    public static final String COLUMN_USER_NAME = "user_name";
     public static final String COLUMN_USER_EMAIL_ID = "user_emailid";
+
+    public static final String COLUMN_QRCODE_BITMAP ="bitmapQRCode";
 
     //drama table
     private static final String DATABASE_CREATE_TICKET = "create table if not exists "
@@ -140,6 +135,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_AUDITORIUM_NAME + " TEXT, "
             + COLUMN_USER_NAME + " TEXT, "
             + COLUMN_USER_EMAIL_ID + " TEXT, "
+            + COLUMN_QRCODE_BITMAP + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
 

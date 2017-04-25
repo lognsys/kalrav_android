@@ -208,15 +208,16 @@ public class DramaFragment extends Fragment {
 
         mAdView.setAdListener(new AdListener() {
             private void showToast(String message) {
-                View view = mAdView;
-                if (view != null) {
-                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-                }
+//                View view = mAdView;
+//                if (view != null) {
+//                    if(message!=null)
+////                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+//                }
             }
 
             @Override
             public void onAdLoaded() {
-                showToast("Ad loaded.");
+//                showToast("Ad loaded.");
             }
 
             @Override
