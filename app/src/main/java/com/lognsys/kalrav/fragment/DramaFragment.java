@@ -61,7 +61,9 @@ public class DramaFragment extends Fragment {
     FavouritesInfo favouritesInfo;
     List<FavouritesInfo> favouritesInfos;
     MyAdapter adapter;
-    private static final String JSON_URL="http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2";
+//    http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2
+    private static final String GETALLDRAMA_AND_GROUP_URL="http://192.168.0.19:8080/getalldramaandgroup";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,12 +89,13 @@ public class DramaFragment extends Fragment {
     private void displaydrama() {
         KalravApplication.getInstance().getPrefs().showpDialog(getContext());
 
-        JsonArrayRequest req = new JsonArrayRequest(JSON_URL,
+        JsonArrayRequest req = new JsonArrayRequest(GETALLDRAMA_AND_GROUP_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
 
                         try {
+                            Log.d("","displaydrama response.length() "+response.length());
 
                             for (int i=0; i<response.length(); i++) {
                                 DramaInfo dramaInfo=new DramaInfo();
@@ -106,7 +109,39 @@ public class DramaFragment extends Fragment {
                                             "Error: 1 " + e.getMessage(),
                                             Toast.LENGTH_LONG).show();
                                 }
-                                String id=jsonObject.getString("id");
+                                String groups=jsonObject.getString("groups");
+//                                Log.d("","displaydrama groups "+groups);
+
+                                JSONObject jsonGroupsObject=new JSONObject(groups);
+                                int groupId=jsonGroupsObject.getInt("id");
+                                Log.d("","displaydrama jsonGroupsObject groupId "+groupId);
+
+                                String group_name=jsonGroupsObject.getString("group_name");
+                                Log.d("","displaydrama jsonGroupsObject group_name "+group_name);
+                                dramaInfo.setGroup_name(group_name);
+
+
+
+                                String drama=jsonObject.getString("drama");
+                                Log.d("","displaydrama drama "+drama);
+                                JSONObject jsonDramaObject=new JSONObject(drama);
+
+                                int dramaId=jsonDramaObject.getInt("id");
+                                Log.d("","displaydrama jsonDramaObject dramaId "+dramaId);
+                                dramaInfo.setId(dramaId);
+
+                                String title=jsonDramaObject.getString("title");
+                                Log.d("","displaydrama jsonDramaObject title "+title);
+                                dramaInfo.setTitle(title);
+
+                                String imageurl=jsonDramaObject.getString("imageurl");
+                                Log.d("","displaydrama jsonDramaObject imageurl "+imageurl);
+                                dramaInfo.setLink_photo(imageurl);
+
+
+
+
+                               /* String id=jsonObject.getString("id");
                                 dramaInfo.setId(Integer.parseInt(id));
 
                                 String drama_name=jsonObject.getString("drama_name");
@@ -149,7 +184,7 @@ public class DramaFragment extends Fragment {
                                     dramaInfo.setGenre(sb.toString());
                                 }
                                 String briefDescription=jsonObject.getString("briefDescription");
-                                dramaInfo.setBriefDescription(briefDescription);
+                                dramaInfo.setBriefDescription(briefDescription);*/
 
                                 KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
 
@@ -289,7 +324,7 @@ public class DramaFragment extends Fragment {
             Log.d("", "MyAdapter onBindViewHolder ");
 
             final DramaInfo[] dramaInfo = {list.get(position)};
-            holder.titleTextView.setText(dramaInfo[0].getDrama_name());
+            holder.titleTextView.setText(dramaInfo[0].getTitle());
 //            holder.coverImageView.setImageResource(Integer.parseInt(list.get(position).getLink_photo()));
             Picasso.with(getContext()).load(dramaInfo[0].getLink_photo()).into(holder.coverImageView);
             if(dramaInfo[0].getIsfav()!=null && dramaInfo[0].getIsfav().equalsIgnoreCase("true")){
@@ -344,7 +379,7 @@ public class DramaFragment extends Fragment {
 
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                    share.putExtra(Intent.EXTRA_TEXT,"Drama Details : \n Drama Name : "+dramaInfo[0].getDrama_name()
+                    share.putExtra(Intent.EXTRA_TEXT,"Drama Details : \n Drama Name : "+dramaInfo[0].getTitle()
                                                         +" \n Drama Date : "+dramaInfo[0].getDatetime()+" Drama Time : "+dramaInfo[0].getTime()
                                                         +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()+" Drama Language : "+dramaInfo[0].getDrama_language());
                     share.setType("image/jpeg");
@@ -374,7 +409,7 @@ public class DramaFragment extends Fragment {
             Uri bmpUri = null;
             try {
                 File file =  new File(Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_DOWNLOADS), "share_image_" + dramaInfo.getDrama_name() + ".png");
+                        Environment.DIRECTORY_DOWNLOADS), "share_image_" + dramaInfo.getTitle() + ".png");
                 file.getParentFile().mkdirs();
                 FileOutputStream out = new FileOutputStream(file);
                 bmp.compress(Bitmap.CompressFormat.PNG, 90, out);

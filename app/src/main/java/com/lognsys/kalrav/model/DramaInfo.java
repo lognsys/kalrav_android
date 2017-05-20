@@ -10,15 +10,32 @@ public class DramaInfo implements Serializable {
 
 
     private String group_name;
-    private String drama_name;
+    private String title;
     private String link_photo;
     private String datetime;
-    private String briefDescription;
+    private String description;
     private String[] cast;
     private String genre;
     private String director;
     private String writer;
-    private String music,drama_language,time;
+    private String music,star_cast,drama_language,time;
+    String avg_rating;
+
+    public String getAvg_rating() {
+        return avg_rating;
+    }
+
+    public void setAvg_rating(String avg_rating) {
+        this.avg_rating = avg_rating;
+    }
+
+    public String getStar_cast() {
+        return star_cast;
+    }
+
+    public void setStar_cast(String star_cast) {
+        this.star_cast = star_cast;
+    }
 
     public String getIsfav() {
         return isfav;
@@ -116,12 +133,12 @@ public class DramaInfo implements Serializable {
     }
 
 
-    public String getBriefDescription() {
-        return briefDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBriefDescription(String briefDescription) {
-        this.briefDescription = briefDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getGroup_name() {
@@ -132,12 +149,12 @@ public class DramaInfo implements Serializable {
         this.group_name = group_name;
     }
 
-    public String getDrama_name() {
-        return drama_name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setDrama_name(String drama_name) {
-        this.drama_name = drama_name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getLink_photo() {

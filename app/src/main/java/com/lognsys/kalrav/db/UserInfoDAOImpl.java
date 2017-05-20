@@ -43,7 +43,7 @@ public class UserInfoDAOImpl implements UserInfoDAO {
 
             Log.d(TAG, "Adding New User - " + user.toString());
             ContentValues values = new ContentValues();
-            values.put(SQLiteHelper.COLUMN_USER_FBID, user.getFb_id());
+            values.put(SQLiteHelper.COLUMN_ID, user.getId());
             values.put(SQLiteHelper.COLUMN_USER_EMAIL, user.getEmail());
             values.put(SQLiteHelper.COLUMN_USER_NAME, user.getName());/*
             values.put(SQLiteHelper.COLUMN_USER_BIRTHDAY, user.getBirthday());*/

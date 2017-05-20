@@ -49,18 +49,18 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
             ContentValues values = new ContentValues();
             values.put(SQLiteHelper.COLUMN_ID, dramaInfo.getId());
             values.put(SQLiteHelper.COLUMN_GROUP_NAME, dramaInfo.getGroup_name());
-            values.put(SQLiteHelper.COLUMN_DRAMA_NAME, dramaInfo.getDrama_name());
+            values.put(SQLiteHelper.COLUMN_DRAMA_NAME, dramaInfo.getTitle());
             values.put(SQLiteHelper.COLUMN_LINK_PHOTO, dramaInfo.getLink_photo());
             values.put(SQLiteHelper.COLUMN_DATETIME, dramaInfo.getDatetime());
             values.put(SQLiteHelper.COLUMN_DRAMA_LENGTH, dramaInfo.getDrama_length());
             values.put(SQLiteHelper.COLUMN_DRAMA_LANGUAGE, dramaInfo.getDrama_language());
             values.put(SQLiteHelper.COLUMN_DRAMA_GENRE, dramaInfo.getGenre());
             values.put(SQLiteHelper.COLUMN_DRAMA_TIME, dramaInfo.getTime());
-            values.put(SQLiteHelper.COLUMN_DRAMA_DESCRIPTION, dramaInfo.getBriefDescription());
+            values.put(SQLiteHelper.COLUMN_DRAMA_DESCRIPTION, dramaInfo.getDescription());
             values.put(SQLiteHelper.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
             Log.d("","Test addDrama dramaInfo.getId() "+dramaInfo.getId());
             Log.d("","Test addDrama dramaInfo.getGroup_name() "+dramaInfo.getGroup_name());
-            Log.d("","Test addDrama dramaInfo.getDrama_name() "+dramaInfo.getDrama_name());
+            Log.d("","Test addDrama dramaInfo.getTitle() "+dramaInfo.getTitle());
             Log.d("","Test addDrama dramaInfo.getLink_photo() "+dramaInfo.getLink_photo());
             Log.d("","Test addDrama dramaInfo.getDatetime() "+dramaInfo.getDatetime());
 
@@ -98,14 +98,14 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
         db = sqLiteHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SQLiteHelper.COLUMN_GROUP_NAME, dramaInfo.getGroup_name());
-        values.put(SQLiteHelper.COLUMN_DRAMA_NAME, dramaInfo.getDrama_name());
+        values.put(SQLiteHelper.COLUMN_DRAMA_NAME, dramaInfo.getTitle());
         values.put(SQLiteHelper.COLUMN_LINK_PHOTO, dramaInfo.getLink_photo());
         values.put(SQLiteHelper.COLUMN_DATETIME, dramaInfo.getDatetime());
         values.put(SQLiteHelper.COLUMN_DRAMA_LENGTH, dramaInfo.getDrama_length());
         values.put(SQLiteHelper.COLUMN_DRAMA_LANGUAGE, dramaInfo.getDrama_language());
         values.put(SQLiteHelper.COLUMN_DRAMA_GENRE, dramaInfo.getGenre());
         values.put(SQLiteHelper.COLUMN_DRAMA_TIME, dramaInfo.getTime());
-        values.put(SQLiteHelper.COLUMN_DRAMA_DESCRIPTION, dramaInfo.getBriefDescription());
+        values.put(SQLiteHelper.COLUMN_DRAMA_DESCRIPTION, dramaInfo.getDescription());
         values.put(SQLiteHelper.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
         Log.d("DramaFragment","Fragment updateCount dramaInfo.getIsfav() "+ dramaInfo.getIsfav());
 
@@ -164,14 +164,14 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
                 dramaInfo.setId(Integer.parseInt(id));
                 dramaInfo.setGroup_name(groupname);
-                dramaInfo.setDrama_name(dramaname);
+                dramaInfo.setTitle(dramaname);
                 dramaInfo.setLink_photo(linkphoto);
                 dramaInfo.setDatetime(datatime);;
                 dramaInfo.setDrama_length(dramaLength);;
                 dramaInfo.setDrama_language(dramaLanguage);;
                 dramaInfo.setGenre(dramaGenre);;
                 dramaInfo.setTime(dramaTime);
-                dramaInfo.setBriefDescription(briefDescription);
+                dramaInfo.setDescription(briefDescription);
                 dramaInfo.setIsfav(isFav);
 
                 Log.d("","Fragment getAllDrama getIsfav "+dramaInfo.getIsfav());
@@ -219,14 +219,14 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
                     dramaInfo.setId(Integer.parseInt(id));
                     dramaInfo.setGroup_name(groupname);
-                    dramaInfo.setDrama_name(dramaname);
+                    dramaInfo.setTitle(dramaname);
                     dramaInfo.setLink_photo(linkphoto);
                     dramaInfo.setDatetime(datatime);;
                     dramaInfo.setDrama_length(dramaLength);;
                     dramaInfo.setDrama_language(dramaLanguage);;
                     dramaInfo.setGenre(dramaGenre);;
                     dramaInfo.setTime(dramaTime);
-                    dramaInfo.setBriefDescription(briefDescription);
+                    dramaInfo.setDescription(briefDescription);
                     dramaInfo.setIsfav(isFav);
                     dramaInfos.add(dramaInfo);
                 }

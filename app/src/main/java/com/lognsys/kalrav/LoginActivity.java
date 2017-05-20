@@ -207,7 +207,7 @@ private  String facebookImageUrl;
                     if(isAppInstalled(getApplicationContext(), "com.facebook.katana")) {
                         // Do something
                         Intent receiverIntent = new Intent(Intent.ACTION_VIEW);
-                        receiverIntent.setData(Uri.parse("com.facebook.katana"));
+                        receiverIntent.setData(Uri.parse("com.facebook.katana&hl=en"));
                         startActivity(receiverIntent);
                     }else {
                         Intent i = new Intent(android.content.Intent.ACTION_VIEW);

@@ -280,7 +280,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
 //                     monika added demo userid
                              ticketsInfo.setUser_id(1);
 
-                             DramaName = "Drama Name : "+dramaInfo.getDrama_name();
+                             DramaName = "Drama Name : "+dramaInfo.getTitle();
                              Auditorium = "Auditorium Name : " +editAuditoriumName.getText().toString();
                              GroupName = "Group Name : "+dramaInfo.getGroup_name();
                              DateAndTime = "Drama Date and Time : "+ dramaInfo.getDatetime()+" " +dramaInfo.getTime();
@@ -399,7 +399,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                ticketsInfo.setDrama_id(dramaInfo.getId());
 //                     monika added demo userid
                ticketsInfo.setUser_id(1);
-               ticketsInfo.setDrama_name(dramaInfo.getDrama_name());
+               ticketsInfo.setDrama_name(dramaInfo.getTitle());
                ticketsInfo.setDrama_group_name(dramaInfo.getGroup_name());
                ticketsInfo.setDrama_photo(dramaInfo.getLink_photo());
                ticketsInfo.setDrama_date(dramaInfo.getDatetime());

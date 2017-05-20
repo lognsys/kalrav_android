@@ -162,71 +162,6 @@
                         android:textColor="#000000"
                         android:textSize="14sp" />
                 </LinearLayout>
-<!--
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/tvRatingUser"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="NR"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvUserRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Users Rating"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/tvRatingCritics"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="NR"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvRatingUsers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Critics Rating"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-                    <Button
-                        android:id="@+id/btnbook"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dip"
-                        android:layout_marginLeft="5dip"
-                        android:layout_marginRight="6dip"
-                        android:textSize="14sp"
-                        android:text="Book"
-                        android:background="@drawable/round_btn"
-                        android:textColor="@color/cardview_dark_background"
-                        />
-
-                </LinearLayout>
--->
 
                 <View
                     android:layout_width="1dip"
@@ -289,6 +224,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dip"
+            android:visibility="gone"
             android:background="@drawable/round_corner"
             android:orientation="vertical">
 

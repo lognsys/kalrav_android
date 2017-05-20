@@ -56,6 +56,7 @@
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:hint="Enter Email id"
+        android:text="i@g.com"
         android:backgroundTint="@color/white"
         android:layout_margin="5dip"
          />
@@ -78,6 +79,7 @@
         android:textColorHint="@color/white"
         android:backgroundTint="@color/white"
         android:hint="Enter Name"
+        android:text="Enter"
         android:layout_centerInParent="true"
         android:layout_margin="5dip"/>  <!--  Title -->
     </android.support.design.widget.TextInputLayout>
@@ -98,12 +100,13 @@
         android:inputType="phone"
         android:backgroundTint="@color/white"
         android:hint="Mobile no."
+        android:text="1234567890"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+  <!--  <android.support.design.widget.TextInputLayout
         android:id="@+id/TextspninnerGroupName"
         android:layout_below="@+id/TextMobileNumber"
         android:layout_width="match_parent"
@@ -124,11 +127,11 @@
         android:layout_margin="5dip"
         android:backgroundTint="@color/white"
         android:spinnerMode="dropdown"  />
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/TextautoCities"
-        android:layout_below="@+id/TextspninnerGroupName"
+        android:layout_below="@+id/TextMobileNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -137,11 +140,12 @@
        >
     <AutoCompleteTextView
         android:id="@+id/autoCities"
-        android:layout_below="@+id/spninnerGroupName"
+        android:layout_below="@+id/editMobileNumber"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:hint="Type City Name"
         android:backgroundTint="@color/white"
+        android:text="test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textAutoComplete"

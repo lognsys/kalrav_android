@@ -35,16 +35,29 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.CustomGridArrayAdapter;
 import com.lognsys.kalrav.adapter.ExpadableListAdapter;
 import com.lognsys.kalrav.adapter.HorizontalAdapterCriticsReview;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
 import com.lognsys.kalrav.adapter.SlidingImage_Adapter;
+import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.MySpannable;
 import com.lognsys.kalrav.model.TimeSlot;
+import com.lognsys.kalrav.util.KalravApplication;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +73,9 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private int mDotsCount;
     private LinearLayout mDotsLayout;
     int position;
+
+    DramaInfoDAOImpl dramaInfoDAO;
+    private static final String GET_DRAMA_DETAIL_BY_ID_URL="http://192.168.0.19:8080/getdramadetailbyid/";
 
     private RecyclerView horizontal_recycler_view_users;
     private RecyclerView horizontal_recycler_view_critics;
@@ -82,6 +98,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         dramaInfo = (DramaInfo) getArguments().getSerializable("dramaInfo");
         Log.d("","Detail Fragment dramaInfo "+dramaInfo);
 
+        dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
         dramaImage=(ImageView) view.findViewById(R.id.dramaImage);
         tvDramaName=(TextView) view.findViewById(R.id.tvDramaName);
@@ -94,36 +111,8 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         textGroupname =(TextView) view.findViewById(R.id.textGroupname);
 
         if(dramaInfo!= null){
-          if(dramaInfo.getLink_photo()!=null){
-              Picasso.with(getContext()).load(dramaInfo.getLink_photo()).into(dramaImage);
-            }
-            else{
-              Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(dramaImage);
-          }
-         if(dramaInfo.getDrama_name()!=null){
-              tvDramaName.setText(dramaInfo.getDrama_name());
-          }
-          if(dramaInfo.getDrama_length()!=null){
-              tvDramaLength.setText(dramaInfo.getDrama_length());
-          }
-          if(dramaInfo.getDatetime()!=null){
-              tvDramaDate.setText(dramaInfo.getDatetime());
-          }
-          if(dramaInfo.getTime()!=null){
-              tvDramaTiming.setText(dramaInfo.getTime());
-          }
-          if(dramaInfo.getDrama_language()!=null){
-              tvDramaLanguage.setText(dramaInfo.getDrama_language());
-          }
-          if(dramaInfo.getGenre()!=null){
-              tvDramaGenre.setText(dramaInfo.getGenre());
-          }
-          if(dramaInfo.getBriefDescription()!=null){
-              textsynopsys.setText(dramaInfo.getBriefDescription());
-          }
-            if(dramaInfo.getGroup_name()!=null){
-                textGroupname.setText(dramaInfo.getGroup_name());
-            }
+            displayDramaDetail(dramaInfo);
+
 
 
       }
@@ -284,6 +273,144 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
         return view;
     }
+
+
+
+
+
+
+
+
+
+
+    private void displayDramaDetail(DramaInfo dramaInfo) {
+       String dramaDetailURLByID=GET_DRAMA_DETAIL_BY_ID_URL+dramaInfo.getId();
+        Log.d("","displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
+
+        KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                dramaDetailURLByID, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("","displayDramaDetail response "+ response.toString());
+
+                try {
+                    DramaInfo dramaInfo=new DramaInfo();
+
+                    // Parsing json object response
+                    // response will be a json object
+                    int id = response.getInt("id");
+                    dramaInfo.setId(id);
+
+                    String title = response.getString("title");
+                    dramaInfo.setTitle(title);
+                    if(dramaInfo.getTitle()!=null){
+                        tvDramaName.setText(dramaInfo.getTitle());
+                    }
+
+                    String imageurl = response.getString("imageurl");
+                    dramaInfo.setLink_photo(imageurl);
+                    if(dramaInfo.getLink_photo()!=null){
+                        Picasso.with(getContext()).load(dramaInfo.getLink_photo()).into(dramaImage);
+                    }
+                    else{
+                        Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(dramaImage);
+                    }
+
+                    String drama_length = response.getString("drama_length");
+                    dramaInfo.setDrama_length(drama_length);
+                    if(dramaInfo.getDrama_length()!=null){
+                        tvDramaLength.setText(dramaInfo.getDrama_length());
+                    }
+
+
+                    String date = response.getString("date");
+                    dramaInfo.setDatetime(date);
+                    if(dramaInfo.getDatetime()!=null){
+                        tvDramaDate.setText(dramaInfo.getDatetime());
+                    }
+                    if(dramaInfo.getTime()!=null){
+                        tvDramaTiming.setText(dramaInfo.getTime());
+                    }
+
+                    String genre = response.getString("genre");
+                    dramaInfo.setGenre(genre);
+                    if(dramaInfo.getGenre()!=null){
+                        tvDramaGenre.setText(dramaInfo.getGenre());
+                    }
+
+                    String star_cast = response.getString("star_cast");
+                    dramaInfo.setStar_cast(star_cast);
+                    if(dramaInfo.getStar_cast()!=null){
+                        tvDramaGenre.setText(dramaInfo.getStar_cast());
+                    }
+
+                    String description = response.getString("description");
+                    dramaInfo.setDescription(description);
+                    if(dramaInfo.getDescription()!=null){
+                        textsynopsys.setText(dramaInfo.getDescription());
+                    }
+
+                    String director = response.getString("director");
+                    dramaInfo.setDirector(director);
+                    String writer = response.getString("writer");
+                    dramaInfo.setWriter(writer);
+                    String music = response.getString("music");
+                    dramaInfo.setMusic(music);
+                    String avg_rating = response.getString("avg_rating");
+                    dramaInfo.setAvg_rating(avg_rating);
+                    dramaInfoDAO.updateDrama(dramaInfo);
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+/*
+
+                    if(dramaInfo.getDrama_language()!=null){
+                        tvDramaLanguage.setText(dramaInfo.getDrama_language());
+                    }
+
+                    if(dramaInfo.getGroup_name()!=null){
+                        textGroupname.setText(dramaInfo.getGroup_name());
+                    }
+
+*/
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("","displayDramaDetail JSONException "+e);
+
+                    Toast.makeText(getActivity(),
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("","displayDramaDetail VolleyError "+error);
+
+                Toast.makeText(getActivity(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+            }
+        });
+        KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+        // Adding request to request queue
+        KalravApplication.getInstance().addToRequestQueue(jsonObjReq);
+
+    }
+
+
+
+
+
+
 
     private static void makeTextViewResizable(final TextView tv, final int maxLine, final String expandText, final boolean viewMore) {
 

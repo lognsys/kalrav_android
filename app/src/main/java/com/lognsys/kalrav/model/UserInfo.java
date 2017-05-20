@@ -11,11 +11,31 @@ public class UserInfo implements Serializable {
 
     //User fields
     // TODO : Pending phoneNo & zipcode validation
+
+    private int id;
     private String phoneNo;
     private String address;
     private String city;
     private String state;
     private String zipcode;
+    private String google_id;
+    private String location;
+    private String name;
+    private String email;
+    private String birthday;
+    private int loggedIn;
+    private String groupname;
+    private String picture;
+    private String fb_id;
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getPicture() {
         return picture;
@@ -25,7 +45,6 @@ public class UserInfo implements Serializable {
         this.picture = picture;
     }
 
-    private String picture;
 
     public String getGroupname() {
         return groupname;
@@ -35,7 +54,6 @@ public class UserInfo implements Serializable {
         this.groupname = groupname;
     }
 
-    private String groupname;
 
 
     public String getPhoneNo() {
@@ -79,8 +97,6 @@ public class UserInfo implements Serializable {
     }
 
 
-    //facebook fields
-    private String fb_id;
 
     public String getGoogle_id() {
         return google_id;
@@ -90,12 +106,6 @@ public class UserInfo implements Serializable {
         this.google_id = google_id;
     }
 
-    private String google_id;
-    private String location;
-    private String name;
-    private String email;
-    private String birthday;
-    private int loggedIn;
 
     public String getFb_id() {
         return fb_id;
@@ -151,7 +161,8 @@ public class UserInfo implements Serializable {
         //no-arg constructor
     }
 
-    public UserInfo(String phoneNo, String address, String city, String state, String zipcode, String fb_id, String location, String name, String email, String birthday, int loggedIn) {
+    public UserInfo(int id,String phoneNo, String address, String city, String state,  String zipcode, String fb_id, String location, String name, String email, String birthday, int loggedIn) {
+        this.id = id;
         this.phoneNo = phoneNo;
         this.address = address;
         this.city = city;
@@ -168,17 +179,21 @@ public class UserInfo implements Serializable {
     @Override
     public String toString() {
         return "UserInfo{" +
-                "phoneNo='" + phoneNo + '\'' +
+                "id=" + id +
+                ", phoneNo='" + phoneNo + '\'' +
                 ", address='" + address + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", zipcode='" + zipcode + '\'' +
-                ", fb_id='" + fb_id + '\'' +
+                ", google_id='" + google_id + '\'' +
                 ", location='" + location + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", birthday='" + birthday + '\'' +
                 ", loggedIn=" + loggedIn +
+                ", groupname='" + groupname + '\'' +
+                ", picture='" + picture + '\'' +
+                ", fb_id='" + fb_id + '\'' +
                 '}';
     }
 }

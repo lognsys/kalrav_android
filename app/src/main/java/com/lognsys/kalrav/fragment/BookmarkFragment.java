@@ -163,13 +163,13 @@ public class BookmarkFragment extends Fragment {
 
             final DramaInfo[] dramaInfo = {list.get(position)};
             Picasso.with(getContext()).load(dramaInfo[0].getLink_photo()).into(holder.dramaImage);
-            holder.textDramaName.setText(dramaInfo[0].getDrama_name());
+            holder.textDramaName.setText(dramaInfo[0].getTitle());
             holder.tvDramaLength.setText(dramaInfo[0].getDrama_length());
             holder.textDramaDate.setText(dramaInfo[0].getDatetime());
             holder.textDramaTiming.setText(dramaInfo[0].getTime());
             holder.textDramaLanguage.setText(dramaInfo[0].getDrama_language());
             holder.textDramaGenre.setText(dramaInfo[0].getGenre());
-            holder.textDramaName.setText(dramaInfo[0].getDrama_name());
+            holder.textDramaName.setText(dramaInfo[0].getTitle());
             holder.textDramaGroupname.setText(dramaInfo[0].getGroup_name());
 
         }
@@ -214,7 +214,7 @@ public class BookmarkFragment extends Fragment {
                     // We can access the data within the views
                     Log.d("", "MyAdapter getAdapterPosition list.get(position) "+ list.get(position));
                     Log.d("", "MyAdapter getAdapterPosition MyViewHolder dramaInfo "+dramaInfo);
-                    Log.d("", "MyAdapter getAdapterPositionMyViewHolder dramaInfo.getName "+dramaInfo.getDrama_name());
+                    Log.d("", "MyAdapter getAdapterPositionMyViewHolder dramaInfo.getName "+dramaInfo.getTitle());
                     if(dramaInfo!=null) {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("dramaInfo", dramaInfo);

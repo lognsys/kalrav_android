@@ -23,26 +23,41 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.lognsys.kalrav.db.UserInfoDAO;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.Services;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.validation.Validator;
 
@@ -51,12 +66,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText editUsername;
     private EditText editName;
     private EditText editMobileNumber;
-    private Spinner spninnerGroupName;
+//    private Spinner spninnerGroupName;
     private AutoCompleteTextView autoCities;
     private Button btnRegister;
     ParserTask parserTask;
     PlacesTask placesTask;
-
+//   String REST_REGISTER_USER="http://192.168.0.19:8080/createuser/0/dADAFSDBVXVXCV/deepu@gmail.com/deepu%20sharma/8767569879/location/provenance/2017-05-16%2017:09:51/true/false/device/google/city/state/401107/company/deepu/viv/Youth/Admin";
+    String REST_REGISTER_USER="http://192.168.0.19:8080/createuser/";
     private String fb_id, google_id;
     // Initializing a String Array
     String[] groupName = new String[]{
@@ -75,10 +91,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         userDaoImpl = new UserInfoDAOImpl(this);
         userInfos = (ArrayList<UserInfo>) getIntent().getSerializableExtra("userInfos");
-
+        if(userInfos!=null){
           for (UserInfo userInfo : userInfos) {
 
             populateData(userInfo);
+
+        }
+        }
+        else{
+            populateData(null);
 
         }
     }
@@ -90,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             editUsername = (EditText) findViewById(R.id.editUsername);
             editName = (EditText) findViewById(R.id.editName);
             editMobileNumber = (EditText) findViewById(R.id.editMobileNumber);
-            spninnerGroupName = (Spinner) findViewById(R.id.spninnerGroupName);
+//            spninnerGroupName = (Spinner) findViewById(R.id.spninnerGroupName);
             autoCities = (AutoCompleteTextView) findViewById(R.id.autoCities);
             btnRegister = (Button) findViewById(R.id.btnRegister);
             btnRegister.setOnClickListener(this);
@@ -148,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             };
 
-            spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_list_item);
+      /*      spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_list_item);
             spninnerGroupName.setAdapter(spinnerArrayAdapter);
 
             spninnerGroupName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -172,7 +193,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             });
 
-            if (userInfo != null) {
+      */      if (userInfo != null) {
                 if (userInfo.getEmail() != null) {
                     editUsername.setText(userInfo.getEmail());
                 }
@@ -258,39 +279,39 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             } else if (autoCities.getText().toString().length() == 0) {
                 autoCities.setError("City is not entered");
                 autoCities.requestFocus();
-            } else if (spninnerGroupName.getSelectedItem().toString().length() == 0) {
-                Toast.makeText(getApplicationContext(), "Please Select group name", Toast.LENGTH_LONG).show();
-                spninnerGroupName.requestFocus();
-            } else {
-
-                String username, name, city, groupname, mobile;
+            }  else {
+               String username, realname,phone, city, groupname=null;
                 username = editUsername.getText().toString();
-                name = editName.getText().toString();
+                realname = editName.getText().toString();
                 city = autoCities.getText().toString();
-                groupname = spninnerGroupName.getSelectedItem().toString();
-                mobile = editMobileNumber.getText().toString();
-                KalravApplication.getInstance().getPrefs().setName(name);
+//                groupname = spninnerGroupName.getSelectedItem().toString();
+                phone = editMobileNumber.getText().toString();
+                KalravApplication.getInstance().getPrefs().setName(realname);
                 KalravApplication.getInstance().getPrefs().setEmail(username);
-                KalravApplication.getInstance().getPrefs().setMobile(mobile);
-
-                RegisteredTask task = new RegisteredTask(username, name, city, groupname, mobile);
+                KalravApplication.getInstance().getPrefs().setMobile(phone);
+                String auth_id = null;
+                if (fb_id != null)
+                    auth_id= fb_id;
+                if (google_id != null)
+                    auth_id= google_id;
+                RegisteredTask task = new RegisteredTask(realname,username,auth_id,phone, city, groupname);
                 task.execute();
             }
         }
     }
-
     //Register and inserting  user records
-    private class RegisteredTask extends AsyncTask<Void, Void, Void> {
-        String username, name, city, groupname, mobile;
+    private class RegisteredTask extends AsyncTask<String, Void, String> {
+        String auth_id, username, realname,phone, city, groupname;
 
         ProgressDialog dialog;
 
-        public RegisteredTask(String username, String name, String city, String groupname, String mobile) {
+        public RegisteredTask(String realname, String username, String auth_id, String phone, String city, String groupname) {
             this.username = username;
-            this.name = name;
+            this.realname = realname;
             this.city = city;
             this.groupname = groupname;
-            this.mobile = mobile;
+            this.phone = phone;
+            this.auth_id=auth_id;
 
         }
 
@@ -304,45 +325,134 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
         @Override
-        protected Void doInBackground(Void... place) {
-            // For storing data from web service
+        protected String doInBackground(String... place) {
 
             try {
-                userInfo = new UserInfo();
-                userInfo.setEmail(this.username);
-                userInfo.setName(this.name);
-                userInfo.setLocation(this.city);
-                userInfo.setPhoneNo(this.mobile);
-                userInfo.setGroupname(this.groupname);
-                if (fb_id != null)
-                    userInfo.setFb_id(fb_id);
-                if (google_id != null)
-                    userInfo.setGoogle_id(google_id);
-                userInfo.setLoggedIn(Constants.LOG_IN);
-//                        //save to the database
+                String postParameters, firstname, lastname;
+                String[] splited=null;
+                if(this.realname!=null && this.realname.length()>0 && this.realname.contains(" ")){
+                    splited = this.realname.split(" ");
+                    firstname = splited[0]==null?"":splited[0];
+                    lastname = splited[1]==null?"":splited[1] ;
+                }
+                else{
+                    firstname="-";
+                    lastname="-";
+                }
+                /*http://192.168.0.19:8080/createuser/0/priyank%20doshi/doshipriyank@gmail.com/authid124fnfj
+                /8097526387/location/provenance/2017-05-13%2000:00:00/true/true/device/address/city/state/401107/company_name
+                /priyank/doshi/group/role*/
+                Log.d("", "Test doInBackground this.auth_id " + this.auth_id);
+                Log.d("", "Test doInBackground this.phone " + this.phone);
+
+                postParameters=""+0+"/"+this.realname+"/"+this.username+"/"+this.auth_id+"/"+this.phone
+                        +"/location/provenance/2017-05-16 17:09:51/"+true+"/"+true+"/android/address/"+this.city
+                        +"/state/401107/company/"+firstname+"/"+lastname+"/None/None";
+                postParameters=postParameters.replace(" ","%20");
 
 
-                KalravApplication.getInstance().setGlobalUserObject(userInfo);
-                Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
-                userDaoImpl.addUser(userInfo);
-                KalravApplication.getInstance().getPrefs().setIsLogin(true);
+                String urlString=REST_REGISTER_USER+postParameters;
+                URL urlToRequest = new URL(urlString);
+                Log.d("", "Test doInBackground urlToRequest " + urlToRequest);
 
-            } catch (Exception e) {
-                Log.d("", "Test Exception " + e);
+                HttpURLConnection urlConnection =
+                        (HttpURLConnection) urlToRequest.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type",
+                        "application/json");
+                Log.d("", "Test doInBackground urlConnection " + urlConnection);
+                urlConnection.setFixedLengthStreamingMode(
+                        postParameters.getBytes().length);
+                Log.d("", "Test doInBackground postParameters " + postParameters);
+
+                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                out.print(postParameters);
+                Log.d("", "Test doInBackground out " + out.toString());
+
+                out.close();
+                // handle issues
+                int statusCode = urlConnection.getResponseCode();
+                Log.d("", "Test doInBackground statusCode" + statusCode);
+               /* if (statusCode != HttpURLConnection.HTTP_OK) {
+                    // throw some exception
+                    Log.d("", "Test doInBackground statusCode not equal" + statusCode);
+
+                }*/
+//
+               if(statusCode==409){
+                   Log.d("", "Test doInBackground Status-Code 409: Conflict. " + statusCode);
+               }
+               else if(statusCode==201){
+                   Log.d("", "Test doInBackground Status-Code 200: OK. " + statusCode);
+                   InputStream in =
+                           new BufferedInputStream(urlConnection.getInputStream());
+                   return getResponseText(in);
+               }
+
 
             }
+            catch (Exception e) {
+                Log.d("", "Test doInBackground Exception " + e);
+            }
+
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            dialog.dismiss();
-            Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
-            i.putExtra("groupname", this.groupname);
-            startActivity(i);
-            finish();
+        private String getResponseText(InputStream inputStream) throws IOException {
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 
+            StringBuilder total = new StringBuilder();
+            String line;
+            while ((line = r.readLine())!=null) {
+                total.append(line).append('\n');
+            }
+            String ResponseString=total.toString();
+            Log.d("", "Test getResponseText ResponseString " + ResponseString);
+
+            r.close();
+            return ResponseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Log.d("", "Test onPostExecute result " + result);
+            try {
+                if (result != null) {
+                    JSONObject jsonObject = new JSONObject(result);
+
+                    userInfo = new UserInfo();
+                    userInfo.setId(jsonObject.getInt("id"));
+                    userInfo.setName(jsonObject.getString("realname"));
+                    userInfo.setEmail(jsonObject.getString("username"));
+                    if (fb_id != null)
+                        userInfo.setFb_id(fb_id);
+                    if (google_id != null)
+                        userInfo.setGoogle_id(google_id);
+                    userInfo.setPhoneNo(jsonObject.getString("phone"));
+                    userInfo.setCity(jsonObject.getString("city"));
+                    userInfo.setLoggedIn(Constants.LOG_IN);
+//                        //save to the database
+
+                    KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+                    KalravApplication.getInstance().setGlobalUserObject(userInfo);
+                    Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
+                    userDaoImpl.addUser(userInfo);
+                    KalravApplication.getInstance().getPrefs().setIsLogin(true);
+
+                    dialog.dismiss();
+                    Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
+                    startActivity(i);
+                    finish();
+
+
+                } else {
+                    dialog.dismiss();
+                }
+            } catch (Exception e) {
+
+            }
         }
     }
 
