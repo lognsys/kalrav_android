@@ -44,6 +44,7 @@
 
     <string name="activity_title_about_us">About Us</string>
     <string name="activity_title_privacy_policy">Privacy Policy</string>
+    <string name="activity_service_name">Service</string>
 
 
     <string name="banner_ad_unit_id">ca-app-pub-2091012524875733/2660775800</string>

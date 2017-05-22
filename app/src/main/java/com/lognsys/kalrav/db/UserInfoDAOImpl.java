@@ -111,12 +111,71 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             user.setGoogle_id(google_id);
             //Do something Here with values
 //            } while (c.moveToNext());
+
+            return user;
         }
 
         c.close();
         db.close();
 
         return user;
+    }
+
+    @Override
+    public int findUser(UserInfo userArg) {
+        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+        UserInfo user = null;
+
+        Cursor c = db.rawQuery("SELECT " + SQLiteHelper.COLUMN_USER_FBID + "," +
+                SQLiteHelper.COLUMN_USER_EMAIL + "," +
+                SQLiteHelper.COLUMN_USER_NAME + "," +
+                //      SQLiteHelper.COLUMN_USER_BIRTHDAY + "," +
+                SQLiteHelper.COLUMN_USER_LOGGEDIN + "," +
+                SQLiteHelper.COLUMN_USER_LOCATION +"," +
+                SQLiteHelper.COLUMN_USER_GROUPNAME + "," +
+                SQLiteHelper.COLUMN_USER_PHONENO + "," +
+                SQLiteHelper.COLUMN_USER_GOOGLEID +
+                " FROM user where email=? ", new String[]{userArg.getEmail()});
+        Log.d(TAG,"LOGGEDIN findUserBy userArg.getEmail() - "+userArg.getEmail());
+        if(c!=null)
+            Log.d(TAG,"LOGGEDIN findUserBy getCount - "+c.getCount());
+
+        if (c != null && c.moveToFirst()) {
+//            do {
+            //assing values
+
+            user =  new UserInfo();
+            String fb_id = c.getString(0);
+            String email = c.getString(1);
+            String name = c.getString(2);
+//            String birthday = c.getString(3);
+            int loggedIn = c.getInt(3);
+            String location = c.getString(4);
+            String groupname = c.getString(5);
+            String mobile = c.getString(6);
+            String google_id = c.getString(7);
+            Log.d(TAG,"LOGGEDIN findUserBy mobile - "+mobile+" groupname - "+groupname+" location - "+location+" name - "+name);
+
+            user.setFb_id(fb_id);
+            user.setEmail(email);
+            user.setName(name);
+//            user.setBirthday(birthday);
+            user.setLoggedIn(loggedIn);
+            user.setLocation(location);
+
+            user.setGroupname(groupname);
+            user.setPhoneNo(mobile);
+            user.setGoogle_id(google_id);
+            //Do something Here with values
+//            } while (c.moveToNext());
+
+            return c.getCount();
+        }
+
+        c.close();
+        db.close();
+
+        return 0;
     }
 
 

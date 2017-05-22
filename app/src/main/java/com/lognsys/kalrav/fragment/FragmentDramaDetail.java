@@ -69,7 +69,8 @@ import java.util.List;
 
 public class FragmentDramaDetail extends Fragment implements View.OnClickListener {
 //for dots
-   static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaDate,tvDramaTiming,tvDramaLanguage,tvDramaGenre,textsynopsys;
+   static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaMusic,tvDramaDate,tvDramaTiming,tvDramaLanguage,
+        tvDramaGenre,textsynopsys,textDirector,textWriter,textStarcast;
     private int mDotsCount;
     private LinearLayout mDotsLayout;
     int position;
@@ -104,10 +105,14 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         tvDramaName=(TextView) view.findViewById(R.id.tvDramaName);
         tvDramaLength=(TextView) view.findViewById(R.id.tvDramaLength);
         tvDramaDate=(TextView) view.findViewById(R.id.tvDramaDate);
+        tvDramaMusic=(TextView) view.findViewById(R.id.tvDramaMusic);
         tvDramaTiming=(TextView) view.findViewById(R.id.tvDramaTiming);
         tvDramaLanguage=(TextView) view.findViewById(R.id.tvDramaLanguage);
         tvDramaGenre=(TextView) view.findViewById(R.id.tvDramaGenre);
         textsynopsys=(TextView) view.findViewById(R.id.textsynopsys);
+        textDirector=(TextView) view.findViewById(R.id.textDirector);
+        textWriter=(TextView) view.findViewById(R.id.textWriter);
+        textStarcast=(TextView) view.findViewById(R.id.textStarcast);
         textGroupname =(TextView) view.findViewById(R.id.textGroupname);
 
         if(dramaInfo!= null){
@@ -284,6 +289,9 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
 
     private void displayDramaDetail(DramaInfo dramaInfo) {
+    String groupname=dramaInfo.getGroup_name();
+        textGroupname.setText(groupname);
+
        String dramaDetailURLByID=GET_DRAMA_DETAIL_BY_ID_URL+dramaInfo.getId();
         Log.d("","displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
 
@@ -326,13 +334,18 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
 
                     String date = response.getString("date");
+                    String[] splited=null;
+
                     dramaInfo.setDatetime(date);
                     if(dramaInfo.getDatetime()!=null){
                         tvDramaDate.setText(dramaInfo.getDatetime());
+                        splited = dramaInfo.getDatetime().split(" ");
+                        String datevalue  = splited[0]==null?"":splited[0];
+                        tvDramaDate.setText(datevalue);
+                        String timevalue  = splited[1]==null?"":splited[1] ;
+                        tvDramaTiming.setText(timevalue);
                     }
-                    if(dramaInfo.getTime()!=null){
-                        tvDramaTiming.setText(dramaInfo.getTime());
-                    }
+
 
                     String genre = response.getString("genre");
                     dramaInfo.setGenre(genre);
@@ -343,7 +356,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                     String star_cast = response.getString("star_cast");
                     dramaInfo.setStar_cast(star_cast);
                     if(dramaInfo.getStar_cast()!=null){
-                        tvDramaGenre.setText(dramaInfo.getStar_cast());
+                        textStarcast.setText(dramaInfo.getStar_cast());
                     }
 
                     String description = response.getString("description");
@@ -354,12 +367,31 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
                     String director = response.getString("director");
                     dramaInfo.setDirector(director);
+                    if(dramaInfo.getDirector()!=null){
+                        textDirector.setText(dramaInfo.getDirector());
+                    }
+
+
                     String writer = response.getString("writer");
                     dramaInfo.setWriter(writer);
+                    if(dramaInfo.getWriter()!=null){
+                        textWriter.setText(dramaInfo.getWriter());
+                    }
+
                     String music = response.getString("music");
                     dramaInfo.setMusic(music);
+                    if(dramaInfo.getMusic()!=null && dramaInfo.getMusic().length()>0){
+                        tvDramaMusic.setText(dramaInfo.getMusic());
+                    }
                     String avg_rating = response.getString("avg_rating");
                     dramaInfo.setAvg_rating(avg_rating);
+
+                    String drama_language = response.getString("drama_language");
+                    dramaInfo.setDrama_language(drama_language);
+
+                    if(dramaInfo.getDrama_language()!=null && dramaInfo.getDrama_language().length()>0){
+                        tvDramaLanguage.setText(dramaInfo.getDrama_language());
+                    }
                     dramaInfoDAO.updateDrama(dramaInfo);
                     KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
 /*

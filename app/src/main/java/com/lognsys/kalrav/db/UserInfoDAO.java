@@ -11,6 +11,7 @@ public interface UserInfoDAO {
     void addUser(UserInfo userInfo);
 
     UserInfo findUserBy(UserInfo userEmail);
+    int findUser(UserInfo userEmail);
 
     int updateUserInfo(UserInfo userInfo);
 

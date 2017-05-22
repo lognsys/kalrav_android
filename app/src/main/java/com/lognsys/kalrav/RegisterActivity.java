@@ -302,7 +302,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     //Register and inserting  user records
     private class RegisteredTask extends AsyncTask<String, Void, String> {
         String auth_id, username, realname,phone, city, groupname;
-
+        int statusCode;
         ProgressDialog dialog;
 
         public RegisteredTask(String realname, String username, String auth_id, String phone, String city, String groupname) {
@@ -372,7 +372,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 out.close();
                 // handle issues
-                int statusCode = urlConnection.getResponseCode();
+                 statusCode = urlConnection.getResponseCode();
                 Log.d("", "Test doInBackground statusCode" + statusCode);
                /* if (statusCode != HttpURLConnection.HTTP_OK) {
                     // throw some exception
@@ -380,23 +380,35 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 }*/
 //
-               if(statusCode==409){
+               if(statusCode>0){
                    Log.d("", "Test doInBackground Status-Code 409: Conflict. " + statusCode);
-               }
-               else if(statusCode==201){
-                   Log.d("", "Test doInBackground Status-Code 200: OK. " + statusCode);
+
                    InputStream in =
                            new BufferedInputStream(urlConnection.getInputStream());
-                   return getResponseText(in);
+                   try {
+
+                       String values=getResponseText(in);
+                       Log.d("", "Test doInBackground Status-Code 409: .Conflict values " + values);
+
+                       return values;
+                   } catch (IOException e) {
+                       Log.d("", "Test doInBackground Status-Code 409: .Conflict IOException " + e);
+
+                   }
+
                }
+//               else if(statusCode==201){
+//                   Log.d("", "Test doInBackground Status-Code 200: OK. " + statusCode);
+//
+//               }
+
 
 
             }
             catch (Exception e) {
                 Log.d("", "Test doInBackground Exception " + e);
             }
-
-            return null;
+          return null;
         }
 
         private String getResponseText(InputStream inputStream) throws IOException {
@@ -442,6 +454,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     KalravApplication.getInstance().getPrefs().setIsLogin(true);
 
                     dialog.dismiss();
+                    KalravApplication.getInstance().showDialog(RegisterActivity.this,"User Created Successfully !!!");
                     Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
                     startActivity(i);
                     finish();
@@ -451,6 +464,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     dialog.dismiss();
                 }
             } catch (Exception e) {
+//                KalravApplication.getInstance().showDialog(RegisterActivity.this,"Please check your  network connection");
+                Log.d("", "onPostExecute Exception " +e);
 
             }
         }

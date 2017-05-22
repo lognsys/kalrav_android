@@ -152,16 +152,20 @@ private  String facebookImageUrl;
 
         if (null != user && KalravApplication.getInstance().getPrefs().getIsLogin()) {
             Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
+            if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null){
+                //setting global variable
+                KalravApplication.getInstance().setGlobalUserObject(user);
+                KalravApplication.getInstance().invokeService(getApplicationContext());
 
-            //setting global variable
-            KalravApplication.getInstance().setGlobalUserObject(user);
+                Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
 
-            Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
 
-            startActivity(intent);
-            finish();
+
 
         }
         else {
@@ -470,7 +474,11 @@ private  String facebookImageUrl;
                                             }
 
                                         userInfo.setLoggedIn(Constants.LOG_IN);
-                                        if(userInfo!=null){
+
+                                int user_count=userDaoImpl.findUser(userInfo);
+                                Log.d(TAG, "Requesting Google Login userInfo1..."+user_count);
+
+                                if(user_count>0){
                                             UserInfo userInfo1=userDaoImpl.findUserBy(userInfo);
                                             if(userInfo1 !=null){
                                                 Intent i = new Intent(LoginActivity.this, HomeActivity.class);

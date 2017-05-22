@@ -1,17 +1,24 @@
 package com.lognsys.kalrav.util;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.UserInfo;
+import com.lognsys.kalrav.service.KalravDramaByGroupService;
 
 /**
  * Created by pdoshi on 03/01/17.
@@ -98,5 +105,35 @@ public class KalravApplication extends Application {
 
     return isConnected;
     }
+public  void invokeService(Context context){
+    // use this to start and trigger a service
+    Log.d(TAG, "OnCreate invokeService context- " +context);
 
+    Intent i= new Intent(context, KalravDramaByGroupService.class);
+    context.startService(i);
+}
+public void showDialog(Context context, String message){
+    AlertDialog alertDialog = new AlertDialog.Builder(
+            context).create();
+
+    // Setting Dialog Title
+    alertDialog.setTitle("Kalrav");
+
+    // Setting Dialog Message
+    alertDialog.setMessage(message);
+
+    // Setting Icon to Dialog
+    alertDialog.setIcon(R.drawable.kalrav_logo);
+
+    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+        }
+    });
+
+
+    // Showing Alert Message
+    alertDialog.show();
+}
 }
