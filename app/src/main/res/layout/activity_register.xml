@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:htext="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -29,6 +31,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="30dp"
 
+        android:layout_margin="5dip"
         android:layout_below="@+id/kalrav_logo"
         android:gravity="center"
         android:textColor="#FFFFFF"
@@ -43,7 +46,6 @@
         android:layout_below="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
         app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
         android:textColorHint="@color/white">
 
@@ -54,11 +56,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textColor="@color/white"
+        android:layout_below="@+id/text"
         android:textColorHint="@color/white"
         android:hint="Enter Email id"
-        android:text="i@g.com"
+        android:textSize="12sp"
         android:backgroundTint="@color/white"
-        android:layout_margin="5dip"
          />
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -66,29 +68,26 @@
         android:layout_below="@+id/TextInputUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
         app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
         android:textColorHint="@color/white">
 
-    <EditText
-        android:id="@+id/editName"
-        android:layout_below="@+id/editUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:backgroundTint="@color/white"
-        android:hint="Enter Name"
-        android:text="Enter"
-        android:layout_centerInParent="true"
-        android:layout_margin="5dip"/>  <!--  Title -->
+        <EditText
+            android:id="@+id/editName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editUsername"
+            android:layout_centerInParent="true"
+            android:textSize="12sp"
+            android:backgroundTint="@color/white"
+            android:hint="Enter Name"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />  <!--  Title -->
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/TextMobileNumber"
         android:layout_below="@+id/TextInputName"
         android:layout_width="match_parent"
-        android:layout_margin="5dip"
         android:layout_height="wrap_content"
         app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
         android:textColorHint="@color/white">
@@ -98,75 +97,108 @@
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:inputType="phone"
+        android:textSize="12sp"
         android:backgroundTint="@color/white"
         android:hint="Mobile no."
-        android:text="1234567890"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
     </android.support.design.widget.TextInputLayout>
-
-  <!--  <android.support.design.widget.TextInputLayout
-        android:id="@+id/TextspninnerGroupName"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/TextAddress"
         android:layout_below="@+id/TextMobileNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
-        android:textColorHint="@color/white">
-    <Spinner
-        android:id="@+id/spninnerGroupName"
-        android:layout_below="@+id/editMobileNumber"
-        android:textColor="@color/white"
-        android:dropDownSelector="@color/white"
         android:textColorHint="@color/white"
-
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="5dip"
-        android:backgroundTint="@color/white"
-        android:spinnerMode="dropdown"  />
-    </android.support.design.widget.TextInputLayout>-->
+        app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
+        >
+        <EditText
+            android:id="@+id/editAddress"
+            android:layout_below="@+id/editMobileNumber"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:hint="Enter Address"
+            android:textSize="12sp"
+            android:backgroundTint="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/TextautoCities"
-        android:layout_below="@+id/TextMobileNumber"
+        android:id="@+id/TextCities"
+        android:layout_below="@+id/TextAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:textColorHint="@color/white"
         app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
        >
-    <AutoCompleteTextView
-        android:id="@+id/autoCities"
-        android:layout_below="@+id/editMobileNumber"
+    <EditText
+        android:id="@+id/editCities"
+        android:layout_below="@+id/editAddress"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:hint="Type City Name"
+        android:hint="Enter City"
+        android:textSize="12sp"
         android:backgroundTint="@color/white"
-        android:text="test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textAutoComplete"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"/>
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/TextState"
+        android:layout_below="@+id/TextCities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/white"
+        app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
+        >
+        <EditText
+            android:id="@+id/editState"
+            android:layout_below="@+id/editCities"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:hint="Enter State"
+            android:textSize="12sp"
+            android:backgroundTint="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/TextPincode"
+        android:layout_below="@+id/TextState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/white"
+        app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
+        >
+        <EditText
+            android:id="@+id/editPincode"
+            android:layout_below="@+id/editState"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:hint="Enter pin code"
+            android:textSize="12sp"
+            android:text="Save"
+            android:backgroundTint="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </android.support.design.widget.TextInputLayout>
 
 
     <Button
         android:id="@+id/btnRegister"
         style="?android:textAppearanceMedium"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="Register"
-        android:layout_margin="5dip"
+        android:text="Save"
         android:background="@drawable/round_btn"
         android:textColor="@android:color/holo_red_dark"
-        android:textStyle="bold" />
-
-
+        android:textStyle="bold"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>
-

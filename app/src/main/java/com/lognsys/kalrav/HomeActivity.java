@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.fragment.BookmarkFragment;
 import com.lognsys.kalrav.fragment.DramaFragment;
+import com.lognsys.kalrav.fragment.MyDramaFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
 import com.lognsys.kalrav.fragment.MyticketListFragment;
 import com.lognsys.kalrav.fragment.NotificationFragment;
@@ -68,6 +69,7 @@ public class HomeActivity extends AppCompatActivity {
     // tags used to attach the fragments
     private static final String TAG_DRAMA = "drama";
     private static final String TAG_BOOKMARK = "bookmark";
+    private static final String TAG_MYDRAMA = "mydrama";
     private static final String TAG_NOTIFICATIONS = "notification";
 //    private static final String TAG_SETTINGS = "settings";
     public static String CURRENT_TAG = TAG_DRAMA;
@@ -247,7 +249,10 @@ public class HomeActivity extends AppCompatActivity {
                 // notification
                 MyticketListFragment myticketListFragment = new MyticketListFragment();
                 return myticketListFragment;
-
+            case 4:
+                // notification
+                MyDramaFragment myDramaFragment = new MyDramaFragment();
+                return myDramaFragment;
             default:
                 return new DramaFragment();
         }
@@ -302,6 +307,16 @@ public class HomeActivity extends AppCompatActivity {
                         Log.d("","setUpNavigationView nav_bookmark ");
                         CURRENT_TAG = TAG_BOOKMARK;
                         fragment = new MyticketListFragment();
+
+                        HomeActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                        drawer.closeDrawers();
+                        return true;
+                    case R.id.nav_mydrama:
+                        navItemIndex = 4;
+                        Log.d("","setUpNavigationView nav_bookmark ");
+                        CURRENT_TAG = TAG_MYDRAMA;
+                        fragment = new MyDramaFragment();
 
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();

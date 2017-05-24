@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -29,10 +30,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
@@ -65,11 +68,14 @@ import com.hanks.htextview.HTextViewType;
 import com.lognsys.kalrav.db.SQLiteHelper;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.dialog.NetworkStatusDialog;
+import com.lognsys.kalrav.fragment.DramaFragment;
+import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.FontManager;
 import com.lognsys.kalrav.util.KalravApplication;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -107,8 +113,9 @@ public class LoginActivity extends AppCompatActivity implements
     private static final int RC_NETWORK_DIALOG = 101;
     Timer timer;
     TimerTask timerTask;
-   TextView textSkipLogin;
+    TextView textSkipLogin;
     ProgressDialog progressDialog;
+
     //login_activity UI variable
     private ImageView fbSignIn, googSignIn;
     private LoginButton loginButton;
@@ -118,37 +125,40 @@ public class LoginActivity extends AppCompatActivity implements
     private HTextView hTextView;
     Handler mHtHandler;
     Handler mUiHandler;
+
     //firebase variable declaration
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-private  String facebookImageUrl;
+    private  String facebookImageUrl;
+
     //Google API variable
     private GoogleApiClient mGoogleApiClient;
 
 
     //Shared preference variables;
-    private String email = "";
+    private String fb_id,google_id,email = "";
     private boolean login_status = false;
     private String oauthId = "";
     private String device_token_id = "";
     UserInfoDAOImpl userDaoImpl;
     SharedPreferences sharedpreferences;
+    private  String GET_USERDETAILS_IF_ALREADY_EXIST_URL="http://192.168.0.19:8080/getusername/users/username/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
-
         //creating database sqlite and storing user pojo
         SQLiteHelper database = new SQLiteHelper(this);
         userDaoImpl = new UserInfoDAOImpl(this);
+
         //Instantiating global obj
         // globalObj = ((KalravApplication) getApplicationContext());
 
         //LOGIN MODULE Step 1: Check if last user loggedIN
         UserInfo user = userDaoImpl.lastUserLoggedIn();
+        Log.d(TAG, "CASE1:  KalravApplication.getInstance().getPrefs().getIsLogin()..."+ KalravApplication.getInstance().getPrefs().getIsLogin());
+        Log.d(TAG, "CASE1:  user..."+ user);
 
         if (null != user && KalravApplication.getInstance().getPrefs().getIsLogin()) {
             Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
@@ -156,20 +166,18 @@ private  String facebookImageUrl;
                 //setting global variable
                 KalravApplication.getInstance().setGlobalUserObject(user);
                 KalravApplication.getInstance().invokeService(getApplicationContext());
-
                 Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
+                if(user.getEmail()!=null && user.getEmail().length()>0){
+                    docallApi(user);
 
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                }
 
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//                startActivity(intent);
+//                finish();
             }
-
-
-
         }
         else {
-
             Log.d(TAG, "Case2: OnCreate method - Login through Facebook Auth and saving to database.");
             //Initialize Facebook sdk
             FacebookSdk.sdkInitialize(getApplicationContext());
@@ -177,47 +185,48 @@ private  String facebookImageUrl;
 
             //setting layout activity_login
             setContentView(R.layout.activity_login);
+
             textSkipLogin=(TextView)findViewById(R.id.textSkipLogin);
             textSkipLogin.setOnClickListener(this);
             hTextView = (HTextView) findViewById(R.id.text);
+
             hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
+
             // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
             hTextView.setAnimateType(HTextViewType.TYPER);
             hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
 
 
             loginButton = (LoginButton) findViewById(R.id.fb_image);
+
             loginButton.setBackgroundResource(R.drawable.fb);
             loginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             loginButton.setReadPermissions("email", "public_profile");
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-
                     requestData();
-
                 }
-
                 @Override
                 public void onCancel() {
-                    Toast.makeText(getApplicationContext(), "Login Cancelled...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_cancel), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onError(FacebookException e) {
 
-                    Toast.makeText(getApplicationContext(), "Login Error: Check network connection...", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG,"Exception isAppInstalled " +isAppInstalled(getApplicationContext(), "com.facebook.katana"));
+                    Toast.makeText(getApplicationContext(),getResources().getString(R.string.login_error), Toast.LENGTH_SHORT).show();
+                   /* Log.e(TAG,"Exception isAppInstalled " +isAppInstalled(getApplicationContext(), "com.facebook.katana"));
                     if(isAppInstalled(getApplicationContext(), "com.facebook.katana")) {
                         // Do something
                         Intent receiverIntent = new Intent(Intent.ACTION_VIEW);
-                        receiverIntent.setData(Uri.parse("com.facebook.katana&hl=en"));
+                        receiverIntent.setClassName("com.facebook.katana","");
                         startActivity(receiverIntent);
                     }else {
                         Intent i = new Intent(android.content.Intent.ACTION_VIEW);
                         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.facebook.katana"));
                         startActivity(i);
-                    }
+                    }*/
                     //log facebook Error
                     Log.e(TAG,"Exception" +e);
                 }
@@ -252,16 +261,14 @@ private  String facebookImageUrl;
             mAuthListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:" + firebaseAuth);
+                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:" + firebaseAuth+" firebaseAuth.getCurrentUser():" +firebaseAuth.getCurrentUser());
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                    Log.d(TAG, "onAuthStateChanged:firebaseAuth.getCurrentUser():" +firebaseAuth.getCurrentUser());
                     Log.d(TAG, "onAuthStateChanged:user:" +user);
                     if (user != null) {
 
                         // User is signed in
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                        Log.d(TAG, "onAuthStateChanged:Provider:" + user.getProviderId());
+                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid()+" Provider:" + user.getProviderId());
 
                         KalravApplication.getInstance().getPrefs().setIsLogin(true);
                         Intent i = new Intent(LoginActivity.this, HomeActivity.class);
@@ -274,14 +281,7 @@ private  String facebookImageUrl;
                     }
                 }
             };
-
-
         }
-
-
-
-
-
     }
 
     private boolean isAppInstalled(Context context, String packageName) {
@@ -313,6 +313,7 @@ private  String facebookImageUrl;
                         Log.v(TAG, " Facebook API response id- " + json.getString("id"));
 
                         userInfo.setFb_id(json.getString("id"));
+                        fb_id=userInfo.getFb_id();
                         KalravApplication.getInstance().getPrefs().setImage(userInfo.getFb_id());
                         KalravApplication.getInstance().getPrefs().setIsFacebookLogin(true);
                         userInfo.setEmail(json.getString("email"));
@@ -322,11 +323,92 @@ private  String facebookImageUrl;
                         KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
                         ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
                         userInfos.add(userInfo);
+                        if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
+                            // do something long
+                            Runnable runnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    docallApi(userInfo.getEmail());
 
-                        Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-                        i.putExtra("userInfos",userInfos);
-                        startActivity(i);
-                        finish();
+                                }
+
+                                private void docallApi(String email) {
+                                    KalravApplication.getInstance().getPrefs().showpDialog(LoginActivity.this);
+                                    GET_USERDETAILS_IF_ALREADY_EXIST_URL=GET_USERDETAILS_IF_ALREADY_EXIST_URL+email;
+
+                                    JsonArrayRequest req = new JsonArrayRequest(GET_USERDETAILS_IF_ALREADY_EXIST_URL,
+                                            new Response.Listener<JSONArray>() {
+                                                @Override
+                                                public void onResponse(JSONArray response) {
+
+                                                    try {
+                                                        Log.d("","GET_USERDETAILS_IF_ALREADY_EXIST_URL response.length() "+response.length());
+                                                        /*if (response != null) {
+                                                            JSONObject jsonObject = new JSONObject(response);
+
+                                                            UserInfo  userInfo = new UserInfo();
+                                                            userInfo.setId(jsonObject.getInt("id"));
+                                                            userInfo.setName(jsonObject.getString("realname"));
+                                                            userInfo.setEmail(jsonObject.getString("username"));
+                                                            if (fb_id != null)
+                                                                userInfo.setFb_id(fb_id);
+                                                            if (google_id != null)
+                                                                userInfo.setGoogle_id(google_id);
+                                                            userInfo.setPhoneNo(jsonObject.getString("phone"));
+                                                            userInfo.setAddress(jsonObject.getString("address"));
+                                                            userInfo.setCity(jsonObject.getString("city"));
+                                                            userInfo.setState(jsonObject.getString("state"));
+                                                            userInfo.setZipcode(jsonObject.getString("zipcode"));
+                                                            userInfo.setLoggedIn(Constants.LOG_IN);
+//                                                            //save to the database
+
+                                                            KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+                                                            KalravApplication.getInstance().setGlobalUserObject(userInfo);
+                                                            Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
+                                                            userDaoImpl.addUser(userInfo);
+                                                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
+
+                                                            dialog.dismiss();
+                                                            KalravApplication.getInstance().showDialog(RegisterActivity.this, "User Created Successfully !!!");
+                                                            Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
+                                                            startActivity(i);
+                                                            finish();
+
+                                                        }*/
+
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                        Log.d("","JSonException Exception "+e);
+
+                                                        Toast.makeText(getApplicationContext(),
+                                                                getString(R.string.no_data_available),
+                                                                Toast.LENGTH_LONG).show();
+                                                    }
+
+                                                }
+                                            }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Log.d("","Error: volly Exception " + error);
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.unknown_error),
+                                                    Toast.LENGTH_LONG).show();
+                                            KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+                                        }
+                                    });
+
+                                    KalravApplication.getInstance().addToRequestQueue(req);
+
+                                }
+                            };
+                            new Thread(runnable).start();
+                        }
+
+//                        Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+//                        i.putExtra("userInfos",userInfos);
+//                        startActivity(i);
+//                        finish();
                     }
                      else {
                     Log.e(TAG, "Could not retrieve data from facebook graphapi...");
@@ -338,7 +420,9 @@ private  String facebookImageUrl;
                 }
         }
 
-    });
+
+
+        });
 
     Bundle parameters = new Bundle();
         parameters.putString("fields", "id, name, email");
@@ -374,7 +458,6 @@ private  String facebookImageUrl;
      * Signin method with GoogleSignInApi
      */
     private void signIn() {
-        Log.d(TAG, "firebaseAuthWithGoogle: signIn" );
         Log.d(TAG, "firebaseAuthWithGoogle: signIn mGoogleApiClient " +mGoogleApiClient);
 
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -439,22 +522,18 @@ private  String facebookImageUrl;
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:Google:" + task.isSuccessful());
+//                        Log.d(TAG, "signInWithCredential:onComplete:Google:" + task.isSuccessful());
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+//                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(LoginActivity.this, getResources().getString(R.string.authentication_failed),
                                     Toast.LENGTH_SHORT).show();
 
                         } else {
                             final UserInfo userInfo = new UserInfo();
 
-                            Log.d(TAG, "Google Login Success...");
-                            Log.d(TAG, "Google Login Success getDisplayName ..."+mAuth.getCurrentUser().getDisplayName());
-                            Log.d(TAG, "Google Login Success getEmail..."+mAuth.getCurrentUser().getEmail());
-                            Log.d(TAG, "Google Login Success getPhotoUrl..."+mAuth.getCurrentUser().getPhotoUrl());
 
                             try {
                                             if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
@@ -474,11 +553,13 @@ private  String facebookImageUrl;
                                             }
 
                                         userInfo.setLoggedIn(Constants.LOG_IN);
+//                                Log.d(TAG, "Google userInfo.getEmail()..."+userInfo.getEmail());
 
-                                int user_count=userDaoImpl.findUser(userInfo);
-                                Log.d(TAG, "Requesting Google Login userInfo1..."+user_count);
+                                if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
+                                    docallApi(userInfo);
 
-                                if(user_count>0){
+                                }
+                               /* if(user_count>0){
                                             UserInfo userInfo1=userDaoImpl.findUserBy(userInfo);
                                             if(userInfo1 !=null){
                                                 Intent i = new Intent(LoginActivity.this, HomeActivity.class);
@@ -487,6 +568,7 @@ private  String facebookImageUrl;
                                             }
                                         }
                                         else{
+
                                             ArrayList<UserInfo> userInfos=new ArrayList<UserInfo>();
                                             userInfos.add(userInfo);
                                             Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -495,7 +577,7 @@ private  String facebookImageUrl;
                                             finish();
                                         }
 
-
+*/
 
                                     } catch (Exception e) {
                                         Log.d(TAG, "Requesting google JSONException..."+e);
@@ -616,6 +698,7 @@ private  String facebookImageUrl;
     public void onStart() {
         super.onStart();
         startTimer();
+        if(mAuthListener!=null)
         mAuth.addAuthStateListener(mAuthListener);
     }
 
@@ -665,11 +748,17 @@ private  String facebookImageUrl;
                 handler.post(new Runnable() {
 
                     public void run() {
+
                         hTextView = (HTextView) findViewById(R.id.text);
-                        hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
-                        // be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
-                        hTextView.setAnimateType(HTextViewType.TYPER);
-                        hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
+                        Typeface myTypeFace = Typeface.createFromAsset(getAssets(), "fonts/Mirza-Regular.ttf");
+
+//                        hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
+                        if(hTextView!=null) {
+                            hTextView.setTypeface(myTypeFace);
+                            hTextView.setAnimateType(HTextViewType.TYPER);
+                            hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
+
+                        }// be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
 
                     }
                 });
@@ -677,5 +766,85 @@ private  String facebookImageUrl;
         };
     }
 
+    private void docallApi(UserInfo userInfo) {
+//        Log.d(TAG, "Google docallApi userInfo.getEmail()..."+userInfo.getEmail());
+        Log.d(TAG, "Google docallApi email................."+userInfo.getEmail());
+
+        GET_USERDETAILS_IF_ALREADY_EXIST_URL=GET_USERDETAILS_IF_ALREADY_EXIST_URL+userInfo.getEmail();
+        Log.d(TAG, "Google docallApi GET_USERDETAILS_IF_ALREADY_EXIST_URL..."+GET_USERDETAILS_IF_ALREADY_EXIST_URL);
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,GET_USERDETAILS_IF_ALREADY_EXIST_URL,
+                null,new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+
+                try {
+                    Log.d("","Google docallApi GET_USERDETAILS_IF_ALREADY_EXIST_URL response.length() "+jsonObject.length());
+                    Log.d("","Google docallApi GET_USERDETAILS_IF_ALREADY_EXIST_URL response.toString() "+jsonObject.toString());
+                                                      if (jsonObject != null) {
+
+                                                            UserInfo  userInfo = new UserInfo();
+                                                            userInfo.setId(jsonObject.getInt("id"));
+                                                            userInfo.setName(jsonObject.getString("realname"));
+                                                            userInfo.setEmail(jsonObject.getString("username"));
+                                                            if (fb_id != null){
+                                                                userInfo.setFb_id(fb_id);
+                                                                KalravApplication.getInstance().getPrefs().setUser_id(fb_id);
+                                                            }
+                                                            if (google_id != null) {
+                                                                userInfo.setGoogle_id(google_id);
+                                                                KalravApplication.getInstance().getPrefs().setUser_id(google_id);
+                                                            }
+                                                            userInfo.setPhoneNo(jsonObject.getString("phone"));
+                                                            userInfo.setAddress(jsonObject.getString("address"));
+                                                            userInfo.setCity(jsonObject.getString("city"));
+                                                            userInfo.setState(jsonObject.getString("state"));
+                                                            userInfo.setZipcode(jsonObject.getString("zipcode"));
+                                                          userInfo.setGroupname(jsonObject.getString("group"));
+                                                          userInfo.setLoggedIn(Constants.LOG_IN);
+//                                                            //save to the database
+                                                          KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
+                                                          KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
+
+                                                          KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+                                                            KalravApplication.getInstance().setGlobalUserObject(userInfo);
+                                                            Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
+                                                            userDaoImpl.addUser(userInfo);
+                                                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
+
+                                                           Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                                                            startActivity(i);
+                                                            finish();
+
+                                                        }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("","JSonException docallApi Exception "+e);
+
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.no_data_available),
+                            Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("","Google docallApi Error: volly Exception " + error);
+                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(i);
+                finish();
+                KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+            }
+        });
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        KalravApplication.getInstance().addToRequestQueue(req);
+
+    }
 }
 

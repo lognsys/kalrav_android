@@ -107,7 +107,7 @@ public class KalravApplication extends Application {
     }
 public  void invokeService(Context context){
     // use this to start and trigger a service
-    Log.d(TAG, "OnCreate invokeService context- " +context);
+    Log.d(TAG, "Service OnCreate invokeService context- " +context);
 
     Intent i= new Intent(context, KalravDramaByGroupService.class);
     context.startService(i);

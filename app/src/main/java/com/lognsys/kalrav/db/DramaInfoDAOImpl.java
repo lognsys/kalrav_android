@@ -91,6 +91,68 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
             return true;
 
     }
+
+    @Override
+    public List<DramaInfo> getAllDramaByUserGroup(String group_name) {
+        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+        DramaInfo dramaInfo = null;
+
+
+        ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
+        Cursor c = db.rawQuery("SELECT " + SQLiteHelper.COLUMN_ID + "," +
+                SQLiteHelper.COLUMN_GROUP_NAME + "," +
+                SQLiteHelper.COLUMN_DRAMA_NAME + "," +
+                SQLiteHelper.COLUMN_LINK_PHOTO + "," +
+                SQLiteHelper.COLUMN_DATETIME +"," +
+                SQLiteHelper.COLUMN_DRAMA_LENGTH +"," +
+                SQLiteHelper.COLUMN_DRAMA_LANGUAGE +"," +
+                SQLiteHelper.COLUMN_DRAMA_GENRE +"," +
+                SQLiteHelper.COLUMN_DRAMA_TIME +"," +
+                SQLiteHelper.COLUMN_DRAMA_DESCRIPTION +"," +
+                SQLiteHelper.COLUMN_DRAMA_ISFAV +
+                " FROM drama where "+ SQLiteHelper.COLUMN_GROUP_NAME +" =? ", new String[]{group_name});
+        if(c!=null)
+            Log.d("","Test getAllDrama  c.getCount() "+ c.getCount());
+
+        if (c != null && c.getCount()>0) {
+
+            while (c.moveToNext()){
+                dramaInfo = new DramaInfo();
+                String id = c.getString(0);
+                String groupname = c.getString(1);
+                String dramaname = c.getString(2);
+                String linkphoto = c.getString(3);
+                String datatime = c.getString(4);
+                String dramaLength = c.getString(5);
+                String dramaLanguage = c.getString(6);
+                String dramaGenre = c.getString(7);
+                String dramaTime= c.getString(8);
+                String briefDescription= c.getString(9);
+                String isFav= c.getString(10);
+                Log.d("","Fragment getAllDrama isFav "+isFav);
+
+                dramaInfo.setId(Integer.parseInt(id));
+                dramaInfo.setGroup_name(groupname);
+                dramaInfo.setTitle(dramaname);
+                dramaInfo.setLink_photo(linkphoto);
+                dramaInfo.setDatetime(datatime);;
+                dramaInfo.setDrama_length(dramaLength);;
+                dramaInfo.setDrama_language(dramaLanguage);;
+                dramaInfo.setGenre(dramaGenre);;
+                dramaInfo.setTime(dramaTime);
+                dramaInfo.setDescription(briefDescription);
+                dramaInfo.setIsfav(isFav);
+
+                Log.d("","Fragment getAllDrama getIsfav "+dramaInfo.getIsfav());
+                dramaInfos.add(dramaInfo);
+            }
+            Log.d("","Fragment getAllDrama dramaInfos.size "+dramaInfos.size());
+
+            c.close();
+        }
+        return dramaInfos;
+    }
+
     @Override
     public int updateDrama(DramaInfo dramaInfo) {
 

@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
+import com.lognsys.kalrav.model.DramaInfo;
+
+import java.util.ArrayList;
+
 /**
  * Created by admin on 3/22/2017.
  */
@@ -266,6 +270,19 @@ public class Preference {
     public String getUser_id()
     {
         return sharedPreferences.getString("user_id", null);
+    }
+
+
+
+    public String getUser_Group_Name()
+    {
+        return sharedPreferences.getString("group", null);
+    }
+    public void setUser_Group_Name(String group)
+    {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("group", group);
+        editor.commit();
     }
 
 }

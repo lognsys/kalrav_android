@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DramaFragment extends Fragment {
+public class MyDramaFragment extends Fragment {
     ArrayList<DramaInfo> listitems = new ArrayList<>();
     RecyclerView myRecyclerView;
     static Bitmap bm;
@@ -146,7 +146,14 @@ public class DramaFragment extends Fragment {
                                     dramaInfo.setIsfav(isFav);
                                     dramaInfoDAO.addDrama(dramaInfo);
 
-                                    dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+                                 if(KalravApplication.getInstance().getPrefs().getUser_Group_Name()!=null && KalravApplication.getInstance().getPrefs().getUser_Group_Name().length()>0)
+                                   {
+                                       dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDramaByUserGroup(KalravApplication.getInstance().getPrefs().getUser_Group_Name());
+                                   }
+                                   else{
+                                        dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+
+                                    }
                                     Log.d("","Test onPost dramaInfos.size "+dramaInfos.size());
                                     if (dramaInfos.size() > 0 & dramaInfos != null) {
                                         adapter=new MyAdapter(dramaInfos);
@@ -299,7 +306,7 @@ public class DramaFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     dramaInfo[0] =list.get(position);
-                    Log.d("DramaFragment","Fragment draminfo id "+ dramaInfo[0].getId());
+                    Log.d("MyDramaFragment","Fragment draminfo id "+ dramaInfo[0].getId());
                     if(dramaInfo[0].getIsfav()==null || !dramaInfo[0].getIsfav().equalsIgnoreCase("true")){
                         holder.bookmarkImageView.setImageResource(R.mipmap.ic_like);
                         Toast.makeText(v.getContext(), "Added to Favourite ", Toast.LENGTH_SHORT).show();
@@ -309,7 +316,7 @@ public class DramaFragment extends Fragment {
 
                             favouritesInfoDAOImpl.addFav(favouritesInfo);
                             favouritesInfos=favouritesInfoDAOImpl.getAllFav();
-                            Log.d("DramaFragment","Fragment favouritesInfos size "+favouritesInfos.size());
+                            Log.d("MyDramaFragment","Fragment favouritesInfos size "+favouritesInfos.size());
                             dramaInfo[0].setIsfav("true");
                             dramaInfoDAO.updateDrama(dramaInfo[0]);
 

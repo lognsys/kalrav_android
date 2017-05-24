@@ -11,6 +11,7 @@
     <string name="nav_notifications">Notification</string>
     <string name="nav_photos">Photo</string>
     <string name="nav_bookmark">Bookmarks</string>
+    <string name="nav_mydrama">My Drama</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_about_us">About Us</string>
     <string name="my_tickets">My Tickets</string>
@@ -77,4 +78,7 @@
     <string name="no_data_available">No data available</string>
     <string name="unknown_error">Unknown Error please Contact to Support Team</string>
 
+    <string name="login_cancel">Login Cancelled...</string>
+    <string name="login_error">Login Error: Check network connection...</string>
+    <string name="authentication_failed">Authentication failed...</string>
 </resources>
