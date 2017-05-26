@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +37,9 @@ import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.db.FavouritesInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.FavouritesInfo;
+import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -49,6 +52,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 public class DramaFragment extends Fragment {
@@ -63,7 +67,11 @@ public class DramaFragment extends Fragment {
     List<FavouritesInfo> favouritesInfos;
     MyAdapter adapter;
 //    http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2
-    private static final String GETALLDRAMA_AND_GROUP_URL="http://192.168.0.19:8080/getalldramaandgroup";
+
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,8 +97,9 @@ public class DramaFragment extends Fragment {
 
     private void displaydrama() {
         KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+        String getAllDramaWithGroupUrl=properties.getProperty(Constants.API_URL_DRAMA.get_alldrama_with_group_url.name());
 
-        JsonArrayRequest req = new JsonArrayRequest(GETALLDRAMA_AND_GROUP_URL,
+        JsonArrayRequest req = new JsonArrayRequest(getAllDramaWithGroupUrl,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -171,7 +180,7 @@ public class DramaFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("","Error: volly Exception " + error);
+                Log.e("","Error: volly Exception " + error);
                 Toast.makeText(getContext(),
                         getString(R.string.unknown_error),
                         Toast.LENGTH_LONG).show();
@@ -193,10 +202,13 @@ public class DramaFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
+        propertyReader = new PropertyReader(getActivity());
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+
+
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
-
-        mAdView = (AdView)view.findViewById(R.id.listener_av_main);
+       mAdView = (AdView)view.findViewById(R.id.listener_av_main);
 
         mAdView.setAdListener(new AdListener() {
             private void showToast(String message) {
@@ -292,7 +304,20 @@ public class DramaFragment extends Fragment {
                 holder.bookmarkImageView.setImageResource(R.mipmap.ic_unlike);
 
             }
-
+            holder.btnbook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dramaInfo[0] =list.get(position);
+                    if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("dramaInfoId", dramaInfo[0].getId());
+                            Fragment fragment = new AuditoriumListFragment();
+                            fragment.setArguments(bundle);
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                    }
+                }
+            });
             // holder.coverImageView.setTag(list.get(position).getImageResourceId());
             holder.bookmarkImageView.setOnClickListener(new View.OnClickListener() {
                 private boolean stateChanged;
@@ -394,6 +419,7 @@ public class DramaFragment extends Fragment {
             public ImageView bookmarkImageView;
             public ImageView shareImageView;
             public TextView textGroupname;
+            public Button btnbook;
 
 
             public MyViewHolder(View itemView) {
@@ -403,6 +429,7 @@ public class DramaFragment extends Fragment {
                 bookmarkImageView = (ImageView) itemView.findViewById(R.id.likeImageView);
                 shareImageView = (ImageView) itemView.findViewById(R.id.shareImageView);
                 textGroupname= (TextView) itemView.findViewById(R.id.textGroupname);
+                btnbook= (Button) itemView.findViewById(R.id.btnbook);
                 Log.d("", "MyAdapter MyViewHolder ");
                 itemView.setOnClickListener(this);
             }

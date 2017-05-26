@@ -16,13 +16,16 @@ import com.lognsys.kalrav.db.FavouritesInfoDAOImpl;
 import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.FavouritesInfo;
+import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Timer;
 
 /**
@@ -32,12 +35,17 @@ import java.util.Timer;
 public class KalravDramaByGroupService extends Service {
     private final int UPDATE_INTERVAL = 60 * 1000;
     private Timer timer = new Timer();
-    private  String GETALLDRAMA_AND_GROUP_URL="http://192.168.0.19:8080/getalldramaandgroup/";
 
     ArrayList<DramaInfo> dramaInfos;
     DramaInfoDAOImpl dramaInfoDAO;
     FavouritesInfoDAOImpl favouritesInfoDAOImpl;
     FavouritesInfo favouritesInfo;
+
+
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
 
     @Override
     public void onCreate() {
@@ -60,6 +68,9 @@ public class KalravDramaByGroupService extends Service {
       super.onStartCommand(intent,flags,startId);
         Log.d("Service"," Service onStartCommand KalravApplication.getInstance().getPrefs().getCustomer_id() "+KalravApplication.getInstance().getPrefs().getCustomer_id());
         Log.d("Service"," Service onStartCommand KalravApplication.getInstance().getPrefs().getUser_Group_Name() "+KalravApplication.getInstance().getPrefs().getUser_Group_Name());
+        propertyReader = new PropertyReader(this);
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+
         if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null && KalravApplication.getInstance().getPrefs().getUser_Group_Name()!=null){
             String group_name=KalravApplication.getInstance().getPrefs().getUser_Group_Name();
             Log.d("Service"," Service onStartCommand ");
@@ -74,11 +85,10 @@ public class KalravDramaByGroupService extends Service {
         return Service.START_STICKY;
     }
     private void displayramaByGroup(String group_name) {
+        String getAllDramaWithGroupUrl=properties.getProperty(Constants.API_URL_DRAMA.get_alldrama_with_group_url.name()+group_name);
+        Log.d("", "Google docallApi getAllDramaWithGroupUrl..."+getAllDramaWithGroupUrl);
 
-        Log.d("Service"," Service displayramaByGroup group_name ===== "+group_name);
-//
-        GETALLDRAMA_AND_GROUP_URL=GETALLDRAMA_AND_GROUP_URL+group_name;
-        JsonArrayRequest req = new JsonArrayRequest(GETALLDRAMA_AND_GROUP_URL,
+        JsonArrayRequest req = new JsonArrayRequest(getAllDramaWithGroupUrl,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

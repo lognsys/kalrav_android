@@ -28,4 +28,12 @@ public class Constants {
 
     public class Shared {
     }
+
+    public enum API_URL_USER {
+        post_create_user_url,
+        get_userdetails_already_exist_url
+    }
+    public enum API_URL_DRAMA {
+        get_alldrama_with_group_url
+    }
 }

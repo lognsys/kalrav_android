@@ -1,0 +1,17 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    tools:context="com.lognsys.kalrav.fragment.AuditoriumListFragment">
+
+    <noman.weekcalendar.WeekCalendar
+        android:id="@+id/weekCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@color/colorPrimary"
+        app:numOfPages="150"
+        app:dayNameLength="threeLetters"
+        app:todaysDateBgColor="#ffffff"
+        app:todaysDateTextColor="#000000"/>
+</RelativeLayout>

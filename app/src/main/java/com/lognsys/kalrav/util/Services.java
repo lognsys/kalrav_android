@@ -61,7 +61,16 @@ public class Services {
         return isValid;
 
     }
+    public static boolean isValidZipCode(String zipcode) {
 
+        boolean isValid = true;
+
+        if(!zipcode.matches("\\d{10}") || !zipcode.matches("^(\\d)(?!\\1+$)\\d*$"))
+            isValid = false;
+
+        return isValid;
+
+    }
     public static boolean isEmpty(String str) {
         return str.trim().isEmpty();
     }

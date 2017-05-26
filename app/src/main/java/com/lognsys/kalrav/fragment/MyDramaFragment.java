@@ -36,7 +36,9 @@ import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.db.FavouritesInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.FavouritesInfo;
+import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -49,6 +51,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 public class MyDramaFragment extends Fragment {
@@ -63,7 +66,11 @@ public class MyDramaFragment extends Fragment {
     List<FavouritesInfo> favouritesInfos;
     MyAdapter adapter;
 //    http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2
-    private static final String GETALLDRAMA_AND_GROUP_URL="http://192.168.0.19:8080/getalldramaandgroup";
+//Properties
+private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,8 +96,9 @@ public class MyDramaFragment extends Fragment {
 
     private void displaydrama() {
         KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+        String getAllDramaWithGroupUrl=properties.getProperty(Constants.API_URL_DRAMA.get_alldrama_with_group_url.name());
 
-        JsonArrayRequest req = new JsonArrayRequest(GETALLDRAMA_AND_GROUP_URL,
+        JsonArrayRequest req = new JsonArrayRequest(getAllDramaWithGroupUrl,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -202,6 +210,8 @@ public class MyDramaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
+        propertyReader = new PropertyReader(getActivity());
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
         mAdView = (AdView)view.findViewById(R.id.listener_av_main);
 

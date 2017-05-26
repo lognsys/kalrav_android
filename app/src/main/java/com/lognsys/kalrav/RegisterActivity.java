@@ -33,6 +33,7 @@ import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 import com.lognsys.kalrav.util.Services;
 
 import org.json.JSONException;
@@ -58,6 +59,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.validation.Validator;
 
@@ -71,10 +73,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText editState;
     private EditText editPincode;
     private Button btnRegister;
-    //   String REST_REGISTER_USER="http://192.168.0.19:8080/createuser/0/dADAFSDBVXVXCV/deepu@gmail.com/deepu%20sharma/8767569879/location/provenance/2017-05-16%2017:09:51/true/false/device/google/city/state/401107/company/deepu/viv/Youth/Admin";
-    String REST_REGISTER_USER = "http://192.168.0.19:8080/createuser/";
     private String fb_id, google_id;
-    // Initializing a String Array
+
+
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
 
     ArrayList<UserInfo> userInfos;
     UserInfoDAOImpl userDaoImpl;
@@ -83,6 +88,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        propertyReader = new PropertyReader(this);
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
         userDaoImpl = new UserInfoDAOImpl(this);
 
@@ -167,7 +174,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             } else if (!Services.isEmailValid(editUsername.getText().toString())) {
                 editUsername.setError("Email is not valid");
-            } else if (editMobileNumber.getText().toString().length() == 0) {
+            } else if (editAddress.getText().toString().length() == 0) {
+                editAddress.setError("Address is Required");
+                editAddress.requestFocus();
+            } else if (editCities.getText().toString().length() == 0) {
+                editCities.setError("City is Required");
+                editCities.requestFocus();
+            } else if (editState.getText().toString().length() == 0) {
+                editState.setError("State is Required");
+                editState.requestFocus();
+            }else if (editPincode.getText().toString().length() == 0) {
+                editPincode.setError("Zipcode is Required");
+                editPincode.requestFocus();
+            }else if (!Services.isValidZipCode(editPincode.getText().toString()) && editPincode.getText().toString().length() >6) {
+                editPincode.setError("Please enter valid zipcode");
+            }
+            else if (editMobileNumber.getText().toString().length() == 0) {
                 editMobileNumber.setError("Mobile number is Required");
                 editMobileNumber.requestFocus();
             } else if (!Services.isValidMobileNo(editMobileNumber.getText().toString()) && editMobileNumber.getText().toString().length() < 10) {
@@ -187,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 KalravApplication.getInstance().getPrefs().setEmail(username);
                 KalravApplication.getInstance().getPrefs().setMobile(phone);
                 String auth_id = null;
-                    auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
+                auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
                 RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
                 task.execute();
             }
@@ -245,9 +267,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         + "/"+this.state+"/"+this.zipcode+"/" + firstname + "/" + lastname + "/None/None";
                 postParameters = postParameters.replace(" ", "%20");
 
-
-                String urlString = REST_REGISTER_USER + postParameters;
-                URL urlToRequest = new URL(urlString);
+                String post_create_user_url=properties.getProperty(Constants.API_URL_USER.post_create_user_url.name())+postParameters;
+                URL urlToRequest = new URL(post_create_user_url);
                 Log.d("", "Test doInBackground urlToRequest " + urlToRequest);
 
                 HttpURLConnection urlConnection =
@@ -341,7 +362,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     KalravApplication.getInstance().getPrefs().setIsLogin(true);
 
                     dialog.dismiss();
-                    KalravApplication.getInstance().showDialog(RegisterActivity.this, "User Created Successfully !!!");
+//                    KalravApplication.getInstance().showDialog(RegisterActivity.this, "User Created Successfully !!!");
                     Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
                     startActivity(i);
                     finish();

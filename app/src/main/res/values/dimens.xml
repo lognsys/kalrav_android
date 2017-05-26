@@ -26,4 +26,6 @@
     <dimen name="profile_width">100dp</dimen>
     <dimen name="profile_height">100dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="day_text_wh">30dp</dimen>
 </resources>
