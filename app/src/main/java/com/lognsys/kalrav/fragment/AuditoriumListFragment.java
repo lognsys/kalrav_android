@@ -1,23 +1,51 @@
 package com.lognsys.kalrav.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.util.KalravApplication;
+import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import noman.weekcalendar.WeekCalendar;
 import noman.weekcalendar.listener.OnDateClickListener;
@@ -40,8 +68,10 @@ public class AuditoriumListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     int dramaInfoId;
-
-
+    RecyclerView myRecyclerView;
+    List<Auditorium> auditoriumList;
+    Auditorium auditorium;
+    MyAdapter adapter;
 
     private WeekCalendar weekCalendar;
     private OnFragmentInteractionListener mListener;
@@ -82,6 +112,8 @@ public class AuditoriumListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_auditorium_list, container, false);
         dramaInfoId = (int) getArguments().getSerializable("dramaInfoId");
+        final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        auditoriumList=new ArrayList<Auditorium>();
         // Inflate the layout for this fragment
         /*SimpleDateFormat curFormater = new SimpleDateFormat("EEE dd");
         GregorianCalendar date = new GregorianCalendar();
@@ -93,11 +125,26 @@ public class AuditoriumListFragment extends Fragment {
             date.roll(Calendar.DAY_OF_MONTH, true);
             Log.d("","HELLO WORLD DAYS: "+dateStringArray[day]);
         }*/
+        String strDate = fmt.print(new DateTime());
+
+        myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+        myRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+         auditorium=new Auditorium();
+
+        myRecyclerView.setLayoutManager(MyLayoutManager);
+        Log.d("","HELLO WORLD DateTime: "+new DateTime().toString());
         weekCalendar = (WeekCalendar)view.findViewById(R.id.weekCalendar);
         weekCalendar.setOnDateClickListener(new OnDateClickListener() {
             @Override
             public void onDateClick(DateTime dateTime) {
-                Toast.makeText(getActivity(), "You Selected " + dateTime.toString(), Toast
+
+               String strDate = fmt.print(dateTime);
+                Log.d("","HELLO WORLD DateTime: "+new DateTime().toString());
+                Log.d("","HELLO WORLD strDate: "+strDate);
+
+                Toast.makeText(getActivity(), "You Selected " + strDate, Toast
                         .LENGTH_SHORT).show();
             }
 
@@ -109,9 +156,105 @@ public class AuditoriumListFragment extends Fragment {
                         " Forward: " + forward, Toast.LENGTH_SHORT).show();
             }
         });*/
+        requestAuditoriumDateTime(dramaInfoId,strDate);
         return view;
     }
 
+    private void requestAuditoriumDateTime(int dramaInfoId, String strDate) {
+        KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+
+        JsonArrayRequest req = new JsonArrayRequest("http://www.json-generator.com/api/json/get/bIImeEJuIy?indent=2",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                    Log.d("","requestAuditoriumDateTime response "+ response.toString());
+
+
+//                    Log.d("","requestAuditoriumDateTime ======= jsonArray "+jsonArray);;
+                    Log.d("","requestAuditoriumDateTime ======= response length "+response.length());;
+
+                    for(int i=0;i<response.length();i++){
+                        auditorium=new Auditorium();
+                        JSONObject jsonObject= response.getJSONObject(i);
+                        Log.d("","requestAuditoriumDateTime ======= jsonObject "+jsonObject);
+
+                        int auditoriumid = jsonObject.getInt("auditoriumid");
+                        auditorium.setAudiId(String.valueOf(auditoriumid));
+//                            Log.d("","requestAuditoriumDateTime ======= auditoriumid "+auditoriumid);
+
+                        String auditoriumname = jsonObject.getString("auditoriumname");
+                        auditorium.setAudiName(auditoriumname);
+//                            Log.d("","requestAuditoriumDateTime ======= auditoriumname "+auditoriumname);
+
+
+                            String time=jsonObject.getString("time");
+//                            Log.d("","requestAuditoriumDateTime ======= time "+time);
+
+                            JSONArray jsontimeArray=new JSONArray(time);
+//                            Log.d("","requestAuditoriumDateTime ======= jsontimeArray "+jsontimeArray);
+                            Log.d("","requestAuditoriumDateTime ======= jsontimeArray.length() "+jsontimeArray.length());
+                            StringBuilder sb=new StringBuilder();
+                            for(int j=0;j<jsontimeArray.length();j++)
+                            {
+                                String timevalue= jsontimeArray.getString(j);
+//                                Log.d("","requestAuditoriumDateTime ======= timevalue "+timevalue);
+
+                                sb.append(timevalue+" ");
+                            }
+                            Log.d("","requestAuditoriumDateTime ======= sb.toString() "+sb.toString());
+
+                            auditorium.setDatetime(sb.toString());
+
+                        auditoriumList.add(auditorium);
+
+                    }
+                    if (auditoriumList.size() > 0 & auditoriumList != null) {
+                        adapter= new MyAdapter(auditoriumList);
+                        myRecyclerView.setAdapter(adapter);
+                    }
+
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("","requestAuditoriumDateTime JSONException "+e);
+
+                    Toast.makeText(getActivity(),
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("","requestAuditoriumDateTime VolleyError "+error);
+
+                Toast.makeText(getActivity(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+            }
+        });
+        KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+        // Adding request to request queue
+        KalravApplication.getInstance().addToRequestQueue(req);
+
+    }
+
+    public static String getCurrentTimeStamp() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        return strDate;
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -150,4 +293,109 @@ public class AuditoriumListFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+
+
+
+    public class MyAdapter extends RecyclerView.Adapter<AuditoriumListFragment.MyAdapter.MyViewHolder> {
+        private List<Auditorium> list;
+
+        public MyAdapter(List<Auditorium> Data) {
+            list = Data;
+//            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
+
+        }
+        @Override
+        public AuditoriumListFragment.MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
+            // create a new view
+            Log.d("", "MyAdapter onCreateViewHolder ");
+            View view=null;
+            Auditorium auditorium =list.get(position);
+
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.auditoriumdetailfragment, parent, false);
+            AuditoriumListFragment.MyAdapter.MyViewHolder holder = new AuditoriumListFragment.MyAdapter.MyViewHolder(view);
+
+
+            return holder;
+
+
+        }
+
+        @Override
+        public void onBindViewHolder(final AuditoriumListFragment.MyAdapter.MyViewHolder holder, final int position) {
+//            Log.d("", "MyAdapter onBindViewHolder ");
+
+             Auditorium auditorium = list.get(position);
+            holder.textAuditoriumName.setText(auditorium.getAudiName());
+            String  timeArray = auditorium.getDatetime();
+            Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
+            String[] split= timeArray.split(" ");
+            Log.d("", "MyAdapter onBindViewHolder split.length "+split.length);
+
+            List<TextView> textList = new ArrayList<TextView>();
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            layoutParams.setMargins(30, 0, 30, 0);
+            for(int i = 0; i < split.length; i++)
+            {
+                TextView newTV = new TextView(getContext());
+                newTV.setText(split[i]);
+                newTV.setBackground(getResources().getDrawable(R.drawable.textviewbackgroundwithborder));
+                newTV.setLayoutParams(layoutParams);
+                /**** Any other text view setup code ****/
+                holder.linearTime.addView(newTV);
+
+                textList.add(newTV);
+            }
+            Log.d("", "MyAdapter onBindViewHolder textTime "+holder.textTime.getText().toString());
+
+
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            public TextView textAuditoriumName;
+            LinearLayout linearTime,linearblock;
+            public TextView textTime;
+
+
+            public MyViewHolder(View itemView) {
+                super(itemView);
+                textAuditoriumName = (TextView) itemView.findViewById(R.id.textAuditoriumName);
+                linearTime = (LinearLayout) itemView.findViewById(R.id.linearTime);
+                textTime=new TextView(getActivity());
+                Log.d("", "MyAdapter MyViewHolder ");
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                int position = getAdapterPosition(); // gets item position
+               /* if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
+                    DramaInfo dramaInfo = list.get(position);
+                    // We can access the data within the views
+                    if(dramaInfo!=null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("dramaInfo", dramaInfo);
+                        Fragment fragment = new FragmentDramaDetail();
+                        fragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                    }
+                }*/
+            }
+        }
+    }
+
+
+
 }

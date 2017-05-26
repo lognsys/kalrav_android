@@ -1,11 +1,9 @@
 package com.lognsys.kalrav.fragment;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -17,8 +15,6 @@ import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,15 +33,10 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.CustomGridArrayAdapter;
-import com.lognsys.kalrav.adapter.ExpadableListAdapter;
-import com.lognsys.kalrav.adapter.HorizontalAdapterCriticsReview;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
-import com.lognsys.kalrav.adapter.SlidingImage_Adapter;
 import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.MySpannable;
@@ -55,12 +44,10 @@ import com.lognsys.kalrav.model.TimeSlot;
 import com.lognsys.kalrav.util.KalravApplication;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -84,7 +71,6 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private ArrayList<String> horizontalListReview;
     private ArrayList<String> horizontalListCritics;
     private HorizontalAdapterUsersReview horizontalAdapterUsers;
-    private HorizontalAdapterCriticsReview horizontalAdapterCritics;
     private List<TimeSlot> timeSlotArrayList;
     DramaInfo dramaInfo;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
@@ -170,39 +156,18 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
         horizontalAdapterUsers = new HorizontalAdapterUsersReview(horizontalListUsers, horizontalListReview);
 
-        horizontalAdapterCritics = new HorizontalAdapterCriticsReview(horizontalListCritics);
-        LinearLayoutManager horizontalLayoutManagaer
+         LinearLayoutManager horizontalLayoutManagaer
                 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager horizontalLayoutManagaer2
                 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         horizontal_recycler_view_users.setLayoutManager(horizontalLayoutManagaer);
         horizontal_recycler_view_critics.setLayoutManager(horizontalLayoutManagaer2);
         horizontal_recycler_view_users.setAdapter(horizontalAdapterUsers);
-        horizontal_recycler_view_critics.setAdapter(horizontalAdapterCritics);
         tvRateDrama = (TextView) view.findViewById(R.id.tvRateDrama);
         tvAllreviewUsers=(TextView)view.findViewById(R.id.tvAllReviewUsers);
         tvAllreviewCritics=(TextView)view.findViewById(R.id.tvAllReviewCritics);
 
-        tvAllreviewUsers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new TestFragment();
 
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-            }
-        });
-        tvAllreviewCritics.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new TestFragment();
-
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-            }
-        });
         tvAllreviewCritics=(TextView)view.findViewById(R.id.tvAllReviewCritics);
         tvRateDrama.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,6 +243,8 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
         return view;
     }
+
+
 
 
 

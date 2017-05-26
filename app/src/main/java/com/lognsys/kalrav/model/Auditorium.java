@@ -7,11 +7,29 @@ import java.util.List;
  */
 
 public class Auditorium {
+    private int dramaId;
     private String audiId;
     private String audiName;
     private String audiRowName;
     private List<String> seats;
     private String price;
+    private String datetime;
+
+    public int getDramaId() {
+        return dramaId;
+    }
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
+    }
+
+    public void setDramaId(int dramaId) {
+        this.dramaId = dramaId;
+    }
 
     public String getAudiId() {
         return audiId;
