@@ -146,11 +146,25 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 Log.d("","Fragment getAllDrama getIsfav "+dramaInfo.getIsfav());
                 dramaInfos.add(dramaInfo);
             }
+
             Log.d("","Fragment getAllDrama dramaInfos.size "+dramaInfos.size());
 
             c.close();
         }
+        else {
+            addDrama(dramaInfo);
+        }
         return dramaInfos;
+    }
+
+    @Override
+    public int getDramaCount() {
+        db = sqLiteHelper.getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM Drama ",null);
+        if (cur != null && cur.getCount()>0)
+            return cur.getCount();
+        else
+            return 0;
     }
 
     @Override

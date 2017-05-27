@@ -331,7 +331,7 @@ public class AuditoriumListFragment extends Fragment {
             holder.textAuditoriumName.setText(auditorium.getAudiName());
             String  timeArray = auditorium.getDatetime();
             Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
-            String[] split= timeArray.split(" ");
+            final String[] split= timeArray.split(" ");
             Log.d("", "MyAdapter onBindViewHolder split.length "+split.length);
 
             List<TextView> textList = new ArrayList<TextView>();
@@ -344,12 +344,29 @@ public class AuditoriumListFragment extends Fragment {
                 TextView newTV = new TextView(getContext());
                 newTV.setText(split[i]);
                 newTV.setBackground(getResources().getDrawable(R.drawable.textviewbackgroundwithborder));
-                newTV.setLayoutParams(layoutParams);
-                /**** Any other text view setup code ****/
-                holder.linearTime.addView(newTV);
 
+                newTV.setLayoutParams(layoutParams);
+                final int finalI = i;
+                newTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getActivity(),"Time"+split[finalI],Toast.LENGTH_LONG).show();
+//                        Fragment fragment = new BookingSeatsFragment();
+//                        Bundle args = new Bundle();
+//                        args.putSerializable("timeSlot",split[finalI]);
+////                        args.putSerializable("dramaInfo",dramaInfo);
+//                        fragment.setArguments(args);
+//                        getActivity().getSupportFragmentManager().beginTransaction()
+//                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+                    }
+                });
+                /**** Any other text view setup code ****/
+
+                holder.linearTime.addView(newTV);
                 textList.add(newTV);
             }
+
             Log.d("", "MyAdapter onBindViewHolder textTime "+holder.textTime.getText().toString());
 
 

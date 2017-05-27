@@ -87,7 +87,23 @@ public class DramaFragment extends Fragment {
         favouritesInfo=new FavouritesInfo();
         favouritesInfos=new ArrayList<FavouritesInfo>();
         if(KalravApplication.getInstance().isConnectedToInternet()) {
-            displaydrama();
+            int count =dramaInfoDAO.getDramaCount();
+            Log.d("","count "+count);
+
+            if(count>0){
+
+                dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+                Log.d("","count dramaInfos size"+dramaInfos.size());
+                if (dramaInfos.size() > 0 & dramaInfos != null) {
+                    adapter=new MyAdapter(dramaInfos);
+                    myRecyclerView.setAdapter(adapter);
+                }
+            }
+            else{
+
+                Log.d("","count display drama "+count);
+                displaydrama();
+            }
         }
         else{
             Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();

@@ -32,4 +32,6 @@ List<DramaInfo>  getDramaListByFavId(ArrayList<FavouritesInfo> favouritesInfos);
     boolean isDramaExist(DramaInfo dramaInfo);
 
     List<DramaInfo> getAllDramaByUserGroup(String group_name);
+
+    int getDramaCount();
 }
