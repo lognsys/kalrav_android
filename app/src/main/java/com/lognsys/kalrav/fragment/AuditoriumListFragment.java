@@ -1,5 +1,6 @@
 package com.lognsys.kalrav.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -30,6 +32,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.SeatExample;
+import com.lognsys.kalrav.schemes.SchemeWithSceneAtoZ;
 import com.lognsys.kalrav.util.KalravApplication;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,6 +77,9 @@ public class AuditoriumListFragment extends Fragment {
     List<Auditorium> auditoriumList;
     Auditorium auditorium;
     MyAdapter adapter;
+
+    static List<SeatExample> itemsList;
+
 
     private WeekCalendar weekCalendar;
     private OnFragmentInteractionListener mListener;
@@ -351,6 +359,8 @@ public class AuditoriumListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getActivity(),"Time"+split[finalI],Toast.LENGTH_LONG).show();
+                        new RequestItemsServiceTask().execute();
+
 //                        Fragment fragment = new BookingSeatsFragment();
 //                        Bundle args = new Bundle();
 //                        args.putSerializable("timeSlot",split[finalI]);
@@ -368,9 +378,91 @@ public class AuditoriumListFragment extends Fragment {
             }
 
             Log.d("", "MyAdapter onBindViewHolder textTime "+holder.textTime.getText().toString());
+        }
+        private class RequestItemsServiceTask
+                extends AsyncTask<Void, Void, Void> {
+            private ProgressDialog dialog =
+                    new ProgressDialog(getActivity());
 
+            @Override
+            protected void onPreExecute() {
+                // TODO i18n
+                dialog.setMessage("Please wait..");
+                dialog.show();
+            }
 
+            @Override
+            protected Void doInBackground(Void... unused) {
+                // The ItemService would contain the method showed
+                // in the previous paragraph
+//            ItemService itemService = ItemService.getCurrentInstance();
+                try {
+                    Log.e("","RequestItemsServiceTask ");
 
+                    itemsList = findAllItems();
+                    Log.e("","RequestItemsServiceTask itemsList "+itemsList+ "itemsList size "+itemsList.size());
+
+                } catch (Throwable e) {
+                    Log.e("","RequestItemsServiceTask Throwable "+e);
+
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void unused) {
+
+                // setListAdapter must not be called at doInBackground()
+                // since it would be executed in separate Thread
+           /* setListAdapter(
+                    new ArrayAdapter<MyItem>(ItemsListActivity.this,
+                            R.layout.list_item, itemsList));
+*/
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                Bundle bundle = new Bundle();
+                bundle.putInt("AtoF",500);
+                bundle.putInt("GtoO",350);
+                bundle.putInt("PtoZ",250);
+                bundle.putSerializable("itemsList", (Serializable) itemsList);
+
+                Fragment fragment = new SchemeWithSceneAtoZ();
+                fragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+            }
+        }
+        public List<SeatExample> findAllItems() {
+            JSONObject serviceResult = SchemeWithSceneAtoZ.requestWebService(
+                    "http://www.json-generator.com/api/json/get/cqlAKkkeJK?indent=2");
+
+            List<SeatExample> foundItems = new ArrayList<SeatExample>(20);
+
+            try {
+                Log.e("","RequestItemsServiceTask findAllItems serviceResult  "+serviceResult);
+
+                JSONArray items = serviceResult.getJSONArray("seatsdetails");
+
+                Log.e("","RequestItemsServiceTask findAllItems items  "+items);
+                Log.e("","RequestItemsServiceTask findAllItems items.length()  "+items.length());
+
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject obj = items.getJSONObject(i);
+                    SeatExample seatExample=new SeatExample();
+                    seatExample.setIrow(obj.getInt("i"));
+                    seatExample.setJrow(obj.getInt("j"));
+                    foundItems.add(seatExample);
+
+                }
+
+            } catch (JSONException e) {
+                Log.e("","RequestItemsServiceTask findAllItems JSONException  "+e);
+
+            }
+
+            return foundItems;
         }
 
         @Override

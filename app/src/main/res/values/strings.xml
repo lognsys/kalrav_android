@@ -6,6 +6,8 @@
     <string name="title_activity_home">Home</string>
     <string name="company_name">Kalrav Arts</string>
 
+    <string name="double_tap_enabled">Double tap enabled</string>
+    <string name="double_tap_disabled">Double tap disabled</string>
     <!-- Navigation Drawer menu labels -->
     <string name="nav_drama">Drama</string>
     <string name="nav_notifications">Notification</string>
