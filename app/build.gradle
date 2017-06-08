@@ -59,6 +59,7 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:10.2.1'
     compile 'com.google.firebase:firebase-auth:10.2.1'
     compile 'com.google.firebase:firebase-ads:10.2.1'
+    compile 'com.google.firebase:firebase-messaging:10.2.1' //fire base  cloud messaging notification
     compile 'com.google.android.gms:play-services-auth:10.2.1'
     compile 'hanks.xyz:htextview-library:0.1.5'
     compile 'com.android.volley:volley:1.0.0'

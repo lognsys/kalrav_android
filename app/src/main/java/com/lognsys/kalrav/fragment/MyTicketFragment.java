@@ -102,36 +102,35 @@ public class MyTicketFragment extends Fragment {
 
 
         tvDramaLanguage = (TextView) view.findViewById(R.id.tvDramaLanguage);
-        Log.d("","Text ticketInfos.size() ===== "+ticketInfos.size());
+       if(ticketInfos!=null) {
+           Log.d("","Text ticketInfos.size() ===== "+ticketInfos.size());
+           for (int i = 0; i < ticketInfos.size(); i++) {
+                ticketsInfo = ticketInfos.get(i);
+                if (ticketsInfo != null) {
+                    tvDramaName.setText(ticketsInfo.getDrama_name());
+                    textDramaDate.setText(ticketsInfo.getDrama_date());
+                    textDramaTiming.setText(ticketsInfo.getDrama_time());
+                    textBookingDate.setText(ticketsInfo.getBooked_date());
+                    textBookingTime.setText(ticketsInfo.getBooked_time());
+                    textUserName.setText(ticketsInfo.getUser_name());
+                    tvAuditorium.setText(ticketsInfo.getAuditorium_name());
+                    textGroupName.setText(ticketsInfo.getDrama_name());
+                    textTotalnoofticket.setText(ticketsInfo.getSeats_no_of_seats_booked());
+                    tvTicketNumber.setText(ticketsInfo.getSeart_seat_no());
+                    textTotalprice.setText(ticketsInfo.getSeats_total_price());
+                    if (ticketsInfo.getDrama_photo() != null) {
+                        Picasso.with(getContext()).load(ticketsInfo.getDrama_photo()).into(dramaImage);
+                    } else {
+                        Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub, null))).into(dramaImage);
+                    }
+                    Log.d("", "Text ticketsInfo.getBitmat ===== " + ticketsInfo.getBitmapQRCode());
 
-        for(int i=0;i<ticketInfos.size();i++){
-            ticketsInfo=ticketInfos.get(i);
-            if(ticketsInfo!=null){
-                tvDramaName.setText(ticketsInfo.getDrama_name());
-                textDramaDate.setText(ticketsInfo.getDrama_date());
-                textDramaTiming.setText(ticketsInfo.getDrama_time());
-                textBookingDate.setText(ticketsInfo.getBooked_date());
-                textBookingTime.setText(ticketsInfo.getBooked_time());
-                textUserName.setText(ticketsInfo.getUser_name());
-                tvAuditorium.setText(ticketsInfo.getAuditorium_name());
-                textGroupName.setText(ticketsInfo.getDrama_name());
-                textTotalnoofticket.setText(ticketsInfo.getSeats_no_of_seats_booked());
-                tvTicketNumber.setText(ticketsInfo.getSeart_seat_no());
-                textTotalprice.setText(ticketsInfo.getSeats_total_price());
-                if(ticketsInfo.getDrama_photo()!=null){
-                    Picasso.with(getContext()).load(ticketsInfo.getDrama_photo()).into(dramaImage);
-                }
-            else{
-                    Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(dramaImage);
-                }
-                Log.d("","Text ticketsInfo.getBitmat ===== "+ticketsInfo.getBitmapQRCode());
-
-                if(ticketsInfo.getBitmapQRCode()!=null){
-                    imageView.setImageBitmap(ticketsInfo.getBitmapQRCode());
+                    if (ticketsInfo.getBitmapQRCode() != null) {
+                        imageView.setImageBitmap(ticketsInfo.getBitmapQRCode());
+                    }
                 }
             }
         }
-
         DramaName = "Drama Name : "+tvDramaName.getText().toString().trim();
         Auditorium = "Auditorium Name" +tvAuditorium.getText().toString().trim();
         GroupName = "Group Name : "+textGroupName.getText().toString().trim();

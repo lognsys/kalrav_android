@@ -56,7 +56,7 @@ import java.util.List;
 
 public class FragmentDramaDetail extends Fragment implements View.OnClickListener {
 //for dots
-   static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaMusic,tvDramaDate,tvDramaTiming,tvDramaLanguage,
+   static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaMusic,textRatingvalue,tvDramaDate,tvDramaTiming,tvDramaLanguage,
         tvDramaGenre,textsynopsys,textDirector,textWriter,textStarcast;
     private int mDotsCount;
     private LinearLayout mDotsLayout;
@@ -72,6 +72,8 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private ArrayList<String> horizontalListCritics;
     private HorizontalAdapterUsersReview horizontalAdapterUsers;
     private List<TimeSlot> timeSlotArrayList;
+    RatingBar rbRatingBar;
+
     DramaInfo dramaInfo;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
     AlertDialog dialog;
@@ -100,7 +102,10 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
         textWriter=(TextView) view.findViewById(R.id.textWriter);
         textStarcast=(TextView) view.findViewById(R.id.textStarcast);
         textGroupname =(TextView) view.findViewById(R.id.textGroupname);
-
+        rbRatingBar = (RatingBar) view.findViewById(R.id.rbRatingBar);
+        textRatingvalue=(TextView) view.findViewById(R.id.textRatingvalue);
+        rbRatingBar.setRating(4.0F);
+        textRatingvalue.setText("4.0");
         if(dramaInfo!= null){
             displayDramaDetail(dramaInfo);
 
@@ -174,12 +179,23 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
             public void onClick(View view) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 View convertView = (View) inflater.inflate(R.layout.dialog_rate_now, null);
+                final ImageView ivDramaImage = (ImageView) convertView.findViewById(R.id.ivDramaImage);
+
                 final TextView tvRatingStar = (TextView) convertView.findViewById(R.id.tvRatingStar);
                 final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.rbRating);
+                Log.d("","onRatingChanged dramaInfo.getLink_photo() " +dramaInfo.getLink_photo());
+                if(dramaInfo.getLink_photo()!=null){
+                    Picasso.with(getContext()).load(dramaInfo.getLink_photo()).into(ivDramaImage);
+                }
+                else{
+                    Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub,null))).into(ivDramaImage);
+                }
+
+
                 ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     public void onRatingChanged(RatingBar ratingBar, float rating,
                                                 boolean fromUser) {
-
+                        Log.d("","onRatingChanged ratingBar.getRating() "+ratingBar.getRating()+"  rating " +rating+" fromUser "+fromUser);
                         tvRatingStar.setText(String.valueOf(ratingBar.getRating()));
 
                     }
@@ -352,6 +368,8 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                     }
                     String avg_rating = response.getString("avg_rating");
                     dramaInfo.setAvg_rating(avg_rating);
+                    rbRatingBar.setRating(Float.parseFloat(dramaInfo.getAvg_rating()));
+                    textRatingvalue.setText(dramaInfo.getAvg_rating());
 
                     String drama_language = response.getString("drama_language");
                     dramaInfo.setDrama_language(drama_language);

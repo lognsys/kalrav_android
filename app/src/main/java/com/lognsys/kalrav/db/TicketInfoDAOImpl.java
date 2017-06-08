@@ -164,8 +164,10 @@ public class TicketInfoDAOImpl implements TicketInfoDAO {
                 ticketsInfo.setDrama_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DRAMA_NAME)).toString());
                 ticketsInfo.setDrama_group_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_GROUP_NAME)).toString());
                 ticketsInfo.setDrama_photo(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_LINK_PHOTO)).toString());
-                ticketsInfo.setDrama_date(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DATETIME)).toString());
-                ticketsInfo.setDrama_time(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DRAMA_TIME)).toString());
+//                if(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DATETIME))!=null)
+//                ticketsInfo.setDrama_date(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DATETIME)));
+//
+//                ticketsInfo.setDrama_time(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DRAMA_TIME)).toString());
                 ticketsInfo.setBooked_time(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_BOOKED_TIME)).toString());
                 ticketsInfo.setBooked_date(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_BOOKED_DATE)).toString());
                 ticketsInfo.setConfirmation_code(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_CONFIRMATION_CODE)).toString());
@@ -186,8 +188,12 @@ public class TicketInfoDAOImpl implements TicketInfoDAO {
             Log.d("","Test getAllTicket ticketsInfos.size "+ticketsInfos.size());
 
             c.close();
+            return ticketsInfos;
         }
-        return ticketsInfos;
+        else{
+            return  null;
+        }
+
     }
     public Bitmap StringToBitMap(String encodedString){
         try{

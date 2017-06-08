@@ -14,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.model.SeatExample;
 
 import org.json.JSONArray;
@@ -85,7 +87,7 @@ public class SchemeWithSceneAtoZ extends Fragment {
                 if (seatList != null && seatList.size() > 0) {
                     for (int i=0;i<seatList.size();i++){
                         Seat seat=seatList.get(i);
-                        Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id()+"Your seat total price : "+seat.getTotal(), Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -93,11 +95,32 @@ public class SchemeWithSceneAtoZ extends Fragment {
                     Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
 
                 }
+                ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                Fragment fff=new ConfirmFragment();
+                Bundle args = new Bundle();
+//                args.putInt("totalPrice", totalPrice);
+//                args.putSerializable("timeSlot",timeSlot);
+//                args.putSerializable("dramaInfo",dramaInfo);
+                args.putSerializable("seats", (ArrayList<Seat>) items);
+                fff.setArguments(args);
+                if (fff != null){
+                    switchFragment(fff);
+                  }
+                else {
+                    Toast.makeText(rootView.getContext(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
                 }
+            }
             });
         return rootView;
     }
-
+    private void switchFragment(Fragment fff) {
+        if (getActivity() == null)
+            return;
+        if (getActivity() instanceof HomeActivity) {
+            HomeActivity feeds = (HomeActivity) getActivity();
+            feeds.switchContent(fff);
+        }
+    }
 
     private class RequestItemsServiceTask
             extends AsyncTask<Void, Void, Void> {
