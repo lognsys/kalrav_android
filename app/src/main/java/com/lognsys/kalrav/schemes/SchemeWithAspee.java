@@ -45,7 +45,7 @@ import by.anatoldeveloper.hallscheme.view.ZoomableImageView;
  * Copyright Nublo
  */
 //http://www.json-generator.com/api/json/get/cuGNiUpDeG?indent=2
-public class SchemeWithSceneAtoZ extends Fragment {
+public class SchemeWithAspee extends Fragment {
     int AtoF,GtoO,PtoZ;
     List<SeatExample> itemsList;
     @Nullable
@@ -168,7 +168,7 @@ public class SchemeWithSceneAtoZ extends Fragment {
         }
     }
     public List<SeatExample> findAllItems() {
-        JSONObject serviceResult = SchemeWithSceneAtoZ.requestWebService(
+        JSONObject serviceResult = SchemeWithAspee.requestWebService(
                 "http://www.json-generator.com/api/json/get/cuGNiUpDeG?indent=2");
 
         List<SeatExample> foundItems = new ArrayList<SeatExample>(20);

@@ -34,6 +34,7 @@ public class Constants {
         get_userdetails_already_exist_url
     }
     public enum API_URL_DRAMA {
-        get_alldrama_with_group_url
+        get_alldrama_with_group_url,
+        getdramadetailbyid
     }
 }

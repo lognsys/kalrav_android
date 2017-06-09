@@ -2,15 +2,9 @@ package com.lognsys.kalrav.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,24 +12,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.Auditorium;
-import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.SeatExample;
-import com.lognsys.kalrav.schemes.SchemeWithSceneAtoZ;
+import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
+import com.lognsys.kalrav.schemes.SchemeWithAspee;
 import com.lognsys.kalrav.util.KalravApplication;
-import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -47,9 +36,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import noman.weekcalendar.WeekCalendar;
@@ -359,13 +346,11 @@ public class AuditoriumListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getActivity(),"Time"+split[finalI],Toast.LENGTH_LONG).show();
+                        //                future implementation with  auditorium id or name and with  date time too
+
                         new RequestItemsServiceTask().execute();
 
-//                        Fragment fragment = new BookingSeatsFragment();
-//                        Bundle args = new Bundle();
-//                        args.putSerializable("timeSlot",split[finalI]);
-////                        args.putSerializable("dramaInfo",dramaInfo);
-//                        fragment.setArguments(args);
+//                        Fragment fragment = new SchemeBhaidasFragment();
 //                        getActivity().getSupportFragmentManager().beginTransaction()
 //                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
@@ -427,7 +412,7 @@ public class AuditoriumListFragment extends Fragment {
                 bundle.putInt("PtoZ",250);
                 bundle.putSerializable("itemsList", (Serializable) itemsList);
 
-                Fragment fragment = new SchemeWithSceneAtoZ();
+                Fragment fragment = new SchemeWithAspee();
                 fragment.setArguments(bundle);
                         getActivity().getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
@@ -435,7 +420,7 @@ public class AuditoriumListFragment extends Fragment {
             }
         }
         public List<SeatExample> findAllItems() {
-            JSONObject serviceResult = SchemeWithSceneAtoZ.requestWebService(
+            JSONObject serviceResult = SchemeWithAspee.requestWebService(
                     "http://www.json-generator.com/api/json/get/cqlAKkkeJK?indent=2");
 
             List<SeatExample> foundItems = new ArrayList<SeatExample>(20);

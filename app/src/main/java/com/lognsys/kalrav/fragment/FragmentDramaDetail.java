@@ -41,7 +41,9 @@ import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.MySpannable;
 import com.lognsys.kalrav.model.TimeSlot;
+import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -49,6 +51,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by admin on 02-04-2017.
@@ -73,6 +76,11 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private HorizontalAdapterUsersReview horizontalAdapterUsers;
     private List<TimeSlot> timeSlotArrayList;
     RatingBar rbRatingBar;
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+
 
     DramaInfo dramaInfo;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
@@ -89,6 +97,10 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
+
+        propertyReader = new PropertyReader(getActivity());
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+
         dramaImage=(ImageView) view.findViewById(R.id.dramaImage);
         tvDramaName=(TextView) view.findViewById(R.id.tvDramaName);
         tvDramaLength=(TextView) view.findViewById(R.id.tvDramaLength);
@@ -274,8 +286,9 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
     private void displayDramaDetail(DramaInfo dramaInfo) {
     String groupname=dramaInfo.getGroup_name();
         textGroupname.setText(groupname);
+        String getdramadetailbyid=properties.getProperty(Constants.API_URL_DRAMA.getdramadetailbyid.name());
 
-       String dramaDetailURLByID=GET_DRAMA_DETAIL_BY_ID_URL+dramaInfo.getId();
+       String dramaDetailURLByID=getdramadetailbyid+dramaInfo.getId();
         Log.d("","displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
 
         KalravApplication.getInstance().getPrefs().showpDialog(getContext());
