@@ -23,6 +23,7 @@ import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.SeatExample;
 import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
+import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
 import com.lognsys.kalrav.schemes.SchemeWithAspee;
 import com.lognsys.kalrav.util.KalravApplication;
 
@@ -348,11 +349,11 @@ public class AuditoriumListFragment extends Fragment {
                         Toast.makeText(getActivity(),"Time"+split[finalI],Toast.LENGTH_LONG).show();
                         //                future implementation with  auditorium id or name and with  date time too
 
-                        new RequestItemsServiceTask().execute();
+//                        new RequestItemsServiceTask().execute();
 
-//                        Fragment fragment = new SchemeBhaidasFragment();
-//                        getActivity().getSupportFragmentManager().beginTransaction()
-//                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                        Fragment fragment = new SchemePrabhodhanFragment();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                     }
                 });
