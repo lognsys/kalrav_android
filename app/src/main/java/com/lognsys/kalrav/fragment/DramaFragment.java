@@ -221,7 +221,6 @@ public class DramaFragment extends Fragment {
         propertyReader = new PropertyReader(getActivity());
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
-
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
        mAdView = (AdView)view.findViewById(R.id.listener_av_main);

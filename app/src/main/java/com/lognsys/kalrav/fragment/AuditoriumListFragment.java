@@ -25,7 +25,9 @@ import com.lognsys.kalrav.model.SeatExample;
 import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
 import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
 import com.lognsys.kalrav.schemes.SchemeWithAspee;
+import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -39,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import noman.weekcalendar.WeekCalendar;
 import noman.weekcalendar.listener.OnDateClickListener;
@@ -56,6 +59,7 @@ public class AuditoriumListFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "AuditoriumListFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -68,6 +72,11 @@ public class AuditoriumListFragment extends Fragment {
 
     static List<SeatExample> itemsList;
 
+
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
 
     private WeekCalendar weekCalendar;
     private OnFragmentInteractionListener mListener;
@@ -108,8 +117,11 @@ public class AuditoriumListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_auditorium_list, container, false);
         dramaInfoId = (int) getArguments().getSerializable("dramaInfoId");
-        final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        auditoriumList=new ArrayList<Auditorium>();
+        propertyReader = new PropertyReader(getActivity());
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+
+
+        final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
         // Inflate the layout for this fragment
         /*SimpleDateFormat curFormater = new SimpleDateFormat("EEE dd");
         GregorianCalendar date = new GregorianCalendar();
@@ -130,16 +142,15 @@ public class AuditoriumListFragment extends Fragment {
          auditorium=new Auditorium();
 
         myRecyclerView.setLayoutManager(MyLayoutManager);
-        Log.d("","HELLO WORLD DateTime: "+new DateTime().toString());
+
         weekCalendar = (WeekCalendar)view.findViewById(R.id.weekCalendar);
         weekCalendar.setOnDateClickListener(new OnDateClickListener() {
             @Override
             public void onDateClick(DateTime dateTime) {
-
+                myRecyclerView.removeAllViews();
                String strDate = fmt.print(dateTime);
-                Log.d("","HELLO WORLD DateTime: "+new DateTime().toString());
-                Log.d("","HELLO WORLD strDate: "+strDate);
 
+                requestAuditoriumDateTime(dramaInfoId,strDate);
                 Toast.makeText(getActivity(), "You Selected " + strDate, Toast
                         .LENGTH_SHORT).show();
             }
@@ -152,22 +163,28 @@ public class AuditoriumListFragment extends Fragment {
                         " Forward: " + forward, Toast.LENGTH_SHORT).show();
             }
         });*/
+
         requestAuditoriumDateTime(dramaInfoId,strDate);
+        Log.d(TAG,"requestAuditoriumDateTime strDate "+strDate);
+
         return view;
     }
 
     private void requestAuditoriumDateTime(int dramaInfoId, String strDate) {
-        KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+        auditoriumList=new ArrayList<Auditorium>();
 
-        JsonArrayRequest req = new JsonArrayRequest("http://www.json-generator.com/api/json/get/bIImeEJuIy?indent=2",
+        KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
+
+        String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name());
+        Log.d(TAG, "requestAuditoriumDateTime auditoriumlist..."+auditoriumlist);
+
+        JsonArrayRequest req = new JsonArrayRequest(auditoriumlist,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
                     Log.d("","requestAuditoriumDateTime response "+ response.toString());
 
-
-//                    Log.d("","requestAuditoriumDateTime ======= jsonArray "+jsonArray);;
                     Log.d("","requestAuditoriumDateTime ======= response length "+response.length());;
 
                     for(int i=0;i<response.length();i++){
@@ -210,7 +227,7 @@ public class AuditoriumListFragment extends Fragment {
                         myRecyclerView.setAdapter(adapter);
                     }
 
-                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 
 
                 } catch (JSONException e) {
@@ -220,7 +237,7 @@ public class AuditoriumListFragment extends Fragment {
                     Toast.makeText(getActivity(),
                             "Error: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
-                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 
                 }
 
@@ -234,23 +251,18 @@ public class AuditoriumListFragment extends Fragment {
                 Toast.makeText(getActivity(),
                         error.getMessage(), Toast.LENGTH_SHORT).show();
                 // hide the progress dialog
-                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 
             }
         });
-        KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+        KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 
         // Adding request to request queue
         KalravApplication.getInstance().addToRequestQueue(req);
 
     }
 
-    public static String getCurrentTimeStamp() {
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-        Date now = new Date();
-        String strDate = sdfDate.format(now);
-        return strDate;
-    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -323,7 +335,7 @@ public class AuditoriumListFragment extends Fragment {
         public void onBindViewHolder(final AuditoriumListFragment.MyAdapter.MyViewHolder holder, final int position) {
 //            Log.d("", "MyAdapter onBindViewHolder ");
 
-             Auditorium auditorium = list.get(position);
+             final Auditorium auditorium = list.get(position);
             holder.textAuditoriumName.setText(auditorium.getAudiName());
             String  timeArray = auditorium.getDatetime();
             Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
@@ -346,14 +358,14 @@ public class AuditoriumListFragment extends Fragment {
                 newTV.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getActivity(),"Time"+split[finalI],Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Time"+split[finalI]+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
                         //                future implementation with  auditorium id or name and with  date time too
 
-//                        new RequestItemsServiceTask().execute();
+                        new RequestItemsServiceTask(auditorium.getAudiName()).execute();
 
-                        Fragment fragment = new SchemePrabhodhanFragment();
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+//                        Fragment fragment = new SchemePrabhodhanFragment();
+//                        getActivity().getSupportFragmentManager().beginTransaction()
+//                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                     }
                 });
@@ -369,6 +381,10 @@ public class AuditoriumListFragment extends Fragment {
                 extends AsyncTask<Void, Void, Void> {
             private ProgressDialog dialog =
                     new ProgressDialog(getActivity());
+            String audiName;
+            public RequestItemsServiceTask(String audiName) {
+            this.audiName=audiName;
+            }
 
             @Override
             protected void onPreExecute() {
@@ -412,11 +428,27 @@ public class AuditoriumListFragment extends Fragment {
                 bundle.putInt("GtoO",350);
                 bundle.putInt("PtoZ",250);
                 bundle.putSerializable("itemsList", (Serializable) itemsList);
+               if(this.audiName.equalsIgnoreCase("Aspee")){
+                   Fragment fragment = new SchemeWithAspee();
+                   fragment.setArguments(bundle);
+                   getActivity().getSupportFragmentManager().beginTransaction()
+                           .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
-                Fragment fragment = new SchemeWithAspee();
-                fragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+               }
+               else if(this.audiName.equalsIgnoreCase("Bhaidas")){
+                   Fragment fragment = new SchemeBhaidasFragment();
+                   fragment.setArguments(bundle);
+                   getActivity().getSupportFragmentManager().beginTransaction()
+                           .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+               }
+                else{
+                   Fragment fragment = new SchemePrabhodhanFragment();
+                   fragment.setArguments(bundle);
+                   getActivity().getSupportFragmentManager().beginTransaction()
+                           .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+               }
 
             }
         }

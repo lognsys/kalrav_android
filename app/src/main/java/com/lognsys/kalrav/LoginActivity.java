@@ -334,7 +334,7 @@ public class LoginActivity extends AppCompatActivity implements
             mAuthListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:" + firebaseAuth+" firebaseAuth.getCurrentUser():" +firebaseAuth.getCurrentUser());
+                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:" + firebaseAuth+" firebaseAuth.getCurrentUser()getEmail:" +firebaseAuth.getCurrentUser());
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     Log.d(TAG, "onAuthStateChanged:user:" +user);
@@ -357,14 +357,6 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean isAppInstalled(Context context, String packageName) {
-        try {
-            context.getPackageManager().getApplicationInfo(packageName, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
 
 
     private void requestData(final LoginResult loginResult) {
@@ -761,9 +753,7 @@ public class LoginActivity extends AppCompatActivity implements
             public void onResponse(JSONObject jsonObject) {
 
                 try {
-                    Log.d("","Google docallApi GET_USERDETAILS_IF_ALREADY_EXIST_URL response.length() "+jsonObject.length());
-                    Log.d("","Google docallApi GET_USERDETAILS_IF_ALREADY_EXIST_URL response.toString() "+jsonObject.toString());
-                                                      if (jsonObject != null) {
+                                                   if (jsonObject != null) {
 
                                                             UserInfo  userInfo = new UserInfo();
                                                             userInfo.setId(jsonObject.getInt("id"));

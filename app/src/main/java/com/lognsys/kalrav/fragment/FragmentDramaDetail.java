@@ -192,6 +192,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 View convertView = (View) inflater.inflate(R.layout.dialog_rate_now, null);
                 final ImageView ivDramaImage = (ImageView) convertView.findViewById(R.id.ivDramaImage);
+                final Button btnsubmit = (Button) convertView.findViewById(R.id.btnsubmit);
 
                 final TextView tvRatingStar = (TextView) convertView.findViewById(R.id.tvRatingStar);
                 final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.rbRating);
@@ -221,6 +222,12 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                 dialog.getWindow().clearFlags(WindowManager.LayoutParams.DIM_AMOUNT_CHANGED);
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.show();
+                btnsubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
 
             }
         });

@@ -372,7 +372,11 @@ public class HomeActivity extends AppCompatActivity {
                         finish();
                         drawer.closeDrawers();
                         break;
-
+                    case R.id.nav_settings:
+                        // launch new intent instead of loading fragment
+                        startActivity(new Intent(HomeActivity.this, SettingFragment.class));
+                        drawer.closeDrawers();
+                        break;
                     default:
                         navItemIndex = 0;
                 }

@@ -81,6 +81,13 @@
             android:theme="@style/AppTheme.NoActionBar" >
 
         </activity>
+        <activity
+            android:name=".SettingFragment"
+            android:label="@string/title_activity_Setting"
+            android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.NoActionBar" >
+
+        </activity>
         <service android:name="com.lognsys.kalrav.FCM.FCMInstanceIdService" android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"></action>

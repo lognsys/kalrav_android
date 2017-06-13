@@ -22,9 +22,9 @@ public class Constants {
     public static int notificationImages[] = {R.drawable.attention, R.mipmap.ic_launcher_lounger, R.mipmap.ic_launcher_charity};
 
     //Placeholder for Drama images & drama names
-    public static int dramaImages[] = {R.drawable.gujjubhai_great, R.drawable.gujjubhai_ghode_chadhiya, R.drawable.jalsa_karo_jayantilal};
-    public static String dramaNames[] = {"Gujjubhai the Great", "Gujjubhai Ghode Chadhiya", "Jalsa Karo Jayantilal"};
-    public static String dramaGroupNames[] = {"Youth", "Medium", "Comedy"};
+//    public static int dramaImages[] = {R.drawable.gujjubhai_great, R.drawable.gujjubhai_ghode_chadhiya, R.drawable.jalsa_karo_jayantilal};
+//    public static String dramaNames[] = {"Gujjubhai the Great", "Gujjubhai Ghode Chadhiya", "Jalsa Karo Jayantilal"};
+//    public static String dramaGroupNames[] = {"Youth", "Medium", "Comedy"};
 
     public class Shared {
     }
@@ -36,5 +36,8 @@ public class Constants {
     public enum API_URL_DRAMA {
         get_alldrama_with_group_url,
         getdramadetailbyid
+    }
+    public enum API_URL_AUDITORIUM_LIST {
+        getauditoriumlist
     }
 }
