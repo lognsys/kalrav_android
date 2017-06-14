@@ -454,7 +454,7 @@ public class AuditoriumListFragment extends Fragment {
         }
         public List<SeatExample> findAllItems() {
             JSONObject serviceResult = SchemeWithAspee.requestWebService(
-                    "http://www.json-generator.com/api/json/get/cqlAKkkeJK?indent=2");
+                    "http://www.json-generator.com/api/json/get/ckNCAIXGnC?indent=2");
 
             List<SeatExample> foundItems = new ArrayList<SeatExample>(20);
 

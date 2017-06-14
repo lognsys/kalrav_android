@@ -38,23 +38,19 @@ public class SchemeBhaidasFragment extends Fragment {
 
     public Seat[][] basicScheme() {//[40][52]
         Seat seats[][] = new Seat[36][50];
-        int k = 0;
-        int k1 = 0;
-        int k2 = 0;
-        int k3 = 0;
-        int k4 = 0;
-        int k5 = 0;
-        int k6 = 0;
-        int k7 = 0;
-        int k8 = 0;
-        int k9 = 0;
-        int k10 = 0;
-        int k11 = 0;
-        int k12 = 0;
-        int k13 = 0;
+
 
         String[] rowname={"GG","FF","EE","DD","CC","BB","AA","Z","Y","","X","W","V","U","T","S","R","","Q","P","O","N","M","L","K","J","H","G","F","E","D","C","B","A","A1"};
-        for (int i = 0; i < 36; i++)
+        for (int i = 0; i < 36; i++){
+            int k = 0;
+            int a1throw = 12;
+            int athrow = 9;
+            int bthrow = 8;
+            int cthrow = 7;
+            int dthrow = 6;
+            int ethrow = 5;
+            int fthrow = 4;
+            int gthrow = 3;
             for(int j = 0; j < 50; j++) {
                 SeatExample seat = new SeatExample();
                 seats[i][j] = seat;
@@ -93,16 +89,14 @@ public class SchemeBhaidasFragment extends Fragment {
     //                          left seats +space+ middle seats +space  +right seats
                                 if((j>2 && j<13) || (j>20 && j<31) || (j>38 && j<49)){
 
-                                    seat.id = ++k1;
-                                    if(seat.id>10){
-                                        seat.id= seat.id+5;
-                                    }
+                                    seat.id = ++k;
                                     seat.status = HallScheme.SeatStatus.FREE;
                                     seat.marker = String.valueOf(seat.id);
                                     seat.selectedSeatMarker=String.valueOf(seat.id);
                                     seat.price=200;
                                 }
                                 else{
+//                                    seat.id = ++k;
                                     seat.status = HallScheme.SeatStatus.EMPTY;
                                 }
                            }
@@ -111,10 +105,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>3 && j<16) || (j>18 && j<33) || (j>35 && j<48)){
-                                   seat.id = ++k2;
+                                   seat.id = ++k;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -127,10 +121,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>4 && j<16) || (j>18 && j<33) || (j>35 && j<47)){
-                                   seat.id = ++k3;
+                                   seat.id = ++k;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -143,10 +137,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>5 && j<16) || (j>18 && j<33) || (j>35 && j<46)){
-                                   seat.id = ++k4;
+                                   seat.id = ++k;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -159,10 +153,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>6 && j<16) || (j>18 && j<33) || (j>35 && j<45)){
-                                   seat.id = ++k5;
+                                   seat.id = ++gthrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -175,10 +169,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>7 && j<16) || (j>18 && j<33) || (j>35 && j<44)){
-                                   seat.id = ++k6;
+                                   seat.id = ++fthrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -191,10 +185,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>8 && j<16) || (j>18 && j<33) || (j>35 && j<43)){
-                                   seat.id = ++k7;
+                                   seat.id = ++ethrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -207,10 +201,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>9 && j<16) || (j>18 && j<33) || (j>35 && j<42)){
-                                   seat.id = ++k8;
+                                   seat.id = ++dthrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -223,10 +217,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>10 && j<16) || (j>18 && j<33) || (j>35 && j<41)){
-                                   seat.id = ++k9;
+                                   seat.id = ++cthrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -239,10 +233,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+                                //   seat.id = ++k;
                                }
                                if((j>11 && j<16) || (j>18 && j<33) || (j>35 && j<40)){
-                                   seat.id = ++k10;
+                                   seat.id = ++bthrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -255,10 +249,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if((j>12 && j<16) || (j>19 && j<33) || (j>35 && j<39)){
-                                   seat.id = ++k11;
+                                   seat.id = ++athrow;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -271,10 +265,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                    seat.status = HallScheme.SeatStatus.INFO;
 //                                  rowname is a string arry  consist of string in array
                                    seat.marker = rowname[i - 1];
-
+//                                   seat.id = ++k;
                                }
                                if( (j>19 && j<33)){
-                                   seat.id = ++k12;
+                                   seat.id = ++a1throw;
                                    seat.status = HallScheme.SeatStatus.FREE;
                                    seat.marker = String.valueOf(seat.id);
                                    seat.selectedSeatMarker=String.valueOf(seat.id);
@@ -283,13 +277,14 @@ public class SchemeBhaidasFragment extends Fragment {
                            }// A1th row ends
                            else{
 //                             left seats +middle seats +right seats
-                               seat.id = (j-2);
-                               if(seat.id>18 && seat.id<52){
-                                   seat.id=seat.id-3;
-                               }
-                               if(seat.id>=29){
-                                   seat.id=seat.id-3;
-                               }
+//                               seat.id = (j-2);
+//                               if(seat.id>18 && seat.id<52){
+//                                   seat.id=seat.id-3;
+//                               }
+//                               if(seat.id>=29){
+//                                   seat.id=seat.id-3;
+//                               }
+                               seat.id = (++k)-1;
                                Log.d("", "Bhaidas seat.id k13=seat.id== " + (seat.id));
                                seat.status = HallScheme.SeatStatus.FREE;
                                seat.marker = String.valueOf(seat.id);
@@ -312,7 +307,7 @@ public class SchemeBhaidasFragment extends Fragment {
                }
 
             }
-
+        }
         return seats;
     }
 
