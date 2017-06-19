@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.Auditorium;
+import com.lognsys.kalrav.model.AuditoriumPriceRange;
 import com.lognsys.kalrav.model.SeatExample;
 import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
 import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
@@ -36,12 +38,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 import noman.weekcalendar.WeekCalendar;
 import noman.weekcalendar.listener.OnDateClickListener;
@@ -67,6 +77,7 @@ public class AuditoriumListFragment extends Fragment {
     int dramaInfoId;
     RecyclerView myRecyclerView;
     List<Auditorium> auditoriumList;
+    List<AuditoriumPriceRange> auditoriumPriceRangeList;
     Auditorium auditorium;
     MyAdapter adapter;
 
@@ -149,6 +160,7 @@ public class AuditoriumListFragment extends Fragment {
             public void onDateClick(DateTime dateTime) {
                 myRecyclerView.removeAllViews();
                String strDate = fmt.print(dateTime);
+                KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
 
                 requestAuditoriumDateTime(dramaInfoId,strDate);
                 Toast.makeText(getActivity(), "You Selected " + strDate, Toast
@@ -163,7 +175,7 @@ public class AuditoriumListFragment extends Fragment {
                         " Forward: " + forward, Toast.LENGTH_SHORT).show();
             }
         });*/
-
+        KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
         requestAuditoriumDateTime(dramaInfoId,strDate);
         Log.d(TAG,"requestAuditoriumDateTime strDate "+strDate);
 
@@ -173,9 +185,7 @@ public class AuditoriumListFragment extends Fragment {
     private void requestAuditoriumDateTime(int dramaInfoId, String strDate) {
         auditoriumList=new ArrayList<Auditorium>();
 
-        KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
-
-        String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name());
+        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name());
         Log.d(TAG, "requestAuditoriumDateTime auditoriumlist..."+auditoriumlist);
 
         JsonArrayRequest req = new JsonArrayRequest(auditoriumlist,
@@ -184,40 +194,56 @@ public class AuditoriumListFragment extends Fragment {
                     public void onResponse(JSONArray response) {
                         try {
                     Log.d("","requestAuditoriumDateTime response "+ response.toString());
-
-                    Log.d("","requestAuditoriumDateTime ======= response length "+response.length());;
-
                     for(int i=0;i<response.length();i++){
                         auditorium=new Auditorium();
+                        auditoriumPriceRangeList=new ArrayList<AuditoriumPriceRange>();
+
                         JSONObject jsonObject= response.getJSONObject(i);
-                        Log.d("","requestAuditoriumDateTime ======= jsonObject "+jsonObject);
 
                         int auditoriumid = jsonObject.getInt("auditoriumid");
                         auditorium.setAudiId(String.valueOf(auditoriumid));
-//                            Log.d("","requestAuditoriumDateTime ======= auditoriumid "+auditoriumid);
 
                         String auditoriumname = jsonObject.getString("auditoriumname");
                         auditorium.setAudiName(auditoriumname);
-//                            Log.d("","requestAuditoriumDateTime ======= auditoriumname "+auditoriumname);
 
+                        String time=jsonObject.getString("time");
 
-                            String time=jsonObject.getString("time");
-//                            Log.d("","requestAuditoriumDateTime ======= time "+time);
-
-                            JSONArray jsontimeArray=new JSONArray(time);
-//                            Log.d("","requestAuditoriumDateTime ======= jsontimeArray "+jsontimeArray);
-                            Log.d("","requestAuditoriumDateTime ======= jsontimeArray.length() "+jsontimeArray.length());
-                            StringBuilder sb=new StringBuilder();
+                        JSONArray jsontimeArray=new JSONArray(time);
+                        StringBuilder sb=new StringBuilder();
                             for(int j=0;j<jsontimeArray.length();j++)
                             {
                                 String timevalue= jsontimeArray.getString(j);
-//                                Log.d("","requestAuditoriumDateTime ======= timevalue "+timevalue);
-
                                 sb.append(timevalue+" ");
                             }
-                            Log.d("","requestAuditoriumDateTime ======= sb.toString() "+sb.toString());
+                        auditorium.setDatetime(sb.toString());
 
-                            auditorium.setDatetime(sb.toString());
+//                        String auditoriumpricerange = ;
+                        JSONArray jsonArrayprice=new JSONArray(jsonObject.getString("auditoriumpricerange"));
+                        Log.d("","requestAuditoriumDateTime jsonArrayprice =======  length "+jsonArrayprice.length());
+
+                        for(int p=0;p<jsonArrayprice.length();p++){
+                            JSONObject jsonObjectpricerange= jsonArrayprice.getJSONObject(p);
+                            AuditoriumPriceRange auditoriumPriceRange=new AuditoriumPriceRange();
+
+
+                            int istart = jsonObjectpricerange.getInt("istart");
+                            auditoriumPriceRange.setIstart(istart);
+
+                            Log.d("","requestAuditoriumDateTime jsonObjectpricerange ======= istart "+istart);
+
+                            int iend = jsonObjectpricerange.getInt("iend");
+                            auditoriumPriceRange.setIend(iend);
+
+                            Log.d("","requestAuditoriumDateTime jsonObjectpricerange ======= iend "+iend);
+
+                            int price = jsonObjectpricerange.getInt("price");
+                            auditoriumPriceRange.setPrice(price);
+
+                            auditoriumPriceRange.setAudiId(auditorium.getAudiId());
+                            Log.d("","requestAuditoriumDateTime jsonObjectpricerange ======= price "+price);
+                            auditoriumPriceRangeList.add(auditoriumPriceRange);
+                        }
+                        auditorium.setAuditoriumPriceRanges((ArrayList<AuditoriumPriceRange>) auditoriumPriceRangeList);
 
                         auditoriumList.add(auditorium);
 
@@ -340,7 +366,7 @@ public class AuditoriumListFragment extends Fragment {
             String  timeArray = auditorium.getDatetime();
             Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
             final String[] split= timeArray.split(" ");
-            Log.d("", "MyAdapter onBindViewHolder split.length "+split.length);
+                      Log.d("", "MyAdapter onBindViewHolder auditorium.getAuditoriumPriceRanges() "+auditorium.getAuditoriumPriceRanges());
 
             List<TextView> textList = new ArrayList<TextView>();
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -360,8 +386,9 @@ public class AuditoriumListFragment extends Fragment {
                     public void onClick(View v) {
                         Toast.makeText(getActivity(),"Time"+split[finalI]+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
                         //                future implementation with  auditorium id or name and with  date time too
+                          //                future implementation with  auditorium id or name and with  date time too
 
-                        new RequestItemsServiceTask(auditorium.getAudiName()).execute();
+                        new RequestItemsServiceTask(auditorium).execute();
 
 //                        Fragment fragment = new SchemePrabhodhanFragment();
 //                        getActivity().getSupportFragmentManager().beginTransaction()
@@ -381,9 +408,9 @@ public class AuditoriumListFragment extends Fragment {
                 extends AsyncTask<Void, Void, Void> {
             private ProgressDialog dialog =
                     new ProgressDialog(getActivity());
-            String audiName;
-            public RequestItemsServiceTask(String audiName) {
-            this.audiName=audiName;
+            Auditorium auditorium;
+            public RequestItemsServiceTask(Auditorium auditorium) {
+            this.auditorium=auditorium;
             }
 
             @Override
@@ -402,7 +429,6 @@ public class AuditoriumListFragment extends Fragment {
                     Log.e("","RequestItemsServiceTask ");
 
                     itemsList = findAllItems();
-                    Log.e("","RequestItemsServiceTask itemsList "+itemsList+ "itemsList size "+itemsList.size());
 
                 } catch (Throwable e) {
                     Log.e("","RequestItemsServiceTask Throwable "+e);
@@ -414,28 +440,34 @@ public class AuditoriumListFragment extends Fragment {
             @Override
             protected void onPostExecute(Void unused) {
 
-                // setListAdapter must not be called at doInBackground()
-                // since it would be executed in separate Thread
-           /* setListAdapter(
-                    new ArrayAdapter<MyItem>(ItemsListActivity.this,
-                            R.layout.list_item, itemsList));
-*/
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("itemsList", (Serializable) itemsList);
+
+
                 if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
-                Bundle bundle = new Bundle();
-                bundle.putInt("AtoF",500);
-                bundle.putInt("GtoO",350);
-                bundle.putInt("PtoZ",250);
-                bundle.putSerializable("itemsList", (Serializable) itemsList);
-               if(this.audiName.equalsIgnoreCase("Aspee")){
+               if(this.auditorium.getAudiName().equalsIgnoreCase("Aspee")){
+
+                   Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
+                   if( this.auditorium.getAuditoriumPriceRanges()!= null){
+
+                       bundle.putSerializable("auditorium",this.auditorium);
+
+                   }
                    Fragment fragment = new SchemeWithAspee();
                    fragment.setArguments(bundle);
                    getActivity().getSupportFragmentManager().beginTransaction()
                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                }
-               else if(this.audiName.equalsIgnoreCase("Bhaidas")){
+               else if(this.auditorium.getAudiName().equalsIgnoreCase("Bhaidas")){
+                   Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
+                   if( this.auditorium.getAuditoriumPriceRanges()!= null){
+
+                       bundle.putSerializable("auditorium",this.auditorium);
+
+                   }
                    Fragment fragment = new SchemeBhaidasFragment();
                    fragment.setArguments(bundle);
                    getActivity().getSupportFragmentManager().beginTransaction()
@@ -443,6 +475,12 @@ public class AuditoriumListFragment extends Fragment {
 
                }
                 else{
+                   Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
+                   if( this.auditorium.getAuditoriumPriceRanges()!= null){
+//                       auditoriumPriceRangeList=getPricerange(this.auditorium);
+                       bundle.putSerializable("auditoriumPriceRangeList", (Serializable)auditoriumPriceRangeList);
+
+                   }
                    Fragment fragment = new SchemePrabhodhanFragment();
                    fragment.setArguments(bundle);
                    getActivity().getSupportFragmentManager().beginTransaction()
@@ -451,19 +489,19 @@ public class AuditoriumListFragment extends Fragment {
                }
 
             }
+
         }
         public List<SeatExample> findAllItems() {
-            JSONObject serviceResult = SchemeWithAspee.requestWebService(
-                    "http://www.json-generator.com/api/json/get/ckNCAIXGnC?indent=2");
+            JSONObject serviceResult = requestWebService(
+                    "http://www.json-generator.com/api/json/get/cfvgPZCSzS?indent=2");
 
-            List<SeatExample> foundItems = new ArrayList<SeatExample>(20);
+            List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 
             try {
-                Log.e("","RequestItemsServiceTask findAllItems serviceResult  "+serviceResult);
 
                 JSONArray items = serviceResult.getJSONArray("seatsdetails");
 
-                Log.e("","RequestItemsServiceTask findAllItems items  "+items);
+//                Log.e("","RequestItemsServiceTask findAllItems items  "+items);
                 Log.e("","RequestItemsServiceTask findAllItems items.length()  "+items.length());
 
                 for (int i = 0; i < items.length(); i++) {
@@ -471,17 +509,93 @@ public class AuditoriumListFragment extends Fragment {
                     SeatExample seatExample=new SeatExample();
                     seatExample.setIrow(obj.getInt("i"));
                     seatExample.setJrow(obj.getInt("j"));
-                    foundItems.add(seatExample);
 
+                    foundItems.add(seatExample);
                 }
 
             } catch (JSONException e) {
                 Log.e("","RequestItemsServiceTask findAllItems JSONException  "+e);
-
             }
 
             return foundItems;
         }
+
+        private  String getResponseText(InputStream inStream) {
+            // very nice trick from
+            // http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+            return new Scanner(inStream).useDelimiter("\\A").next();
+        }
+        private  void disableConnectionReuseIfNecessary() {
+            // see HttpURLConnection API doc
+            if (Integer.parseInt(Build.VERSION.SDK)
+                    < Build.VERSION_CODES.FROYO) {
+                System.setProperty("http.keepAlive", "false");
+            }
+        }
+        public JSONObject requestWebService(String serviceUrl) {
+            Log.e("","RequestItemsServiceTask requestWebService serviceUrl  "+serviceUrl);
+
+            disableConnectionReuseIfNecessary();
+
+            HttpURLConnection urlConnection = null;
+            try {
+                // create connection
+                URL urlToRequest = null;
+                try {
+                    urlToRequest = new URL(serviceUrl);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    Log.e("","RequestItemsServiceTask requestWebService MalformedURLException  "+e);
+
+                }
+                urlConnection = (HttpURLConnection)
+                        urlToRequest.openConnection();
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(5000);
+
+                // handle issues
+                int statusCode = urlConnection.getResponseCode();
+                Log.e("","RequestItemsServiceTask requestWebService statusCode  "+statusCode);
+
+
+                if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    // handle unauthorized (if service requires user login)
+                } else if (statusCode != HttpURLConnection.HTTP_OK) {
+                    // handle any other errors, like 404, 500,..
+                }
+
+                // create JSON object from content
+                InputStream in = new BufferedInputStream(
+                        urlConnection.getInputStream());
+                return new JSONObject(getResponseText(in));
+
+            } catch (MalformedURLException e) {
+                // URL is invalid
+                Log.e("","RequestItemsServiceTask requestWebService MalformedURLException  "+e);
+
+            } catch (SocketTimeoutException e) {
+                // data retrieval or connection timed out
+                Log.e("","RequestItemsServiceTask requestWebService SocketTimeoutException  "+e);
+
+            } catch (IOException e) {
+                // could not read response body
+                // (could not create input stream)
+                Log.e("","RequestItemsServiceTask requestWebService IOException  "+e);
+
+            } catch (JSONException e) {
+                // response body is no valid JSON string
+                Log.e("","RequestItemsServiceTask requestWebService JSONException  "+e);
+
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            return null;
+        }
+
+
 
         @Override
         public int getItemCount() {
@@ -500,7 +614,6 @@ public class AuditoriumListFragment extends Fragment {
                 textAuditoriumName = (TextView) itemView.findViewById(R.id.textAuditoriumName);
                 linearTime = (LinearLayout) itemView.findViewById(R.id.linearTime);
                 textTime=new TextView(getActivity());
-                Log.d("", "MyAdapter MyViewHolder ");
                 itemView.setOnClickListener(this);
             }
 
@@ -522,7 +635,4 @@ public class AuditoriumListFragment extends Fragment {
             }
         }
     }
-
-
-
 }

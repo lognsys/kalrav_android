@@ -162,7 +162,14 @@ public class TicketInfoDAOImpl implements TicketInfoDAO {
                 ticketsInfo.setDrama_id(Integer.parseInt(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DRAMA_ID)).toString()));
                 ticketsInfo.setUser_id(Integer.parseInt(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_USER_ID)).toString()));
                 ticketsInfo.setDrama_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DRAMA_NAME)).toString());
-                ticketsInfo.setDrama_group_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_GROUP_NAME)).toString());
+               if(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_GROUP_NAME))!=null){
+                   ticketsInfo.setDrama_group_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_GROUP_NAME)).toString());
+
+               }
+               else{
+                   ticketsInfo.setDrama_group_name("None");
+
+               }
                 ticketsInfo.setDrama_photo(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_LINK_PHOTO)).toString());
 //                if(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DATETIME))!=null)
 //                ticketsInfo.setDrama_date(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DATETIME)));

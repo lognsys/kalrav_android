@@ -329,18 +329,20 @@ public class LoginActivity extends AppCompatActivity implements
             //Initialize FirebaseAuth
             //You need to include google-services.json (downloaded from firebase console) file under the "app" folder of this project.
             mAuth = FirebaseAuth.getInstance();
+            Log.d(TAG, "onAuthStateChanged:mAuth: ============================= " + mAuth);
 
             // firebase authentication listener will chek if user is authenticated.
             mAuthListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:" + firebaseAuth+" firebaseAuth.getCurrentUser()getEmail:" +firebaseAuth.getCurrentUser());
+                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:============================= " + firebaseAuth+" firebaseAuth.getCurrentUser()getEmail:" +firebaseAuth.getCurrentUser());
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     Log.d(TAG, "onAuthStateChanged:user:" +user);
                     if (user != null) {
 
                         // User is signed in
+                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid()+" Provider:" + user.getProviderId());
                         Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid()+" Provider:" + user.getProviderId());
 
                         KalravApplication.getInstance().getPrefs().setIsLogin(true);
@@ -508,8 +510,8 @@ public class LoginActivity extends AppCompatActivity implements
      * @param acct
      */
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
+        Log.d(TAG, "firebaseAuthWithGoogle: acct.getEmail -=====" + acct.getEmail());
+         Log.d(TAG, "firebaseAuthWithGoogle: acct.getIdToken -=====" + acct.getIdToken());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -529,10 +531,16 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                             try {
+                                     Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getPhotoUrl() -=====" +  mAuth.getCurrentUser().getPhotoUrl());
+                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getUid() -=====" +  mAuth.getCurrentUser().getUid());
+                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getEmail() -=====" +  mAuth.getCurrentUser().getEmail());
+                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getDisplayName() -=====" +  mAuth.getCurrentUser().getDisplayName());
+                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser() -=====" + mAuth.getCurrentUser());
                                             if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
                                                 KalravApplication.getInstance().getPrefs().setImage(String.valueOf(mAuth.getCurrentUser().getPhotoUrl()));
                                                 KalravApplication.getInstance().getPrefs().setIsFacebookLogin(false);
                                             }
+
                                             if( mAuth.getCurrentUser().getUid()!=null) {
                                                 userInfo.setGoogle_id(mAuth.getCurrentUser().getUid());
                                             }
@@ -546,15 +554,15 @@ public class LoginActivity extends AppCompatActivity implements
                                             }
 
                                         userInfo.setLoggedIn(Constants.LOG_IN);
-//                                Log.d(TAG, "Google userInfo.getEmail()..."+userInfo.getEmail());
+
 
                                 if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
                                     docallApi(userInfo);
 
                                 }
 
-                                    } catch (Exception e) {
-                                        Log.d(TAG, "Requesting google JSONException..."+e);
+                                  } catch (Exception e) {
+                                        Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..."+e);
 
                                     }
                                 }

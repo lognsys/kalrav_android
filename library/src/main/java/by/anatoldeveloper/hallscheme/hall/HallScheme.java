@@ -54,7 +54,7 @@ public class HallScheme {
             public void onClick(Point p) {
                 p.x -= scene.getLeftYOffset();
                 p.y -= scene.getTopXOffset();
-                Log.d("","drawTextCentred p.y values "+(p.y)+" p.x value "+(p.x)+" p value "+(p));
+//                Log.d("","drawTextCentred p.y values "+(p.y)+" p.x value "+(p.x)+" p value "+(p));
 
                 clickScheme(p);
             }
@@ -92,6 +92,7 @@ public class HallScheme {
         width = seats[0].length;
         this.scene = new Scene(ScenePosition.NONE, 0, 0, offset/2);
         image.setImageBitmap(getImageBitmap());
+        image.setMaxZoom(3.5f);
     }
 
     public void setScenePosition(ScenePosition position) {
@@ -226,7 +227,7 @@ public class HallScheme {
     }
 
     private void clickScheme(int row, int seat) {
-//        Log.d("","Test Log clickScheme row value "+(row)+" seat value "+(seat));
+        Log.d("","Test Log clickScheme row value "+(row)+" seat value "+(seat));
 
 
         Seat pressedSeat = seats[seat][row];
@@ -249,7 +250,7 @@ public class HallScheme {
                     +"pressedSeat getTotal "+(pressedSeat.getTotal()));
 
             listofSelectedSeats.add(pressedSeat);
-            Log.d("","Test Log clickScheme listofSelectedSeats.size() "+(listofSelectedSeats.size()));
+//            Log.d("","Test Log clickScheme listofSelectedSeats.size() "+(listofSelectedSeats.size()));
 
             image.setImageBitmap(getImageBitmap());
         } else if (maxSeatsClickListener != null) {
@@ -428,7 +429,7 @@ public class HallScheme {
         width = 0;
         height = 0;
         zones = new ArrayList<>();
-        image.setShouldOnMeasureBeCalled(true);
+//        image.setShouldOnMeasureBeCalled(true);
     }
 
     public void notifySeatListener(Seat s) {

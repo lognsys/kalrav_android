@@ -178,6 +178,9 @@ public class ZoomableImageView extends ImageView {
     public void setZoomByDoubleTap(boolean zoomByDoubleTap) {
         this.zoomByDoubleTap = zoomByDoubleTap;
     }
+    public void setMaxZoom(float x) {
+        maxScale = x;
+    }
 
     @Override
     public boolean performClick() {

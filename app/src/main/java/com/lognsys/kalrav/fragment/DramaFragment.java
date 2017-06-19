@@ -223,7 +223,7 @@ public class DramaFragment extends Fragment {
 
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
-       mAdView = (AdView)view.findViewById(R.id.listener_av_main);
+        mAdView = (AdView)view.findViewById(R.id.listener_av_main);
 
         mAdView.setAdListener(new AdListener() {
             private void showToast(String message) {

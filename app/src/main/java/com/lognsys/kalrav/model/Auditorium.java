@@ -1,19 +1,30 @@
 package com.lognsys.kalrav.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by admin on 4/17/2017.
  */
 
-public class Auditorium {
+public class Auditorium implements Serializable {
     private int dramaId;
     private String audiId;
     private String audiName;
     private String audiRowName;
     private List<String> seats;
+    private ArrayList<AuditoriumPriceRange> auditoriumPriceRanges;
     private String price;
     private String datetime;
+
+    public ArrayList<AuditoriumPriceRange> getAuditoriumPriceRanges() {
+        return auditoriumPriceRanges;
+    }
+
+    public void setAuditoriumPriceRanges(ArrayList<AuditoriumPriceRange> auditoriumPriceRanges) {
+        this.auditoriumPriceRanges = auditoriumPriceRanges;
+    }
 
     public int getDramaId() {
         return dramaId;
