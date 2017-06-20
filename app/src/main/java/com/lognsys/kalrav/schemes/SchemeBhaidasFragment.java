@@ -4,11 +4,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lognsys.kalrav.R;
@@ -37,30 +40,62 @@ public class SchemeBhaidasFragment extends Fragment {
     ZoomableImageView imageView;
     Button btnProceed;
     HallScheme scheme;
+    RecyclerView listViewPrices;
+    MyAdapter adapter;
     int n=91;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.basic_scheme_fragment, container, false);
         auditorium= (Auditorium) getArguments().getSerializable("auditorium");
-
-        ZoomableImageView imageView = (ZoomableImageView) rootView.findViewById(R.id.zoomable_image);
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
-        Log.d("BHAIDAS"," BHAIDAS itemsList === "+(itemsList)+ "itemsList SIZE "+itemsList.size());
+        populateData(rootView);
+
+        return rootView;
+    }
+
+    private void populateData(View rootView) {
         if (auditorium!=null){
             auditoriumPriceRangeList= getPricerange(this.auditorium);
         }
-        final HallScheme scheme = new HallScheme(imageView, basicScheme(), getActivity());
-        scheme.setSceneName(getString(R.string.all_eye_here));
+        imageView = (ZoomableImageView) rootView.findViewById(R.id.zoomable_image);
+        btnProceed = (Button) rootView.findViewById(R.id.btnProceed);
+        listViewPrices = (RecyclerView) rootView.findViewById(R.id.pricelist);
+        listViewPrices.setHasFixedSize(true);
+
+        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        listViewPrices.setLayoutManager(MyLayoutManager);
+
+        adapter =new MyAdapter(auditoriumPriceRangeList);
+
+        listViewPrices.setAdapter( adapter);
+
+        scheme = new HallScheme(imageView, basicScheme(), getActivity());
         scheme.setScenePosition(ScenePosition.SOUTH);
-        Button btnProceed=(Button)rootView.findViewById(R.id.btnProceed);
+        scheme.setSceneName(getString(R.string.all_eye_here));
+        scheme.setSeatListener(new SeatListener() {
+
+            @Override
+            public void selectSeat(int id) {
+                Toast.makeText(getActivity(), "select seat " + id, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void unSelectSeat(int id) {
+                Toast.makeText(getActivity(), "unSelect seat " + id, Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
         btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<Seat> seatList=scheme.getListOfSelectedSeats();
                 if (seatList != null && seatList.size() > 0) {
                     for (int i=0;i<seatList.size();i++){
-                        Seat seat=seatList.get(i);
+                        SeatExample seat= (SeatExample) seatList.get(i);
                         Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id()+"Your seat total price : "+seat.getTotal(), Toast.LENGTH_SHORT).show();
 
                     }
@@ -85,8 +120,73 @@ public class SchemeBhaidasFragment extends Fragment {
 //                }
             }
         });
-        return rootView;
     }
+    public class MyAdapter extends RecyclerView.Adapter<SchemeBhaidasFragment.MyAdapter.MyViewHolder> {
+        private List<AuditoriumPriceRange> list;
+
+        public MyAdapter(List<AuditoriumPriceRange> Data) {
+            list = Data;
+//            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
+
+        }
+        @Override
+        public SchemeBhaidasFragment.MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
+            // create a new view
+            View view=null;
+            AuditoriumPriceRange auditorium =list.get(position);
+
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.auditoriumpricelist_fragmentdetail, parent, false);
+            SchemeBhaidasFragment.MyAdapter.MyViewHolder holder = new SchemeBhaidasFragment.MyAdapter.MyViewHolder(view);
+
+
+            return holder;
+
+
+        }
+
+
+
+        @Override
+        public void onBindViewHolder(SchemeBhaidasFragment.MyAdapter.MyViewHolder holder, int position) {
+
+            AuditoriumPriceRange auditorium = list.get(position);
+
+            holder.textIStart.setText("Row "+auditorium.getIstart());
+            holder.textIEnd.setText(" To "+auditorium.getIend());
+            holder.textPrice.setText("-Rs ."+String.valueOf(auditorium.getPrice()));
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            public TextView textIStart;
+            public TextView textIEnd;
+            public TextView textPrice;
+
+
+            public MyViewHolder(View itemView) {
+                super(itemView);
+                textIStart = (TextView) itemView.findViewById(R.id.textIStart);
+                textIEnd = (TextView) itemView.findViewById(R.id.textIEnd);
+                textPrice = (TextView) itemView.findViewById(R.id.textPrice);
+
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                int position = getAdapterPosition(); // gets item position
+
+            }
+        }
+    }
+
     private ArrayList<AuditoriumPriceRange> getPricerange(Auditorium auditorium) {
         ArrayList<AuditoriumPriceRange> lists=new ArrayList<AuditoriumPriceRange>();
         if(auditorium!=null && auditorium.getAuditoriumPriceRanges()!=null && auditorium.getAuditoriumPriceRanges().size()>0){

@@ -477,8 +477,8 @@ public class AuditoriumListFragment extends Fragment {
                 else{
                    Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
                    if( this.auditorium.getAuditoriumPriceRanges()!= null){
-//                       auditoriumPriceRangeList=getPricerange(this.auditorium);
-                       bundle.putSerializable("auditoriumPriceRangeList", (Serializable)auditoriumPriceRangeList);
+
+                       bundle.putSerializable("auditorium",this.auditorium);
 
                    }
                    Fragment fragment = new SchemePrabhodhanFragment();
@@ -493,7 +493,7 @@ public class AuditoriumListFragment extends Fragment {
         }
         public List<SeatExample> findAllItems() {
             JSONObject serviceResult = requestWebService(
-                    "http://www.json-generator.com/api/json/get/bUEpNyNBki?indent=2");
+                    "http://www.json-generator.com/api/json/get/cedBfVViiG?indent=2");
 
             List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 
