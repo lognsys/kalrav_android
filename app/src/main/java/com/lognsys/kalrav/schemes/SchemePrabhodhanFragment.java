@@ -158,22 +158,21 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if (i == 1) {
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
+
                         }
                         if ((i == 1 && j > 11 && j < 24)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                             Log.d(TAG, " kk th row");
-                            ;
+                            seat.marker = rowname[i];
                         }
                     }
                     if (i > 1 && i < 3) {// jjth row
+
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 10 || j == 25) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -181,17 +180,16 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 5 && j < 10) || (j > 10 && j < 25) || (j > 25 && j < 30)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
 
                             Log.d(TAG, " kk th row");
                         }
                     }
                     if (i > 2 && i < 4) {//hh row
+
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 10 || j == 25) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -199,15 +197,14 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 3 && j < 10) || (j > 10 && j < 25) || (j > 25 && j < 33)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
                             seat.price = 200;
                         }
                     }
                     if (i > 3 && i < 8) { //gg, ff, ee, dd row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 10 || j == 25) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -215,15 +212,14 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 0 && j < 10) || (j > 10 && j < 25) || (j > 25 && j < 35)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
                             seat.price = 200;
                         }
                     }
                     if (i > 7 && i < 10) { // cc, bb row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 10 || j == 25) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -231,15 +227,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 1 && j < 10) || (j > 10 && j < 25) || (j > 25 && j < 34)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                     if (i == 10) {// aa row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 10 || j == 25) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -247,12 +241,11 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 0 && j < 10) || (j > 10 && j < 25) || (j > 25 && j < 32)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                     if (i == 13) { //y th  row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
                             seat.marker = rowname[i];
@@ -260,15 +253,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((i == 13 && j > 12 && j < 23)) {
                             seat.id =1+( ++k);
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                     if (i == 14) {// X row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 11 || j == 24) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -276,15 +267,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 8 && j < 11) || (j > 11 && j < 24) || (j > 24 && j < 27)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                     if (i == 15) {// W row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 11 || (j > 22 && j < 25)) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -292,15 +281,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 5 && j < 11) || (j > 11 && j < 23) || (j > 24 && j < 29)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                     if (i == 16) {// V row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 11 || j == 24) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -308,15 +295,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 3 && j < 11) || (j > 11 && j < 24) || (j > 24 && j < 33)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                     if (i > 16 && i < 24) {// U row to N row
+                        seat.marker = rowname[i];
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-                            seat.marker = rowname[i];
                         }
                         if (j == 11 || j == 24) {
                             seat.status = HallScheme.SeatStatus.EMPTY;
@@ -324,16 +309,14 @@ public class SchemePrabhodhanFragment extends Fragment {
                         if ((j > 0 && j < 11) || ((((i % 2 == 0) && (j > 11 && j < 24)) || (!(i % 2 == 0) && (j > 11 && j < 23)))) || (j > 24 && j < 35)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
-                            seat.marker = String.valueOf(seat.id);
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
                         }
                     }
                 }
                 if (i == 24) {// SP row
+                    seat.marker = rowname[i];
                     if (j == 0) {
                         seat.status = HallScheme.SeatStatus.INFO;
-                        seat.marker = rowname[i];
                     }
                     if (j == 11 || j == 24) {
                         seat.status = HallScheme.SeatStatus.EMPTY;
@@ -341,15 +324,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if ((j > 1 && j < 11) || (j > 11 && j < 24) || (j > 24 && j < 34)) {
                         seat.id = ++k;
                         seat.status = HallScheme.SeatStatus.FREE;
-                        seat.marker = String.valueOf(seat.id);
                         seat.selectedSeatMarker = String.valueOf(seat.id);
-                        seat.price = 200;
                     }
                 }
                 if (i > 24 && i < 32) {// M row to F row
+                    seat.marker = rowname[i];
                     if (j == 0) {
                         seat.status = HallScheme.SeatStatus.INFO;
-                        seat.marker = rowname[i];
                     }
                     if (j == 11 || j == 24) {
                         seat.status = HallScheme.SeatStatus.EMPTY;
@@ -357,15 +338,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if ((j > 0 && j < 11) || ((((i % 2 == 0) && (j > 11 && j < 23)) || (!(i % 2 == 0) && (j > 11 && j < 24)))) || (j > 24 && j < 35)) {
                         seat.id = ++k;
                         seat.status = HallScheme.SeatStatus.FREE;
-                        seat.marker = String.valueOf(seat.id);
                         seat.selectedSeatMarker = String.valueOf(seat.id);
-                        seat.price = 200;
                     }
                 }
                 if (i > 31 && i < 35) {// E row to C row
+                    seat.marker = rowname[i];
                     if (j == 0) {
                         seat.status = HallScheme.SeatStatus.INFO;
-                        seat.marker = rowname[i];
                     }
                     if (j == 11 || j == 24) {
                         seat.status = HallScheme.SeatStatus.EMPTY;
@@ -373,15 +352,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if ((j > 1 && j < 11) || ((((i % 2 == 0) && (j > 11 && j < 23)) || (!(i % 2 == 0) && (j > 11 && j < 24)))) || (j > 24 && j < 34)) {
                         seat.id = ++k;
                         seat.status = HallScheme.SeatStatus.FREE;
-                        seat.marker = String.valueOf(seat.id);
                         seat.selectedSeatMarker = String.valueOf(seat.id);
-                        seat.price = 200;
                     }
                 }
                 if (i == 35) {// B row
+                    seat.marker = rowname[i];
                     if (j == 0) {
                         seat.status = HallScheme.SeatStatus.INFO;
-                        seat.marker = rowname[i];
                     }
                     if (j == 11 || j == 24) {
                         seat.status = HallScheme.SeatStatus.EMPTY;
@@ -389,15 +366,13 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if ((j > 2 && j < 11) || (j > 11 && j < 24) || (j > 24 && j < 33)) {
                         seat.id = ++k;
                         seat.status = HallScheme.SeatStatus.FREE;
-                        seat.marker = String.valueOf(seat.id);
                         seat.selectedSeatMarker = String.valueOf(seat.id);
-                        seat.price = 200;
                     }
                 }
                 if (i == 36) {// A row
+                    seat.marker = rowname[i];
                     if (j == 0) {
                         seat.status = HallScheme.SeatStatus.INFO;
-                        seat.marker = rowname[i];
                     }
                     if (j == 11 || (j > 22 && j < 25)) {
                         seat.status = HallScheme.SeatStatus.EMPTY;
@@ -405,12 +380,20 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if ((j > 3 && j < 11) || (j > 11 && j < 23) || (j > 24 && j < 32)) {
                         seat.id = ++k;
                         seat.status = HallScheme.SeatStatus.FREE;
-                        seat.marker = String.valueOf(seat.id);
                         seat.selectedSeatMarker = String.valueOf(seat.id);
-                        seat.price = 200;
                     }
                 }
+                if(i>0){
+                    for(int p=0;p<auditoriumPriceRangeList.size();p++){
+                        if(j>0 && j<49){
+                            if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
+                                seat.price=auditoriumPriceRangeList.get(p).getPrice();
+                            }
+                        }
 
+                    }
+
+                }
             }
 
 //            incrementing by  2 rows range of rows 1 to 28
