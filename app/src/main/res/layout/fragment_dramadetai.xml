@@ -70,6 +70,19 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:orientation="vertical">
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="3dip"
+                            android:hint="Drama Date and Time :"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
                         <TextView
@@ -94,6 +107,7 @@
                                 android:textSize="14sp" />
                             </LinearLayout>
                     </LinearLayout>
+                </LinearLayout>
 
 
 
@@ -200,11 +214,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:padding="5dp"
-                        android:textSize="14sp"
+                        android:background="@drawable/round_btn_white_red"
                         android:text="Book"
-                        android:background="@drawable/round_btn"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
                         android:textColor="@color/cardview_dark_background"
+                        android:textSize="12sp"
+                        android:textStyle="normal"
                         />
                 </LinearLayout>
                 <View

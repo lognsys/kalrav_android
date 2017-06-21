@@ -57,7 +57,7 @@ import java.util.Properties;
  * Created by admin on 02-04-2017.
  */
 
-public class FragmentDramaDetail extends Fragment implements View.OnClickListener {
+public class FragmentDramaDetail extends Fragment  {
 //for dots
    static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaMusic,textRatingvalue,tvDramaDate,tvDramaTiming,tvDramaLanguage,
         tvDramaGenre,textsynopsys,textDirector,textWriter,textStarcast;
@@ -126,7 +126,20 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
       }
         viewPager=(ViewPager)view.findViewById(R.id.viewpager);
         btnbook=(Button)view.findViewById(R.id.btnbook);
-        btnbook.setOnClickListener(this);
+        btnbook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(dramaInfo !=null && dramaInfo.getId()!=0){
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("dramaInfoId", dramaInfo.getId());
+                    Fragment fragment = new AuditoriumListFragment();
+                    fragment.setArguments(bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                }
+            }
+        });
         //recycler view for users review
         horizontal_recycler_view_users = (RecyclerView) view.findViewById(R.id.rvUsersReview);
         SnapHelper helper = new LinearSnapHelper();
@@ -332,7 +345,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                     String drama_length = response.getString("drama_length");
                     dramaInfo.setDrama_length(drama_length);
                     if(dramaInfo.getDrama_length()!=null){
-                        tvDramaLength.setText(dramaInfo.getDrama_length());
+                        tvDramaLength.setText("Drama Length : \n "+dramaInfo.getDrama_length());
                     }
 
 
@@ -353,7 +366,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                     String genre = response.getString("genre");
                     dramaInfo.setGenre(genre);
                     if(dramaInfo.getGenre()!=null){
-                        tvDramaGenre.setText(dramaInfo.getGenre());
+                        tvDramaGenre.setText("Genre : "+dramaInfo.getGenre());
                     }
 
                     String star_cast = response.getString("star_cast");
@@ -384,7 +397,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                     String music = response.getString("music");
                     dramaInfo.setMusic(music);
                     if(dramaInfo.getMusic()!=null && dramaInfo.getMusic().length()>0){
-                        tvDramaMusic.setText(dramaInfo.getMusic());
+                        tvDramaMusic.setText("Music : "+dramaInfo.getMusic());
                     }
                     String avg_rating = response.getString("avg_rating");
                     dramaInfo.setAvg_rating(avg_rating);
@@ -395,21 +408,10 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
                     dramaInfo.setDrama_language(drama_language);
 
                     if(dramaInfo.getDrama_language()!=null && dramaInfo.getDrama_language().length()>0){
-                        tvDramaLanguage.setText(dramaInfo.getDrama_language());
+                        tvDramaLanguage.setText("Language : "+dramaInfo.getDrama_language());
                     }
                     dramaInfoDAO.updateDrama(dramaInfo);
                     KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
-/*
-
-                    if(dramaInfo.getDrama_language()!=null){
-                        tvDramaLanguage.setText(dramaInfo.getDrama_language());
-                    }
-
-                    if(dramaInfo.getGroup_name()!=null){
-                        textGroupname.setText(dramaInfo.getGroup_name());
-                    }
-
-*/
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -523,9 +525,12 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
 
     }
 
-
+/*
     @Override
     public void onClick(View v) {
+
+
+        *//*
 
 // Created a new Dialog
         final Dialog dialog = new Dialog(getActivity());
@@ -573,7 +578,7 @@ public class FragmentDramaDetail extends Fragment implements View.OnClickListene
             }
         });
 // Display the dialog
-        dialog.show();
-    }
+        dialog.show();*//*
+    }*/
 }
 

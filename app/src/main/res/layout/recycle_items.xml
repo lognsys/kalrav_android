@@ -90,7 +90,7 @@
                        android:id="@+id/btnbook"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:background="@drawable/round_btn"
+                       android:background="@drawable/round_btn_white_red"
                        android:text="Book"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"

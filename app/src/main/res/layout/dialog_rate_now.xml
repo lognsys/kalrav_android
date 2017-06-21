@@ -93,13 +93,17 @@
 
         <Button
             android:id="@+id/btnsubmit"
-            style="?android:textAppearanceMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_gravity="bottom|center_horizontal"
             android:text="Submit"
-            android:textColor="@android:color/holo_red_dark"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+
+            android:gravity="center"
+            android:layout_width="190dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/round_btn"
+            android:textColor="#fff" />
 
 
     </LinearLayout>

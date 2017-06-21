@@ -368,6 +368,7 @@ public class DramaFragment extends Fragment {
                 }
             });
             holder.textGroupname.setText(dramaInfo[0].getGroup_name());
+            holder.textGroupname.setText(dramaInfo[0].getGroup_name());
 
             holder.shareImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -377,8 +378,9 @@ public class DramaFragment extends Fragment {
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.putExtra(Intent.EXTRA_STREAM, bmpUri);
                     share.putExtra(Intent.EXTRA_TEXT,"Drama Details : \n Drama Name : "+dramaInfo[0].getTitle()
-                                                        +" \n Drama Date : "+dramaInfo[0].getDatetime()+" Drama Time : "+dramaInfo[0].getTime()
-                                                        +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()+" Drama Language : "+dramaInfo[0].getDrama_language());
+                                                       /* +" \n Drama Date : "+dramaInfo[0].getDatetime()+" Drama Time : "+dramaInfo[0].getTime()*/
+                                                        +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()
+                                            /*+" Drama Language : "+dramaInfo[0].getDrama_language()*/);
                     share.setType("image/jpeg");
                     share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     getContext().startActivity(Intent.createChooser(share, "Share image File"));

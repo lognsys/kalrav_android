@@ -531,7 +531,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                             try {
-                                     Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getPhotoUrl() -=====" +  mAuth.getCurrentUser().getPhotoUrl());
+                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getPhotoUrl() -=====" +  mAuth.getCurrentUser().getPhotoUrl());
                                 Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getUid() -=====" +  mAuth.getCurrentUser().getUid());
                                 Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getEmail() -=====" +  mAuth.getCurrentUser().getEmail());
                                 Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getDisplayName() -=====" +  mAuth.getCurrentUser().getDisplayName());

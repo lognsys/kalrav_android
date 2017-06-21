@@ -64,13 +64,15 @@ public class HallScheme {
         sceneName = context.getString(R.string.scene);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            schemeBackgroundColor = context.getResources().getColor(R.color.light_grey);
+            schemeBackgroundColor =  context.getResources().getColor(R.color.white);
+//            schemeBackgroundColor = context.getResources().getColor(R.color.light_grey);
             unavailableSeatColor = context.getResources().getColor(R.color.disabled_color);
             chosenColor = context.getResources().getColor(R.color.orange);
             markerPaint = initTextPaint(context.getResources().getColor(R.color.black_gray));
             scenePaint = initTextPaint(context.getResources().getColor(R.color.black_gray));
         } else {
-            schemeBackgroundColor = context.getColor(R.color.light_grey);
+//            schemeBackgroundColor = context.getColor(R.color.light_grey);
+            schemeBackgroundColor = context.getColor(R.color.white);
             unavailableSeatColor = context.getColor(R.color.disabled_color);
             chosenColor = context.getColor(R.color.orange);
             markerPaint = initTextPaint(context.getColor(R.color.black_gray));

@@ -51,6 +51,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
     private PropertyReader propertyReader;
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+    public static final String TAG = "SettingFragment";
 
     ArrayList<UserInfo> userInfos;
     UserInfoDAOImpl userDaoImpl;
@@ -63,6 +64,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
         userDaoImpl = new UserInfoDAOImpl(this);
+        Log.d(TAG, "Setting onCreate getCustomer_id " + KalravApplication.getInstance().getPrefs().getCustomer_id());
 
         populateData();
 
@@ -80,7 +82,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
         editPincode = (EditText) findViewById(R.id.editPincode);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         profile_image= (ImageView) findViewById(R.id.profile_image);
-//        btnRegister.setOnClickListener(this);
+        btnRegister.setOnClickListener(this);
         if (KalravApplication.getInstance().getPrefs().getEmail() != null)
         {
             editUsername.setText(KalravApplication.getInstance().getPrefs().getEmail());

@@ -493,7 +493,7 @@ public class AuditoriumListFragment extends Fragment {
         }
         public List<SeatExample> findAllItems() {
             JSONObject serviceResult = requestWebService(
-                    "http://www.json-generator.com/api/json/get/cfqTqBmHUy?indent=2");
+                    "http://www.json-generator.com/api/json/get/bUQytBJysy?indent=2");
 
             List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 
