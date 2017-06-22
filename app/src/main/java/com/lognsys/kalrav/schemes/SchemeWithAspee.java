@@ -26,20 +26,8 @@ package com.lognsys.kalrav.schemes;
         import com.lognsys.kalrav.model.AuditoriumPriceRange;
         import com.lognsys.kalrav.model.SeatExample;
 
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
-
-        import java.io.BufferedInputStream;
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.net.HttpURLConnection;
-        import java.net.MalformedURLException;
-        import java.net.SocketTimeoutException;
-        import java.net.URL;
         import java.util.ArrayList;
         import java.util.List;
-        import java.util.Scanner;
 
         import by.anatoldeveloper.hallscheme.hall.HallScheme;
         import by.anatoldeveloper.hallscheme.hall.ScenePosition;
@@ -51,7 +39,6 @@ package com.lognsys.kalrav.schemes;
  * Created by Nublo on 05.12.2015.
  * Copyright Nublo
  */
-//http://www.json-generator.com/api/json/get/cuGNiUpDeG?indent=2
 public class SchemeWithAspee extends Fragment {
     List<SeatExample> itemsList;
     Auditorium auditorium;
@@ -61,6 +48,8 @@ public class SchemeWithAspee extends Fragment {
     RecyclerView listViewPrices;
     ZoomableImageView imageView;
     MyAdapter adapter;
+    int dramaInfoId;
+    String time,strDate;
     String rowNumber[]={"","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","H","G","F","E","D","C","B","A"};
 
     int n =91;
@@ -71,6 +60,9 @@ public class SchemeWithAspee extends Fragment {
 
         auditorium= (Auditorium) getArguments().getSerializable("auditorium");
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
+        dramaInfoId=  getArguments().getInt("dramaInfoId");
+        time=  getArguments().getString("time");
+        strDate=  getArguments().getString("strDate");
         populateData(rootView);
 
         return rootView;
@@ -126,20 +118,20 @@ public class SchemeWithAspee extends Fragment {
                     Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
 
                 }
-//                ArrayList<Seat> items=(ArrayList<Seat>)seatList;
-//                Fragment fff=new ConfirmFragment();
-//                Bundle args = new Bundle();
-////                args.putInt("totalPrice", totalPrice);
-////                args.putSerializable("timeSlot",timeSlot);
-////                args.putSerializable("dramaInfo",dramaInfo);
-//                args.putSerializable("seats", (ArrayList<Seat>) items);
-//                fff.setArguments(args);
-//                if (fff != null){
-//                    switchFragment(fff);
-//                }
-//                else {
-//                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
-//                }
+                ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                Fragment fff=new ConfirmFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("dramaInfoId",dramaInfoId);
+                args.putString("time", time);
+                args.putString("strDate", strDate);
+                args.putSerializable("seats", (ArrayList<Seat>) items);
+                fff.setArguments(args);
+                if (fff != null){
+                    switchFragment(fff);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -149,8 +141,6 @@ public class SchemeWithAspee extends Fragment {
 
         public MyAdapter(List<AuditoriumPriceRange> Data) {
             list = Data;
-//            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
-
         }
         @Override
         public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
@@ -175,8 +165,15 @@ public class SchemeWithAspee extends Fragment {
 
             AuditoriumPriceRange auditorium = list.get(position);
 
-            holder.textIStart.setText("Row "+auditorium.getIstart());
-            holder.textIEnd.setText(" To "+auditorium.getIend());
+            int iValue=auditorium.getIstart();
+            String strIvalue =rowNumber[iValue];
+            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+
+            int iEndValue=auditorium.getIend();
+            String strIEndvalue =rowNumber[iEndValue];
+            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            holder.textIStart.setText("Row "+strIvalue);
+            holder.textIEnd.setText(" To  "+strIEndvalue);
             holder.textPrice.setText("-Rs ."+String.valueOf(auditorium.getPrice()));
          }
 
@@ -429,7 +426,6 @@ public class SchemeWithAspee extends Fragment {
 
                                 if (i > 13 && i < 17) {
                                     seat.id = midSeatsYtoMrow - (1 * j);
-//                                    Log.d("","itemsList === seat.id "+(seat.id));
 
                                 } else if (i > 17 && i < 21) {//&& i < 22
                                     seat.id = midSeatsLtoGrow - (1 * j);
@@ -636,7 +632,6 @@ public class SchemeWithAspee extends Fragment {
                         if(rows>21 && rows<28 )
                         {
                             rows=rows+2;
-                            Log.d("","itemsList === rows inside rows itemsList.get(k).getJrow() ===== "+(itemsList.get(k).getJrow()));
 
                             colvalue=32-itemsList.get(k).getJrow()-4;
 //                        Log.d("","itemsList findAllItems colvalue ================ "+colvalue);
@@ -648,10 +643,6 @@ public class SchemeWithAspee extends Fragment {
                             }
                             else{
                                 if(itemsList.get(k).getJrow()==1){
-                                    Log.d("","getJrow AT K ==========="+itemsList.get(k).getJrow()
-                                            +" K ========== "+k
-                                            +" k+1 ==="+(k+1)
-                                            +" 32-itemsList.get(k).getJrow()-k+1 ==="+(32-itemsList.get(k).getJrow()-k+1));
 
                                     colvalue=31-itemsList.get(k).getJrow();
                                     seat.id =itemsList.get(k).getJrow();
@@ -728,8 +719,11 @@ public class SchemeWithAspee extends Fragment {
                                 if(itemsList.get(k).getJrow()>21)
                                 seat.status = HallScheme.SeatStatus.EMPTY;
                             }
-                        }
-                       //                   row A ends
+                        }//                   row A ends
+
+                            if(rows>29)
+                                seat.status = HallScheme.SeatStatus.EMPTY;
+
                     }else{
 
 //                   row (P to Y) start
@@ -772,7 +766,6 @@ public class SchemeWithAspee extends Fragment {
                                 seat.selectedSeatMarker = String.valueOf(seat.id);
                             }
                         }//                   row Z ends
-
 
                     }
                     seats[rows][colvalue]=seat;

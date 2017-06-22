@@ -158,6 +158,53 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
     }
 
     @Override
+    public DramaInfo getDramaByDramaId(int id) {
+        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+        DramaInfo dramaInfo = null;
+
+
+        ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
+        Cursor c = db.rawQuery("SELECT  * FROM drama where "+ SQLiteHelper.COLUMN_ID +" =? ", new String[]{String.valueOf(id)});
+        if(c!=null)
+            Log.d("","Test getAllDrama  c.getCount() "+ c.getCount());
+
+        if (c != null && c.getCount()>0) {
+
+            while (c.moveToNext()){
+                dramaInfo = new DramaInfo();
+                 id = Integer.parseInt(c.getString(0));
+                String groupname = c.getString(1);
+                String dramaname = c.getString(2);
+                String linkphoto = c.getString(3);
+                String datatime = c.getString(4);
+                String dramaLength = c.getString(5);
+                String dramaLanguage = c.getString(6);
+                String dramaGenre = c.getString(7);
+                String dramaTime= c.getString(8);
+                String briefDescription= c.getString(9);
+                String isFav= c.getString(10);
+                Log.d("","Fragment getAllDrama isFav "+isFav);
+
+                dramaInfo.setId(Integer.parseInt(String.valueOf(id)));
+                dramaInfo.setGroup_name(groupname);
+                dramaInfo.setTitle(dramaname);
+                dramaInfo.setLink_photo(linkphoto);
+                dramaInfo.setDatetime(datatime);;
+                dramaInfo.setDrama_length(dramaLength);;
+                dramaInfo.setDrama_language(dramaLanguage);;
+                dramaInfo.setGenre(dramaGenre);;
+                dramaInfo.setTime(dramaTime);
+                dramaInfo.setDescription(briefDescription);
+                dramaInfo.setIsfav(isFav);
+
+
+            }
+            return dramaInfo;
+        }
+        return null;
+    }
+
+    @Override
     public int getDramaCount() {
         db = sqLiteHelper.getReadableDatabase();
         Cursor cur = db.rawQuery("SELECT * FROM Drama ",null);

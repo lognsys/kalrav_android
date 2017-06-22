@@ -91,7 +91,7 @@ public class AuditoriumListFragment extends Fragment {
 
     private WeekCalendar weekCalendar;
     private OnFragmentInteractionListener mListener;
-
+    String strDate=null;
     public AuditoriumListFragment() {
         // Required empty public constructor
     }
@@ -133,18 +133,8 @@ public class AuditoriumListFragment extends Fragment {
 
 
         final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
-        // Inflate the layout for this fragment
-        /*SimpleDateFormat curFormater = new SimpleDateFormat("EEE dd");
-        GregorianCalendar date = new GregorianCalendar();
-        String[] dateStringArray = new String[7];
-        date.set(GregorianCalendar.WEEK_OF_MONTH, date.get(GregorianCalendar.DATE)-date.get(GregorianCalendar.DAY_OF_WEEK)+1);
-        for (int day = 0; day < 7; day++) {
-            dateStringArray[day] = curFormater.format(date.getTime());
-            date.setFirstDayOfWeek(day);
-            date.roll(Calendar.DAY_OF_MONTH, true);
-            Log.d("","HELLO WORLD DAYS: "+dateStringArray[day]);
-        }*/
-        String strDate = fmt.print(new DateTime());
+
+         strDate = fmt.print(new DateTime());
 
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
@@ -385,14 +375,8 @@ public class AuditoriumListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getActivity(),"Time"+split[finalI]+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
-                        //                future implementation with  auditorium id or name and with  date time too
-                          //                future implementation with  auditorium id or name and with  date time too
 
-                        new RequestItemsServiceTask(auditorium).execute();
-
-//                        Fragment fragment = new SchemePrabhodhanFragment();
-//                        getActivity().getSupportFragmentManager().beginTransaction()
-//                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                        new RequestItemsServiceTask(auditorium,split[finalI],strDate).execute();
 
                     }
                 });
@@ -409,8 +393,11 @@ public class AuditoriumListFragment extends Fragment {
             private ProgressDialog dialog =
                     new ProgressDialog(getActivity());
             Auditorium auditorium;
-            public RequestItemsServiceTask(Auditorium auditorium) {
+            String time,strDate;
+            public RequestItemsServiceTask(Auditorium auditorium, String time, String strDate) {
             this.auditorium=auditorium;
+            this.time=time;
+            this.strDate=strDate;
             }
 
             @Override
@@ -442,8 +429,9 @@ public class AuditoriumListFragment extends Fragment {
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("itemsList", (Serializable) itemsList);
-
-
+                bundle.putInt("dramaInfoId", dramaInfoId);
+                bundle.putString("time", this.time);
+                bundle.putString("strDate", this.strDate);
                 if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
@@ -493,7 +481,7 @@ public class AuditoriumListFragment extends Fragment {
         }
         public List<SeatExample> findAllItems() {
             JSONObject serviceResult = requestWebService(
-                    "http://www.json-generator.com/api/json/get/bUQytBJysy?indent=2");
+                    "http://www.json-generator.com/api/json/get/ckfmtreesy?indent=2");
 
             List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 

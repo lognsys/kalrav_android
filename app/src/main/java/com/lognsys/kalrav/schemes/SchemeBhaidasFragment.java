@@ -14,7 +14,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.AuditoriumPriceRange;
 import com.lognsys.kalrav.model.SeatExample;
@@ -33,7 +35,8 @@ import by.anatoldeveloper.hallscheme.view.ZoomableImageView;
  * Copyright Nublo
  */
 public class SchemeBhaidasFragment extends Fragment {
-
+    String[] rowname={"GG","","FF","EE","DD","CC","BB","AA","Z","Y","","X","W","V","U","T",
+            "S","R","","Q","P","O","N","M","L","K","J","H","G","F","E","D","C","B","A","A1"};
     Auditorium auditorium;
     ArrayList<AuditoriumPriceRange> auditoriumPriceRangeList;
     List<SeatExample> itemsList;
@@ -43,12 +46,17 @@ public class SchemeBhaidasFragment extends Fragment {
     RecyclerView listViewPrices;
     MyAdapter adapter;
     int n=91;
+    int dramaInfoId;
+    String time,strDate;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.basic_scheme_fragment, container, false);
         auditorium= (Auditorium) getArguments().getSerializable("auditorium");
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
+        dramaInfoId=  getArguments().getInt("dramaInfoId");
+        time=  getArguments().getString("time");
+        strDate=  getArguments().getString("strDate");
         populateData(rootView);
 
         return rootView;
@@ -103,24 +111,33 @@ public class SchemeBhaidasFragment extends Fragment {
                 else{
                     Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
 
+                }  ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                Fragment fff=new ConfirmFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("dramaInfoId",dramaInfoId);
+                args.putString("time", time);
+                args.putString("strDate", strDate);
+                args.putSerializable("seats", (ArrayList<Seat>) items);
+                fff.setArguments(args);
+                if (fff != null){
+                    switchFragment(fff);
                 }
-//                ArrayList<Seat> items=(ArrayList<Seat>)seatList;
-//                Fragment fff=new ConfirmFragment();
-//                Bundle args = new Bundle();
-////                args.putInt("totalPrice", totalPrice);
-////                args.putSerializable("timeSlot",timeSlot);
-////                args.putSerializable("dramaInfo",dramaInfo);
-//                args.putSerializable("seats", (ArrayList<Seat>) items);
-//                fff.setArguments(args);
-//                if (fff != null){
-//                    switchFragment(fff);
-//                }
-//                else {
-//                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
-//                }
+                else {
+                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
+
+    private void switchFragment(Fragment fff) {
+        if (getActivity() == null)
+            return;
+        if (getActivity() instanceof HomeActivity) {
+            HomeActivity feeds = (HomeActivity) getActivity();
+            feeds.switchContent(fff);
+        }
+    }
+
     public class MyAdapter extends RecyclerView.Adapter<SchemeBhaidasFragment.MyAdapter.MyViewHolder> {
         private List<AuditoriumPriceRange> list;
 
@@ -151,9 +168,15 @@ public class SchemeBhaidasFragment extends Fragment {
         public void onBindViewHolder(SchemeBhaidasFragment.MyAdapter.MyViewHolder holder, int position) {
 
             AuditoriumPriceRange auditorium = list.get(position);
+            int iValue=auditorium.getIstart();
+            String strIvalue =rowname[iValue];
+            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
 
-            holder.textIStart.setText("Row "+auditorium.getIstart());
-            holder.textIEnd.setText(" To "+auditorium.getIend());
+            int iEndValue=auditorium.getIend();
+            String strIEndvalue =rowname[iEndValue];
+            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            holder.textIStart.setText("Row "+strIvalue);
+            holder.textIEnd.setText(" To  "+strIEndvalue);
             holder.textPrice.setText("-Rs ."+String.valueOf(auditorium.getPrice()));
         }
 
@@ -201,8 +224,7 @@ public class SchemeBhaidasFragment extends Fragment {
         Seat seats[][] = new Seat[40][50];
 
 
-        String[] rowname={"GG","","FF","EE","DD","CC","BB","AA","Z","Y","","X","W","V","U","T",
-                "S","R","","Q","P","O","N","M","L","K","J","H","G","F","E","D","C","B","A","A1"};
+
         for (int i = 0; i < 40; i++){
             int k = 0;
             int a1throw = 12;
@@ -445,8 +467,7 @@ public class SchemeBhaidasFragment extends Fragment {
                                         if(seat.id>27){
                                             seat.id=seat.id-2;
                                         }
-                                        Log.d("", "Bhaidas left seats +middle seats +right seats =========== " + (seat.id));
-                                        seat.status = HallScheme.SeatStatus.FREE;
+                                       seat.status = HallScheme.SeatStatus.FREE;
                                         seat.marker = rowname[i - 1];
                                         seat.selectedSeatMarker=String.valueOf(seat.id);
 
@@ -565,334 +586,340 @@ public class SchemeBhaidasFragment extends Fragment {
                         }//                   row U to R ends
 
 //                   row Q to M start                   <=21                                >16
-                        if(rows>18 && rows<25)
+                        if(rows>18 && rows<37)
                         {
 
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<39)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>0 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                            rows=rows+1;
+//                             row Q to M start
+                            if(rows>19 && rows<25){
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<39)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
+                                    if(itemsList.get(k).getJrow()>0 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
+
                                 }
-
-                            }
-                        }//    Q to M Ends
-
+                            }// row Q to M ends
 
 //                   row L to K start                   <=21                                >16
-                        if(rows>24 && rows<27)
-                        {
+                            if(rows>24 && rows<27)
+                            {
 
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<38)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>1 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<38)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>1 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//    L to K Ends
+                                }
+                            }//    L to K Ends
 
 //                   row J to H start                   <=21                                >16
-                        if(rows>26 && rows<29)
-                        {
+                            if(rows>26 && rows<29)
+                            {
 
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<37)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>2 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<37)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>2 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//    J to H Ends
+                                }
+                            }//    J to H Ends
 
 //                   row G start
-                      if(rows ==29)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<36)
+                            if(rows ==29)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>3 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<36)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>3 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//                   row G ends
+                                }
+                            }//                   row G ends
 
 //                   row F start
-                        if(rows ==30)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<35)
+                            if(rows ==30)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>4 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<35)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>4 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//                   row F ends
+                                }
+                            }//                   row F ends
 
 //                   row E start
-                        if(rows ==31)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<34)
+                            if(rows ==31)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>5 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<34)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>5 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//                   row E ends
+                                }
+                            }//                   row E ends
 
 //                   row D start
-                        if(rows ==32)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<33)
+                            if(rows ==32)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>6 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<33)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
+                                    if(itemsList.get(k).getJrow()>6 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
+
                                 }
+                            }//                   row D ends
+                            if(rows>36){
 
+                                seat.status = HallScheme.SeatStatus.EMPTY;
                             }
-                        }//                   row D ends
-
 //                   row C start
-                        if(rows ==33)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<32)
+                            if(rows ==33)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>7 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<32)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>7 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//                   row C ends
+                                }
+                            }//                   row C ends
 
 //                   row B start
-                        if(rows ==34)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<31)
+                            if(rows ==34)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>8 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<31)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>8 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//                   row B ends
+                                }
+                            }//                   row B ends
 
 //                   row A start
-                        if(rows ==35)
-                        {
-                            if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<30)
+                            if(rows ==35)
                             {
-                                colvalue=itemsList.get(k).getJrow()+9;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
-                            {
-                                colvalue=itemsList.get(k).getJrow()+6;
-                                seat.color = Color.argb(255, 60, 179, 113);
-                                seat.id =itemsList.get(k).getJrow();
-                                seat.selectedSeatMarker = String.valueOf(seat.id);
-                            }
-                            else{
-                                if(itemsList.get(k).getJrow()>9 && itemsList.get(k).getJrow()<13){
-                                    colvalue=3+itemsList.get(k).getJrow();
+                                if(itemsList.get(k).getJrow()>26 && itemsList.get(k).getJrow()<30)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+9;
+                                    seat.color = Color.argb(255, 60, 179, 113);
+                                    seat.id =itemsList.get(k).getJrow();
+                                    seat.selectedSeatMarker = String.valueOf(seat.id);
+                                }
+                                else if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                {
+                                    colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
                                     seat.id =itemsList.get(k).getJrow();
                                     seat.selectedSeatMarker = String.valueOf(seat.id);
                                 }
                                 else{
-                                    seat.status = HallScheme.SeatStatus.EMPTY;
-                                    seat.marker=rowname[rows];
-                                }
+                                    if(itemsList.get(k).getJrow()>9 && itemsList.get(k).getJrow()<13){
+                                        colvalue=3+itemsList.get(k).getJrow();
+                                        seat.color = Color.argb(255, 60, 179, 113);
+                                        seat.id =itemsList.get(k).getJrow();
+                                        seat.selectedSeatMarker = String.valueOf(seat.id);
+                                    }
+                                    else{
+                                        seat.status = HallScheme.SeatStatus.EMPTY;
+                                        seat.marker=rowname[rows];
+                                    }
 
-                            }
-                        }//                   row A ends
+                                }
+                            }//                   row A ends
+
 
 //                   row A1 start
-                        if(rows ==36)
-                        {
+                            if(rows ==36)
+                            {
 
-                            if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
+                                if(itemsList.get(k).getJrow()>12 && itemsList.get(k).getJrow()<27)
                                 {
                                     colvalue=itemsList.get(k).getJrow()+6;
                                     seat.color = Color.argb(255, 60, 179, 113);
@@ -903,7 +930,10 @@ public class SchemeBhaidasFragment extends Fragment {
                                     seat.status = HallScheme.SeatStatus.EMPTY;
                                     seat.marker=rowname[rows];
                                 }
-                        }//                   row A1 ends
+                            }//                              row A1 ends
+
+
+                        }//    Q to M Ends
 
 
                     }else{

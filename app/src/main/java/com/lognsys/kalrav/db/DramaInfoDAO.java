@@ -33,5 +33,8 @@ List<DramaInfo>  getDramaListByFavId(ArrayList<FavouritesInfo> favouritesInfos);
 
     List<DramaInfo> getAllDramaByUserGroup(String group_name);
 
+
+    DramaInfo getDramaByDramaId(int id);
+
     int getDramaCount();
 }

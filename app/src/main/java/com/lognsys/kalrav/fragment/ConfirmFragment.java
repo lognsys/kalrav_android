@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import by.anatoldeveloper.hallscheme.hall.Seat;
+
 public class ConfirmFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,15 +92,17 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout input_layout_total_price;
     TimeSlot timeSlot;
     DramaInfo dramaInfo;
-    int totalPrice;
+    String time,strDate;
+    int dramaInfoId,totalPrice;
     ImageView img;
-    ArrayList<String> mSeats;
+    ArrayList<Seat> mSeats;
     String DramaName, Auditorium,TotalPrice, GroupName, DateAndTime, TicketNumber,BookingDateTime,UserName,TotalTicketBooked;
     Bitmap bitmapQRCode,bitmap;
     public final static int QRcodeWidth = 500;
     ArrayList<TicketsInfo> dramaInfos;
     TicketInfoDAOImpl ticketInfoDAO;
     TicketsInfo ticketsInfo;
+    DramaInfoDAOImpl dramaInfoDAO;
     public ConfirmFragment() {
         // Required empty public constructor
     }
@@ -135,16 +139,16 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_confirm, container, false);
-
-        totalPrice = getArguments().getInt("totalPrice");
+        dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
+        dramaInfoId = getArguments().getInt("dramaInfoId");
         timeSlot= (TimeSlot) getArguments().getSerializable("timeSlot");
-        dramaInfo= (DramaInfo) getArguments().getSerializable("dramaInfo");
+        dramaInfo= dramaInfoDAO.getDramaByDramaId(dramaInfoId);
+
         ticketInfoDAO =new TicketInfoDAOImpl(getContext());
         ticketsInfo=new TicketsInfo();
-        Log.d("","Dialog onItemClick timeSlot "+timeSlot);
-        Log.d("","Dialog onItemClick dramaInfo "+dramaInfo);
-
-        mSeats = getArguments().getStringArrayList("seats");
+        time=  getArguments().getString("time");
+        strDate=  getArguments().getString("strDate");
+        mSeats = (ArrayList<Seat>) getArguments().getSerializable("seats");
        populateView(view);
         return view;
     }
@@ -178,25 +182,27 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         }
 
         editAuditoriumName.setText("Kalrav");
-        if(dramaInfo!=null && timeSlot!=null){
-            editTimeSlot.setText(timeSlot.getDateSlot()+" | "+timeSlot.getTimeSlot());
+        if(time!=null && strDate!=null){
+            editTimeSlot.setText(strDate+" | "+time);
         }
 
         btnTicket=(Button) view.findViewById(R.id.btnTicket);
         btnTicket.setOnClickListener(this);
-        if(totalPrice>0){
-            editTotalPrice.setText(String.valueOf("Rs "+totalPrice));
-        }
+
         if(mSeats!= null && mSeats.size()>0){
             int seatno=mSeats.size();
             Log.d("","size ===== "+mSeats.size());
             editNoOfSeatsBooked.setText(String.valueOf(seatno));
             StringBuilder stringBuilder=new StringBuilder();
             for (int i= 0;i<mSeats.size(); i++){
-                String seat=mSeats.get(i);
-                stringBuilder.append(seat+" , ");
+                Seat seat=mSeats.get(i);
+                stringBuilder.append(seat.marker()+seat.selectedSeat()+" , ");
+                totalPrice=seat.getTotal();
             }
             editSeatNumber.setText(stringBuilder.toString());
+            if(totalPrice>0){
+                editTotalPrice.setText(String.valueOf("Rs "+totalPrice));
+            }
         }
     }
 
@@ -273,7 +279,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                  builderSingle.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                      @Override
                      public void onClick(DialogInterface dialog, int which) {
-                         if(dramaInfo != null && timeSlot!= null){
+                         if(dramaInfo != null /*&& timeSlot!= null*/){
 
 
                              ticketsInfo.setDrama_id(dramaInfo.getId());
@@ -284,7 +290,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                              Auditorium = "Auditorium Name : " +editAuditoriumName.getText().toString();
                              GroupName = "Group Name : "+dramaInfo.getGroup_name();
                              DateAndTime = "Drama Date and Time : "+ dramaInfo.getDatetime()+" " +dramaInfo.getTime();
-                             BookingDateTime ="Booking Date and Time :"+ timeSlot.getDateSlot()+" " +timeSlot.getTimeSlot();
+                             BookingDateTime ="Booking Date and Time :"+strDate+" " +time;
                              UserName="Booked by : "+ editName.getText().toString();
                              TicketNumber ="Ticket numbers :"+ editSeatNumber.getText().toString();
                              TotalTicketBooked ="Total Ticket numbers :"+editNoOfSeatsBooked.getText().toString();
@@ -404,8 +410,8 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                ticketsInfo.setDrama_photo(dramaInfo.getLink_photo());
                ticketsInfo.setDrama_date(dramaInfo.getDatetime());
                ticketsInfo.setDrama_time(dramaInfo.getTime());
-               ticketsInfo.setBooked_time(timeSlot.getTimeSlot());
-               ticketsInfo.setBooked_date(timeSlot.getDateSlot());
+               ticketsInfo.setBooked_time(time);
+               ticketsInfo.setBooked_date(strDate);
                String confirmationCode = UUID.randomUUID().toString();
 
                ticketsInfo.setConfirmation_code(confirmationCode);

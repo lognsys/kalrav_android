@@ -212,9 +212,7 @@ public class BookmarkFragment extends Fragment {
                 if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
                     DramaInfo dramaInfo = list.get(position);
                     // We can access the data within the views
-                    Log.d("", "MyAdapter getAdapterPosition list.get(position) "+ list.get(position));
-                    Log.d("", "MyAdapter getAdapterPosition MyViewHolder dramaInfo "+dramaInfo);
-                    Log.d("", "MyAdapter getAdapterPositionMyViewHolder dramaInfo.getName "+dramaInfo.getTitle());
+
                     if(dramaInfo!=null) {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("dramaInfo", dramaInfo);

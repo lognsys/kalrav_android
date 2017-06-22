@@ -14,7 +14,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.AuditoriumPriceRange;
 import com.lognsys.kalrav.model.SeatExample;
@@ -44,6 +46,15 @@ public class SchemePrabhodhanFragment extends Fragment {
     RecyclerView listViewPrices;
     ZoomableImageView imageView;
     MyAdapter adapter;
+    int dramaInfoId;
+    String time,strDate;
+    String[] rowname = {"",
+            "KK", "JJ", "HH", "GG",
+            "FF", "EE", "DD", "CC",
+            "BB", "AA", "", "",
+            "Y", "X", "W", "V", "U", "T", "S", "R",
+            "P", "O", "N", "SP", "M", "L", "K", "J",
+            "H", "G", "F", "E", "D", "C", "B", "A"};
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,11 +63,23 @@ public class SchemePrabhodhanFragment extends Fragment {
         auditorium= (Auditorium) getArguments().getSerializable("auditorium");
 
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
+        dramaInfoId=  getArguments().getInt("dramaInfoId");
+        time=  getArguments().getString("time");
+        strDate=  getArguments().getString("strDate");
         populateData(rootView);
         scheme = new HallScheme(imageView, basicScheme(), getActivity());
         scheme.setSceneName(getString(R.string.all_eye_here));
         scheme.setScenePosition(ScenePosition.SOUTH);
         return rootView;
+    }
+
+    private void switchFragment(Fragment fff) {
+        if (getActivity() == null)
+            return;
+        if (getActivity() instanceof HomeActivity) {
+            HomeActivity feeds = (HomeActivity) getActivity();
+            feeds.switchContent(fff);
+        }
     }
 
     private void populateData(View rootView) {
@@ -109,21 +132,20 @@ public class SchemePrabhodhanFragment extends Fragment {
                 else{
                     Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
 
+                } ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                Fragment fff=new ConfirmFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("dramaInfoId",dramaInfoId);
+                args.putString("time", time);
+                args.putString("strDate", strDate);
+                args.putSerializable("seats", (ArrayList<Seat>) items);
+                fff.setArguments(args);
+                if (fff != null){
+                    switchFragment(fff);
                 }
-//                ArrayList<Seat> items=(ArrayList<Seat>)seatList;
-//                Fragment fff=new ConfirmFragment();
-//                Bundle args = new Bundle();
-////                args.putInt("totalPrice", totalPrice);
-////                args.putSerializable("timeSlot",timeSlot);
-////                args.putSerializable("dramaInfo",dramaInfo);
-//                args.putSerializable("seats", (ArrayList<Seat>) items);
-//                fff.setArguments(args);
-//                if (fff != null){
-//                    switchFragment(fff);
-//                }
-//                else {
-//                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
-//                }
+                else {
+                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -131,13 +153,7 @@ public class SchemePrabhodhanFragment extends Fragment {
     public Seat[][] basicScheme() {//[40][52]
         Seat seats[][] = new Seat[37][37];
 
-        String[] rowname = {"",
-                "KK", "JJ", "HH", "GG",
-                "FF", "EE", "DD", "CC",
-                "BB", "AA", "", "",
-                "Y", "X", "W", "V", "U", "T", "S", "R",
-                "P", "O", "N", "SP", "M", "L", "K", "J",
-                "H", "G", "F", "E", "D", "C", "B", "A"};
+
         for (int i = 0; i < 37; i++) {
             int k = 0;
             for (int j = 0; j < 37; j++) {
@@ -1077,9 +1093,15 @@ public class SchemePrabhodhanFragment extends Fragment {
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
 
             AuditoriumPriceRange auditorium = list.get(position);
+            int iValue=auditorium.getIstart();
+            String strIvalue =rowname[iValue];
+            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
 
-            holder.textIStart.setText("Row "+auditorium.getIstart());
-            holder.textIEnd.setText(" To "+auditorium.getIend());
+            int iEndValue=auditorium.getIend();
+            String strIEndvalue =rowname[iEndValue];
+            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            holder.textIStart.setText("Row "+strIvalue);
+            holder.textIEnd.setText(" To  "+strIEndvalue);
             holder.textPrice.setText("-Rs ."+String.valueOf(auditorium.getPrice()));
         }
 
