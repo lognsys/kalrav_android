@@ -59,22 +59,10 @@ import java.util.Properties;
 
 public class FragmentDramaDetail extends Fragment  {
 //for dots
-   static TextView mDotsText[],tvDramaName,tvDramaLength,tvDramaMusic,textRatingvalue,tvDramaDate,tvDramaTiming,tvDramaLanguage,
+   static TextView tvDramaName,tvDramaLength,tvDramaMusic,textRatingvalue,tvDramaDate,tvDramaTiming,tvDramaLanguage,
         tvDramaGenre,textsynopsys,textDirector,textWriter,textStarcast;
-    private int mDotsCount;
-    private LinearLayout mDotsLayout;
-    int position;
 
     DramaInfoDAOImpl dramaInfoDAO;
-    private static final String GET_DRAMA_DETAIL_BY_ID_URL="http://192.168.0.19:8080/getdramadetailbyid/";
-
-    private RecyclerView horizontal_recycler_view_users;
-    private RecyclerView horizontal_recycler_view_critics;
-    private ArrayList<String> horizontalListUsers;
-    private ArrayList<String> horizontalListReview;
-    private ArrayList<String> horizontalListCritics;
-    private HorizontalAdapterUsersReview horizontalAdapterUsers;
-    private List<TimeSlot> timeSlotArrayList;
     RatingBar rbRatingBar;
     //Properties
     private PropertyReader propertyReader;
@@ -86,9 +74,7 @@ public class FragmentDramaDetail extends Fragment  {
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
     AlertDialog dialog;
     Button btnbook;
-    private static final Integer[] IMAGES= {R.drawable.gujjubhai_ghode_chadhiya,R.drawable.gujjubhai_great,R.drawable.google,R.drawable.com_facebook_button_background};
     ViewPager viewPager;
-    private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
     ImageView dramaImage;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -141,58 +127,7 @@ public class FragmentDramaDetail extends Fragment  {
             }
         });
         //recycler view for users review
-        horizontal_recycler_view_users = (RecyclerView) view.findViewById(R.id.rvUsersReview);
-        SnapHelper helper = new LinearSnapHelper();
-        helper.attachToRecyclerView(horizontal_recycler_view_users);
 
-        horizontalListUsers = new ArrayList<>();
-        horizontalListUsers.add("Radhe Singh");
-        horizontalListUsers.add("horizontal 2");
-        horizontalListUsers.add("horizontal 3");
-        horizontalListUsers.add("horizontal 4");
-        horizontalListUsers.add("horizontal 5");
-        horizontalListUsers.add("horizontal 6");
-        horizontalListUsers.add("horizontal 7");
-        horizontalListUsers.add("horizontal 8");
-        horizontalListUsers.add("horizontal 9");
-        horizontalListUsers.add("horizontal 10");
-
-        horizontal_recycler_view_critics = (RecyclerView) view.findViewById(R.id.rvCriticsReview);
-        SnapHelper helper2 = new LinearSnapHelper();
-        helper2.attachToRecyclerView(horizontal_recycler_view_critics);
-        horizontalListCritics = new ArrayList<>();
-        horizontalListCritics.add("horizontal 1");
-        horizontalListCritics.add("horizontal 2");
-        horizontalListCritics.add("horizontal 3");
-        horizontalListCritics.add("horizontal 4");
-        horizontalListCritics.add("horizontal 5");
-        horizontalListCritics.add("horizontal 6");
-        horizontalListCritics.add("horizontal 7");
-        horizontalListCritics.add("horizontal 8");
-        horizontalListCritics.add("horizontal 9");
-        horizontalListCritics.add("horizontal 10");
-
-        horizontalListReview = new ArrayList<>();
-        horizontalListReview.add("Really third class drama");
-        horizontalListReview.add("horizontal 2");
-        horizontalListReview.add("horizontal 3");
-        horizontalListReview.add("horizontal 4");
-        horizontalListReview.add("horizontal 5");
-        horizontalListReview.add("horizontal 6");
-        horizontalListReview.add("horizontal 7");
-        horizontalListReview.add("horizontal 8");
-        horizontalListReview.add("horizontal 9");
-        horizontalListReview.add("horizontal 10");
-
-        horizontalAdapterUsers = new HorizontalAdapterUsersReview(horizontalListUsers, horizontalListReview);
-
-         LinearLayoutManager horizontalLayoutManagaer
-                = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager horizontalLayoutManagaer2
-                = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        horizontal_recycler_view_users.setLayoutManager(horizontalLayoutManagaer);
-        horizontal_recycler_view_critics.setLayoutManager(horizontalLayoutManagaer2);
-        horizontal_recycler_view_users.setAdapter(horizontalAdapterUsers);
         tvRateDrama = (TextView) view.findViewById(R.id.tvRateDrama);
         tvAllreviewUsers=(TextView)view.findViewById(R.id.tvAllReviewUsers);
         tvAllreviewCritics=(TextView)view.findViewById(R.id.tvAllReviewCritics);
@@ -248,44 +183,9 @@ public class FragmentDramaDetail extends Fragment  {
         TextView tv = (TextView) view.findViewById(R.id.textsynopsys);
         makeTextViewResizable(tv, 2, "View More", true);
 
-        //here we create the dots
-        //as you can see the dots are nothing but "."  of large size
-        mDotsCount = horizontalListUsers.size();
-        mDotsText = new TextView[mDotsCount];
-        mDotsLayout = (LinearLayout) view.findViewById(R.id.image_count);
-        //here we set the dots
-        for (int i = 0; i < mDotsCount; i++) {
-            mDotsText[i] = new TextView(getActivity());
-            mDotsText[i].setText(".");
-            mDotsText[i].setTextSize(45);
-            mDotsText[i].setTypeface(null, Typeface.BOLD);
-            mDotsText[i].setTextColor(android.graphics.Color.GRAY);
-            mDotsLayout.addView(mDotsText[i]);
-        }
 
         //when we scroll the images we have to set the dot that corresponds to the image to White and the others
         //will be Gray
-        horizontal_recycler_view_users.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-
-                /*long currentVisiblePosition = 0;
-                currentVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-*/
-
-                for (int i = 0; i < mDotsCount; i++) {
-                    FragmentDramaDetail.mDotsText[i]
-                            .setTextColor(Color.GRAY);
-                }
-
-                FragmentDramaDetail.mDotsText[horizontalAdapterUsers.position()]
-                        .setTextColor(Color.RED);
-            }
-
-
-        });
 
 
 
