@@ -1,6 +1,7 @@
 package com.lognsys.kalrav.fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.CustomGridArrayAdapter;
 import com.lognsys.kalrav.adapter.HorizontalAdapterUsersReview;
@@ -41,6 +43,7 @@ import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.MySpannable;
 import com.lognsys.kalrav.model.TimeSlot;
+import com.lognsys.kalrav.util.CallAPI;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.PropertyReader;
@@ -69,7 +72,7 @@ public class FragmentDramaDetail extends Fragment  {
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
 
-
+    CallAPI callAPI;
     DramaInfo dramaInfo;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
     AlertDialog dialog;
@@ -173,7 +176,22 @@ public class FragmentDramaDetail extends Fragment  {
                 btnsubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        callAPI=new CallAPI();
+                        if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null) {
+
+                            String ratedrama=properties.getProperty(Constants.API_URL_DRAMA.ratedrama.name());
+                            KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
+                            callAPI.rateDrama(Double.parseDouble(tvRatingStar.getText().toString()), dramaInfo,
+                                    Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()),ratedrama);
+                            KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
+                            dialog.dismiss();
+                        }
+                        else{
+                            Intent intent =new Intent(getActivity(), LoginActivity.class);
+                            startActivity(intent);
+                            dialog.dismiss();
+                        }
+
                     }
                 });
 

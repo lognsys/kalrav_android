@@ -35,7 +35,8 @@ public class Constants {
     }
     public enum API_URL_DRAMA {
         get_alldrama_with_group_url,
-        getdramadetailbyid
+        getdramadetailbyid,
+        ratedrama
     }
     public enum API_URL_AUDITORIUM_LIST {
         getauditoriumlist
