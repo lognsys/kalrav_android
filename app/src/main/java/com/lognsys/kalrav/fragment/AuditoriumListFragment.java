@@ -175,7 +175,7 @@ public class AuditoriumListFragment extends Fragment {
     private void requestAuditoriumDateTime(int dramaInfoId, String strDate) {
         auditoriumList=new ArrayList<Auditorium>();
 
-        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name());
+        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name())+dramaInfoId;
         Log.d(TAG, "requestAuditoriumDateTime auditoriumlist..."+auditoriumlist);
 
         JsonArrayRequest req = new JsonArrayRequest(auditoriumlist,

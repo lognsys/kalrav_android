@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -176,7 +177,7 @@ public class FragmentDramaDetail extends Fragment  {
                 btnsubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        callAPI=new CallAPI();
+                        callAPI=new CallAPI((AppCompatActivity) getActivity());
                         if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null) {
 
                             String ratedrama=properties.getProperty(Constants.API_URL_DRAMA.ratedrama.name());

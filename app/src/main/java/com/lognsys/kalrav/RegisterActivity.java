@@ -248,7 +248,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         protected String doInBackground(String... place) {
 
             try {
-                String postParameters, firstname, lastname;
+                String postParameters, firstname, lastname,device;
                 String[] splited = null;
                 if (this.realname != null && this.realname.length() > 0 && this.realname.contains(" ")) {
                     splited = this.realname.split(" ");
@@ -258,13 +258,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     firstname = "-";
                     lastname = "-";
                 }
+                device=KalravApplication.getInstance().getPrefs().getDevice_token();
                 /*http://192.168.0.19:8080/createuser/0/priyank%20doshi/doshipriyank@gmail.com/authid124fnfj
                 /8097526387/location/provenance/2017-05-13%2000:00:00/true/true/device/address/city/state/401107/company_name
                 /priyank/doshi/group/role*/
 
+              if(device==null){
+                  KalravApplication.getInstance().invokeFCMService(getApplicationContext());
+              }
+                device=KalravApplication.getInstance().getPrefs().getDevice_token();
+
                 postParameters = "" + 0 + "/" + this.realname + "/" + this.username + "/" + this.auth_id + "/" + this.phone
-                        + "/provenance/2017-05-16 17:09:51/" + true + "/" + true + "/android/"+ this.address+"/" + this.city
-                        + "/"+this.state+"/"+this.zipcode+"/" + firstname + "/" + lastname + "/None/None";
+                        + "/provenance/2017-05-16 17:09:51/" + true + "/" + true + "/"+device+"/"+ this.address+"/" + this.city
+                        + "/"+this.state+"/"+this.zipcode+"/" + firstname + "/" + lastname + "/GUEST/NONE";
                 postParameters = postParameters.replace(" ", "%20");
 
                 String post_create_user_url=properties.getProperty(Constants.API_URL_USER.post_create_user_url.name())+postParameters;

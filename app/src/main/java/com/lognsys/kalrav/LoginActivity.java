@@ -74,6 +74,7 @@ import com.lognsys.kalrav.dialog.NetworkStatusDialog;
 import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.UserInfo;
+import com.lognsys.kalrav.util.CallAPI;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.FontManager;
 import com.lognsys.kalrav.util.KalravApplication;
@@ -149,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements
     private String device_token_id = "";
     UserInfoDAOImpl userDaoImpl;
     SharedPreferences sharedpreferences;
-
+    CallAPI callAPI;
 
 
     //Properties
@@ -170,30 +171,13 @@ public class LoginActivity extends AppCompatActivity implements
         //Instantiating global obj
         // globalObj = ((KalravApplication) getApplicationContext());
 
-        //LOGIN MODULE Step 1: Check if last user loggedIN
+        callAPI=new CallAPI(LoginActivity.this);
+        if( KalravApplication.getInstance().getPrefs().getDevice_token()==null){
+            KalravApplication.getInstance().invokeFCMService(getApplicationContext());
 
-       /* try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.lognsys.kalrav.LoginActivity",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:","KeyHash "+ Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d("KeyHash:","KeyHash PackageManager.NameNotFoundException "+ e);
-
-        } catch (NoSuchAlgorithmException e) {
-            Log.d("KeyHash:","KeyHash NoSuchAlgorithmException "+ e);
-
-        }*/
-
-
+        }
 
         UserInfo user = userDaoImpl.lastUserLoggedIn();
-        Log.d(TAG, "CASE1:  KalravApplication.getInstance().getPrefs().getIsLogin()..."+ KalravApplication.getInstance().getPrefs().getIsLogin());
-        Log.d(TAG, "CASE1:  user..."+ user);
 
         if (null != user && KalravApplication.getInstance().getPrefs().getIsLogin()) {
             Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
@@ -203,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements
                 KalravApplication.getInstance().invokeService(getApplicationContext());
                 Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
                 if(user.getEmail()!=null && user.getEmail().length()>0){
-                    docallApi(user);
+                    callAPI.alReadyExsistUser(user,fb_id,google_id);
 
                 }
 
@@ -240,11 +224,11 @@ public class LoginActivity extends AppCompatActivity implements
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                   Toast.makeText(getApplicationContext(),  "User ID: "
-                           + loginResult.getAccessToken().getUserId()
-                           + "\n" +
-                           "Auth Token: "
-                           + loginResult.getAccessToken().getToken(),Toast.LENGTH_LONG).show();
+//                   Toast.makeText(getApplicationContext(),  "User ID: "
+//                           + loginResult.getAccessToken().getUserId()
+//                           + "\n" +
+//                           "Auth Token: "
+//                           + loginResult.getAccessToken().getToken(),Toast.LENGTH_LONG).show();
 
                     Log.v(TAG, " Facebook API requestData - ");
                     requestData(loginResult);
@@ -398,14 +382,10 @@ public class LoginActivity extends AppCompatActivity implements
                         KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
 
                             if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
-                                docallApi(userInfo);
-
+                                callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
+                                finish();
                             }
 
-//                        Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-//                        i.putExtra("userInfos",userInfos);
-//                        startActivity(i);
-//                        finish();
                     }
                      else {
                     Log.e(TAG, "Could not retrieve data from facebook graphapi...");
@@ -531,12 +511,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                             try {
-                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getPhotoUrl() -=====" +  mAuth.getCurrentUser().getPhotoUrl());
-                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getUid() -=====" +  mAuth.getCurrentUser().getUid());
-                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getEmail() -=====" +  mAuth.getCurrentUser().getEmail());
-                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser().getDisplayName() -=====" +  mAuth.getCurrentUser().getDisplayName());
-                                Log.d(TAG, "firebaseAuthWithGoogle: acct  mAuth.getCurrentUser() -=====" + mAuth.getCurrentUser());
-                                            if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
+                                           if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
                                                 KalravApplication.getInstance().getPrefs().setImage(String.valueOf(mAuth.getCurrentUser().getPhotoUrl()));
                                                 KalravApplication.getInstance().getPrefs().setIsFacebookLogin(false);
                                             }
@@ -557,7 +532,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                                 if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
-                                    docallApi(userInfo);
+                                    callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
 
                                 }
 
@@ -748,83 +723,5 @@ public class LoginActivity extends AppCompatActivity implements
         };
     }
 
-    private void docallApi(UserInfo userInfo) {
-//        Log.d(TAG, "Google docallApi userInfo.getEmail()..."+userInfo.getEmail());
-        Log.d(TAG, "Google docallApi email................."+userInfo.getEmail());
-
-        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name())+userInfo.getEmail();
-        Log.d(TAG, "Google docallApi alReadyExsistUser..."+alReadyExsistUser);
-
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,alReadyExsistUser,
-                null,new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-
-                try {
-                                                   if (jsonObject != null) {
-
-                                                            UserInfo  userInfo = new UserInfo();
-                                                            userInfo.setId(jsonObject.getInt("id"));
-                                                            userInfo.setName(jsonObject.getString("realname"));
-                                                            userInfo.setEmail(jsonObject.getString("username"));
-                                                            if (fb_id != null){
-                                                                userInfo.setFb_id(fb_id);
-                                                                KalravApplication.getInstance().getPrefs().setUser_id(fb_id);
-                                                            }
-                                                            if (google_id != null) {
-                                                                userInfo.setGoogle_id(google_id);
-                                                                KalravApplication.getInstance().getPrefs().setUser_id(google_id);
-                                                            }
-                                                            userInfo.setPhoneNo(jsonObject.getString("phone"));
-                                                            userInfo.setAddress(jsonObject.getString("address"));
-                                                            userInfo.setCity(jsonObject.getString("city"));
-                                                            userInfo.setState(jsonObject.getString("state"));
-                                                            userInfo.setZipcode(jsonObject.getString("zipcode"));
-                                                          userInfo.setGroupname(jsonObject.getString("group"));
-                                                          userInfo.setLoggedIn(Constants.LOG_IN);
-//                                                            //save to the database
-                                                          KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
-                                                          KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
-
-                                                          KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
-                                                            KalravApplication.getInstance().setGlobalUserObject(userInfo);
-                                                            Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
-                                                            userDaoImpl.addUser(userInfo);
-                                                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
-
-                                                           Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                                                            startActivity(i);
-                                                            finish();
-
-                                                        }
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("","JSonException docallApi Exception "+e);
-
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.no_data_available),
-                            Toast.LENGTH_LONG).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("","Google docallApi Error: volly Exception " + error);
-                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(i);
-                finish();
-                KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
-            }
-        });
-        req.setRetryPolicy(new DefaultRetryPolicy(
-                50000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        KalravApplication.getInstance().addToRequestQueue(req);
-
-    }
 }
 

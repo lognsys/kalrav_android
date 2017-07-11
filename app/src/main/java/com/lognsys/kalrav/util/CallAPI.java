@@ -23,10 +23,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.RegisterActivity;
+import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.Ratings;
 import com.lognsys.kalrav.model.UserInfo;
@@ -59,8 +61,24 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class CallAPI {
 
+    public static final String TAG = "CallAPI";
+    public static final String KEY_DEVICE_TOKEN = "deviceToken";
 
-   @RequiresApi(api = Build.VERSION_CODES.N)
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+    public Context mContext;
+    UserInfoDAOImpl userDaoImpl;
+
+    public CallAPI(AppCompatActivity activity) {
+        mContext=activity;
+    }
+
+    public CallAPI(FCMInstanceIdService fcmInstanceIdService) {
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
    public void rateDrama(final double rating, DramaInfo dramaInfo, int customer_id, String url){
       Ratings ratings=new Ratings();
       ratings.setRating(rating);
@@ -83,6 +101,118 @@ public class CallAPI {
 
       new RateDramaTask(url).execute("");
    }
+
+//   sendDeviceToken to server for registration for notification
+   public void sendDeviceToken(final String device_token, String sendREGTOKENURL) {
+
+       StringRequest stringRequest = new StringRequest(Request.Method.POST, sendREGTOKENURL,
+               new Response.Listener<String>() {
+                   @Override
+                   public void onResponse(String response) {
+                       Log.d("FCM","FCM response===================="+response);
+
+                       Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+                   }
+               },
+               new Response.ErrorListener() {
+                   @Override
+                   public void onErrorResponse(VolleyError error) {
+                       Log.d("FCM","FCM error===================="+error);
+
+                       Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                   }
+               }){
+           @Override
+           protected Map<String,String> getParams(){
+               Map<String,String> params = new HashMap<String, String>();
+               params.put(KEY_DEVICE_TOKEN,device_token);
+               return params;
+           }
+       };
+       RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+       requestQueue.add(stringRequest);
+   }
+
+//   alreadyExist user checking
+    public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id) {
+        propertyReader = new PropertyReader(getApplicationContext());
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+
+        userDaoImpl = new UserInfoDAOImpl(mContext);
+        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name())+userInfo.getEmail();
+        Log.d(TAG, "Google docallApi alReadyExsistUser..."+alReadyExsistUser);
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,alReadyExsistUser,
+                null,new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+
+                try {
+                    if (jsonObject != null) {
+
+                        UserInfo  userInfo = new UserInfo();
+                        userInfo.setId(jsonObject.getInt("id"));
+                        userInfo.setName(jsonObject.getString("realname"));
+                        userInfo.setEmail(jsonObject.getString("username"));
+                        if (fb_id != null){
+                            userInfo.setFb_id(fb_id);
+                            KalravApplication.getInstance().getPrefs().setUser_id(fb_id);
+                        }
+                        if (google_id != null) {
+                            userInfo.setGoogle_id(google_id);
+                            KalravApplication.getInstance().getPrefs().setUser_id(google_id);
+                        }
+                        userInfo.setPhoneNo(jsonObject.getString("phone"));
+                        userInfo.setAddress(jsonObject.getString("address"));
+                        userInfo.setCity(jsonObject.getString("city"));
+                        userInfo.setState(jsonObject.getString("state"));
+                        userInfo.setZipcode(jsonObject.getString("zipcode"));
+                        userInfo.setGroupname(jsonObject.getString("group"));
+                        userInfo.setLoggedIn(Constants.LOG_IN);
+//                                                            //save to the database
+                        KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
+                        KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
+
+                        KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
+                        Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
+                        userDaoImpl.addUser(userInfo);
+                        KalravApplication.getInstance().getPrefs().setIsLogin(true);
+
+                        Intent i = new Intent(mContext, HomeActivity.class);
+                        mContext.startActivity(i);
+//                        finish();
+
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("","JSonException docallApi Exception "+e);
+
+                    Toast.makeText(getApplicationContext(),
+                            getApplicationContext().getString(R.string.no_data_available),
+                            Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("","Google docallApi Error: volly Exception " + error);
+                Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
+                mContext.startActivity(i);
+//                finish();
+                KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+            }
+        });
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        KalravApplication.getInstance().addToRequestQueue(req);
+
+    }
 
    private class RateDramaTask extends AsyncTask<String, Void, String> {
       String url;
