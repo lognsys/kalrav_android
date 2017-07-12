@@ -199,7 +199,7 @@ public class CallAPI {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("","Google docallApi Error: volly Exception " + error);
+                Log.d("","Google docallApi Error: volly Exception " + error.getMessage());
                 Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
                 mContext.startActivity(i);
 //                finish();

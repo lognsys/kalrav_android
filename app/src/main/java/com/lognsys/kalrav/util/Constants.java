@@ -32,7 +32,8 @@ public class Constants {
     public enum API_URL_USER {
         post_create_user_url,
         get_userdetails_already_exist_url,
-        sendDeviceToken
+        sendDeviceToken,
+        put_update_user_url
     }
     public enum API_URL_DRAMA {
         get_alldrama_with_group_url,

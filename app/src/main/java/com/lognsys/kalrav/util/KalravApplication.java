@@ -44,7 +44,7 @@ public class KalravApplication extends Application {
         mInstance = this;
         prefs = new Preference(this);
          cm =  (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        invokeFCMService(this);
     }
     public Preference getPrefs() {
         return prefs;

@@ -10,7 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
@@ -32,6 +37,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class SettingFragment extends AppCompatActivity implements View.OnClickListener {
@@ -209,11 +216,106 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
                 KalravApplication.getInstance().getPrefs().setMobile(phone);
                 String auth_id = null;
                 auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
-                RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
-                task.execute();
+//                RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
+//                task.execute();
             }
         }
     }
+    public void postReq(final String realname, final String username,final String auth_id,final String phone,
+                        final String address,final String city,final String state,final String zipcode){
+
+        String put_update_user_url=properties.getProperty(Constants.API_URL_USER.put_update_user_url.name());
+        KalravApplication.getInstance().getPrefs().showpDialog(getApplicationContext());
+
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, put_update_user_url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.d("Response", response);
+                        KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        if(error!=null && error.getMessage() !=null){
+                            Toast.makeText(getApplicationContext(),"error VOLLEY "+error.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_LONG).show();
+
+                        }Log.d("Error.Response", error.getMessage());
+                        KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                String firstname,lastname,device;
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("realname", realname);
+                String[] splited = null;
+
+                Log.d("realname","realname   "  +realname);
+
+                if (realname != null  && realname.contains(" ")) {
+                    splited =realname.split(" ");
+                    firstname = splited[0] == null ? "" : splited[0];
+                    lastname = splited[1] == null ? "" : splited[1];
+                } else {
+                    firstname = "";
+                    lastname = "";
+                }
+                device=KalravApplication.getInstance().getPrefs().getDevice_token();
+                if(device==null){
+                    KalravApplication.getInstance().invokeFCMService(getApplicationContext());
+                }
+                device=KalravApplication.getInstance().getPrefs().getDevice_token();
+                Log.d("realname","username   "  +username);
+                Log.d("realname","auth_id   "  +"auth_id");
+                Log.d("realname","phone   "  +phone);
+                Log.d("realname","address   "  +address);
+                Log.d("realname","city   "  +city);
+                Log.d("realname","state   "  +state);
+                Log.d("realname","zipcode   "  +zipcode);
+                Log.d("realname","device   "  +"device");
+                Log.d("realname","firstname   "  +firstname);
+                Log.d("realname","lastname   "  +lastname);
+
+                params.put("Content-type", "application/json");
+                params.put("Accept", "application/json");
+                params.put("username", username);
+                params.put("auth_id", auth_id);
+                params.put("phone", phone);
+                params.put("address", address);
+                params.put( "city" ,city);
+                params.put("state", state);
+                params.put("zipcode", zipcode);
+                params.put("provenance", "Google");
+                params.put("role", "GUEST");
+                params.put("group", "NONE");
+                params.put("notification", String.valueOf(false));
+                params.put("enabled", String.valueOf(false));
+                params.put("device", device);
+                params.put("firstname", firstname);
+                params.put("lastname", lastname);
+
+                return params;
+            }
+        };
+//        queue.add(postRequest);
+        KalravApplication.getInstance().addToRequestQueue(postRequest);
+
+    }
+
 
     //Register and inserting  user records
     private class RegisteredTask extends AsyncTask<String, Void, String> {
