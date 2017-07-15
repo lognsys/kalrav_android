@@ -68,6 +68,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.hanks.htextview.HTextView;
 import com.hanks.htextview.HTextViewType;
+import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.db.SQLiteHelper;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.dialog.NetworkStatusDialog;
@@ -170,33 +171,26 @@ public class LoginActivity extends AppCompatActivity implements
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
         //Instantiating global obj
         // globalObj = ((KalravApplication) getApplicationContext());
+        UserInfo user=null;
+        callAPI = new CallAPI(LoginActivity.this);
+        if( userDaoImpl.lastUserLoggedIn()!=null)
+         user = userDaoImpl.lastUserLoggedIn();
 
-        callAPI=new CallAPI(LoginActivity.this);
-        if( KalravApplication.getInstance().getPrefs().getDevice_token()==null){
-            KalravApplication.getInstance().invokeFCMService(getApplicationContext());
-
-        }
-
-        UserInfo user = userDaoImpl.lastUserLoggedIn();
+//       invokeFCMService();
 
         if (null != user && KalravApplication.getInstance().getPrefs().getIsLogin()) {
             Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
-            if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null){
+            if (KalravApplication.getInstance().getPrefs().getCustomer_id() != null) {
                 //setting global variable
                 KalravApplication.getInstance().setGlobalUserObject(user);
-                KalravApplication.getInstance().invokeService(getApplicationContext());
+//                KalravApplication.getInstance().invokeService(getApplicationContext());
                 Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
-                if(user.getEmail()!=null && user.getEmail().length()>0){
-                    callAPI.alReadyExsistUser(user,fb_id,google_id);
+                if (user.getEmail() != null && user.getEmail().length() > 0) {
+                    callAPI.alReadyExsistUser(user, fb_id, google_id);
 
                 }
-
-//                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//                startActivity(intent);
-//                finish();
             }
-        }
-        else {
+        } else {
             Log.d(TAG, "Case2: OnCreate method - Login through Facebook Auth and saving to database.");
             //Initialize Facebook sdk
             FacebookSdk.sdkInitialize(getApplicationContext());
@@ -205,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements
             //setting layout activity_login
             setContentView(R.layout.activity_login);
 
-            textSkipLogin=(TextView)findViewById(R.id.textSkipLogin);
+            textSkipLogin = (TextView) findViewById(R.id.textSkipLogin);
             textSkipLogin.setOnClickListener(this);
             hTextView = (HTextView) findViewById(R.id.text);
 
@@ -224,69 +218,26 @@ public class LoginActivity extends AppCompatActivity implements
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-//                   Toast.makeText(getApplicationContext(),  "User ID: "
-//                           + loginResult.getAccessToken().getUserId()
-//                           + "\n" +
-//                           "Auth Token: "
-//                           + loginResult.getAccessToken().getToken(),Toast.LENGTH_LONG).show();
-
                     Log.v(TAG, " Facebook API requestData - ");
                     requestData(loginResult);
-                    Log.d(TAG, "mCallbackManager loginResult ==" +loginResult);
+                    Log.d(TAG, "mCallbackManager loginResult ==" + loginResult);
                 }
 
                 @Override
                 public void onCancel() {
-                    Toast.makeText(getApplicationContext(),  "Login attempt canceled.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Login attempt canceled.", Toast.LENGTH_LONG).show();
 
-                    Log.d(TAG, "mCallbackManager onCancel ==" );
+                    Log.d(TAG, "mCallbackManager onCancel ==");
                 }
 
                 @Override
                 public void onError(FacebookException e) {
-                    Log.d(TAG, "mCallbackManager FacebookException ==" +e);
+                    Log.d(TAG, "mCallbackManager FacebookException ==" + e);
 
-                    Toast.makeText(getApplicationContext(),  "Login attempt failed.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Login attempt failed.", Toast.LENGTH_LONG).show();
 
                 }
             });
-/*
-            loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    requestData();
-                }
-                @Override
-                public void onCancel() {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_cancel), Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onError(FacebookException e) {
-
-                    Toast.makeText(getApplicationContext(),getResources().getString(R.string.login_error), Toast.LENGTH_SHORT).show();
-                   */
-/* Log.e(TAG,"Exception isAppInstalled " +isAppInstalled(getApplicationContext(), "com.facebook.katana"));
-                    if(isAppInstalled(getApplicationContext(), "com.facebook.katana")) {
-                        // Do something
-                        Intent receiverIntent = new Intent(Intent.ACTION_VIEW);
-                        receiverIntent.setClassName("com.facebook.katana","");
-                        startActivity(receiverIntent);
-                    }else {
-                        Intent i = new Intent(android.content.Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.facebook.katana"));
-                        startActivity(i);
-                    }*//*
-
-                    //log facebook Error
-                    Log.e(TAG,"Exception" +e);
-                }
-            });
-
-
-
-
-*/
 
             /******************************************************************************/
 
@@ -319,30 +270,59 @@ public class LoginActivity extends AppCompatActivity implements
             mAuthListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:============================= " + firebaseAuth+" firebaseAuth.getCurrentUser()getEmail:" +firebaseAuth.getCurrentUser());
+                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:============================= " + firebaseAuth + " firebaseAuth.getCurrentUser()getEmail:" + firebaseAuth.getCurrentUser());
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                    Log.d(TAG, "onAuthStateChanged:user:" +user);
+                    Log.d(TAG, "onAuthStateChanged:user:" + user);
                     if (user != null) {
 
                         // User is signed in
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid()+" Provider:" + user.getProviderId());
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid()+" Provider:" + user.getProviderId());
-
+                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " Provider:" + user.getProviderId());
+                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " Provider:" + user.getProviderId());
                         KalravApplication.getInstance().getPrefs().setIsLogin(true);
-                        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(i);
-                        finish();
+                        final UserInfo userInfo = new UserInfo();
 
-                    } else {
-                        // User is signed out
-                        Log.d(TAG, "onAuthStateChanged:signed_out");
+
+                        try {
+                            if (mAuth.getCurrentUser().getPhotoUrl() != null) {
+                                KalravApplication.getInstance().getPrefs().setImage(String.valueOf(mAuth.getCurrentUser().getPhotoUrl()));
+                                KalravApplication.getInstance().getPrefs().setIsFacebookLogin(false);
+                            }
+
+                            if (mAuth.getCurrentUser().getUid() != null) {
+                                userInfo.setGoogle_id(mAuth.getCurrentUser().getUid());
+                            }
+                            if (mAuth.getCurrentUser().getEmail() != null) {
+                                userInfo.setEmail(mAuth.getCurrentUser().getEmail());
+                                KalravApplication.getInstance().getPrefs().setEmail(mAuth.getCurrentUser().getEmail());
+                            }
+                            if (mAuth.getCurrentUser().getDisplayName() != null) {
+                                userInfo.setName(mAuth.getCurrentUser().getDisplayName());
+                                KalravApplication.getInstance().getPrefs().setName(mAuth.getCurrentUser().getDisplayName());
+                            }
+                            userInfo.setLoggedIn(Constants.LOG_IN);
+
+                            if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
+                                callAPI.alReadyExsistUser(userInfo, fb_id, google_id);
+                            }
+                        } catch (Exception e) {
+                            Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..." + e);
+
+                        }
                     }
                 }
             };
         }
     }
 
+    private void invokeFCMService() {
+            // use this to start and trigger a service
+            Log.d(TAG, "Rest invokeFCMService context- ");
+
+            Intent i= new Intent(LoginActivity.this, FCMInstanceIdService.class);
+            startService(i);
+
+    }
 
 
     private void requestData(final LoginResult loginResult) {
@@ -381,27 +361,27 @@ public class LoginActivity extends AppCompatActivity implements
                         userInfo.setLoggedIn(Constants.LOG_IN);
                         KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
 
-                            if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
-                                callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
-                                finish();
-                            }
+                        if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
+                            callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
+                            finish();
+                        }
 
                     }
-                     else {
-                    Log.e(TAG, "Could not retrieve data from facebook graphapi...");
-                }
+                    else {
+                        Log.e(TAG, "Could not retrieve data from facebook graphapi...");
+                    }
 
-            } catch (JSONException e) {
+                } catch (JSONException e) {
                     Log.d(TAG, "Facebook facebook JSONException..."+e);
 
                 }
-        }
+            }
 
 
 
         });
 
-    Bundle parameters = new Bundle();
+        Bundle parameters = new Bundle();
         parameters.putString("fields", "id, name, email");
         request.setParameters(parameters);
         request.executeAsync();
@@ -423,7 +403,7 @@ public class LoginActivity extends AppCompatActivity implements
                 break;
             case R.id.textSkipLogin:
                 KalravApplication.getInstance().getPrefs().setIsLogin(true);
-               Intent intent =new Intent(LoginActivity.this,HomeActivity.class);
+                Intent intent =new Intent(LoginActivity.this,HomeActivity.class);
                 startActivity(intent);
                 break;
             default:
@@ -454,7 +434,7 @@ public class LoginActivity extends AppCompatActivity implements
         // Pass the activity result back to the Facebook SDK
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "mCallbackManager onActivityResult requestCode ==" +requestCode+
-        " resultCode ==== "+resultCode+" data === "+data);
+                " resultCode ==== "+resultCode+" data === "+data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode==100) {
@@ -491,7 +471,7 @@ public class LoginActivity extends AppCompatActivity implements
      */
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle: acct.getEmail -=====" + acct.getEmail());
-         Log.d(TAG, "firebaseAuthWithGoogle: acct.getIdToken -=====" + acct.getIdToken());
+        Log.d(TAG, "firebaseAuthWithGoogle: acct.getIdToken -=====" + acct.getIdToken());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -511,36 +491,34 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                             try {
-                                           if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
-                                                KalravApplication.getInstance().getPrefs().setImage(String.valueOf(mAuth.getCurrentUser().getPhotoUrl()));
-                                                KalravApplication.getInstance().getPrefs().setIsFacebookLogin(false);
-                                            }
+                                if( mAuth.getCurrentUser().getPhotoUrl()!=null) {
+                                    KalravApplication.getInstance().getPrefs().setImage(String.valueOf(mAuth.getCurrentUser().getPhotoUrl()));
+                                    KalravApplication.getInstance().getPrefs().setIsFacebookLogin(false);
+                                }
 
-                                            if( mAuth.getCurrentUser().getUid()!=null) {
-                                                userInfo.setGoogle_id(mAuth.getCurrentUser().getUid());
-                                            }
-                                            if( mAuth.getCurrentUser().getEmail()!=null) {
-                                                userInfo.setEmail(mAuth.getCurrentUser().getEmail());
-                                                KalravApplication.getInstance().getPrefs().setEmail(mAuth.getCurrentUser().getEmail());
-                                            }
-                                            if( mAuth.getCurrentUser().getDisplayName()!=null) {
-                                                userInfo.setName(mAuth.getCurrentUser().getDisplayName());
-                                                KalravApplication.getInstance().getPrefs().setName(mAuth.getCurrentUser().getDisplayName());
-                                            }
+                                if( mAuth.getCurrentUser().getUid()!=null) {
+                                    userInfo.setGoogle_id(mAuth.getCurrentUser().getUid());
+                                }
+                                if( mAuth.getCurrentUser().getEmail()!=null) {
+                                    userInfo.setEmail(mAuth.getCurrentUser().getEmail());
+                                    KalravApplication.getInstance().getPrefs().setEmail(mAuth.getCurrentUser().getEmail());
+                                }
+                                if( mAuth.getCurrentUser().getDisplayName()!=null) {
+                                    userInfo.setName(mAuth.getCurrentUser().getDisplayName());
+                                    KalravApplication.getInstance().getPrefs().setName(mAuth.getCurrentUser().getDisplayName());
+                                }
+                                userInfo.setLoggedIn(Constants.LOG_IN);
 
-                                        userInfo.setLoggedIn(Constants.LOG_IN);
 
-
-                                if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
+                                if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
                                     callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
+                                  }
 
-                                }
+                            } catch (Exception e) {
+                                Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..."+e);
 
-                                  } catch (Exception e) {
-                                        Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..."+e);
-
-                                    }
-                                }
+                            }
+                        }
 
 
                     }
@@ -656,7 +634,7 @@ public class LoginActivity extends AppCompatActivity implements
         super.onStart();
         startTimer();
         if(mAuthListener!=null)
-        mAuth.addAuthStateListener(mAuthListener);
+            mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override

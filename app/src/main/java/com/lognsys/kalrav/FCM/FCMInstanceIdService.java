@@ -1,5 +1,7 @@
 package com.lognsys.kalrav.FCM;
 
+import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -24,25 +26,23 @@ private static String REG_TOKEN="REG_TOKEN";
     private PropertyReader propertyReader;
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+    public static final String TAG = "FCMInstanceIdService";
 
-    CallAPI callAPI;
 
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String recentToken= FirebaseInstanceId.getInstance().getToken();
         REG_TOKEN=recentToken;
-        Log.d("FCM","FCM REG_TOKEN===================="+REG_TOKEN);
+
         KalravApplication.getInstance().getPrefs().setDevice_token(REG_TOKEN);
         propertyReader = new PropertyReader(getApplicationContext());
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
 
         String sendREGTOKENURL=properties.getProperty(Constants.API_URL_USER.sendDeviceToken.name());
+        Log.d(TAG, "Rest onTokenRefresh getDevice_token- " +KalravApplication.getInstance().getPrefs().getDevice_token());
 
-        Log.d("FCM","FCM sendREGTOKENURL===================="+sendREGTOKENURL);
-
-        callAPI=new CallAPI(FCMInstanceIdService.this);
-        callAPI.sendDeviceToken(KalravApplication.getInstance().getPrefs().getDevice_token(),sendREGTOKENURL);
+        CallAPI.sendDeviceToken(KalravApplication.getInstance().getPrefs().getDevice_token(),sendREGTOKENURL);
     }
 }

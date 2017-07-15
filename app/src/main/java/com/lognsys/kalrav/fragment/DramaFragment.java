@@ -112,7 +112,7 @@ public class DramaFragment extends Fragment {
     }
 
     private void displaydrama() {
-        KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+        KalravApplication.getInstance().getPrefs().showDialog(getContext());
         String getAllDramaWithGroupUrl=properties.getProperty(Constants.API_URL_DRAMA.get_alldrama_with_group_url.name());
 
         JsonArrayRequest req = new JsonArrayRequest(getAllDramaWithGroupUrl,

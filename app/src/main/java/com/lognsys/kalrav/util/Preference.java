@@ -28,7 +28,7 @@ public class Preference {
         sharedPreferences = context.getSharedPreferences("Cache", Context.MODE_PRIVATE);
 
     }
-    public void showpDialog(Context context) {
+    public void showDialog(Context context) {
         pDialog = new ProgressDialog(context);
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
@@ -146,29 +146,7 @@ public class Preference {
         return sharedPreferences.getString("image", null);
     }
 
-    public void setFirst_Name(String first_name)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("first_name", first_name);
-        editor.commit();
-    }
-
-    public String getFirst_Name()
-    {
-        return sharedPreferences.getString("first_name", null);
-    }
-    public void setLast_Name(String last_name)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("last_name", last_name);
-        editor.commit();
-    }
-
-    public String getLast_Name()
-    {
-        return sharedPreferences.getString("last_name", null);
-    }
-    public void setLink(String link)
+     public void setLink(String link)
     {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("link", link);

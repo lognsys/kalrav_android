@@ -10,12 +10,14 @@ public interface UserInfoDAO {
 
     void addUser(UserInfo userInfo);
 
+    UserInfo findUserByUsername(String username);
+
     UserInfo findUserBy(UserInfo userEmail);
+
     int findUser(UserInfo userEmail);
 
     int updateUserInfo(UserInfo userInfo);
 
-    boolean deleteUser(UserInfo userInfo);
 
     boolean isUserExist(UserInfo user);
 

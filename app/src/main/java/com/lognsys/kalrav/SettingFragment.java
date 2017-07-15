@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -26,6 +27,7 @@ import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.PropertyReader;
 import com.lognsys.kalrav.util.Services;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -90,16 +93,37 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
         btnRegister = (Button) findViewById(R.id.btnRegister);
         profile_image= (ImageView) findViewById(R.id.profile_image);
         btnRegister.setOnClickListener(this);
-        if (KalravApplication.getInstance().getPrefs().getEmail() != null)
+        if (KalravApplication.getInstance().getGlobalUserObject() != null)
         {
-            editUsername.setText(KalravApplication.getInstance().getPrefs().getEmail());
+            UserInfo userInfo=KalravApplication.getInstance().getGlobalUserObject() /*userDaoImpl.findUserByUsername(KalravApplication.getInstance().getPrefs().getEmail())*/;
+            Log.d("Response","Rest populateData userInfo.toString() " +userInfo.toString());
+
+            if(userInfo.getId()!=0)
+                KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+            if(userInfo.getEmail()!=null)
+            editUsername.setText(userInfo.getEmail());
+
+            if (userInfo.getName() != null) {
+                editName.setText(userInfo.getName());
+            }
+            if (userInfo.getPhoneNo() != null) {
+                editMobileNumber.setText(userInfo.getPhoneNo());
+            }
+            if (userInfo.getCity() != null) {
+                editCities.setText(userInfo.getCity());
+            }
+            if (userInfo.getState() != null) {
+                editState.setText(userInfo.getState());
+            }
+            if (userInfo.getZipcode() != null) {
+                editPincode.setText(userInfo.getZipcode());
+            }
+            if (userInfo.getAddress() != null) {
+                editAddress.setText(userInfo.getAddress());
+            }
         }
-        if (KalravApplication.getInstance().getPrefs().getName() != null) {
-            editName.setText(KalravApplication.getInstance().getPrefs().getName());
-        }
-        if (KalravApplication.getInstance().getPrefs().getMobile() != null) {
-            editMobileNumber.setText(KalravApplication.getInstance().getPrefs().getMobile());
-        }
+
+
         if(KalravApplication.getInstance().getPrefs().getIsFacebookLogin()==true){
             if(KalravApplication.getInstance().getPrefs().getImage()!=null){
                 String imgUrl = "https://graph.facebook.com/" + KalravApplication.getInstance().getPrefs().getImage() + "/picture?type=large";
@@ -215,270 +239,198 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
                 KalravApplication.getInstance().getPrefs().setEmail(username);
                 KalravApplication.getInstance().getPrefs().setMobile(phone);
                 String auth_id = null;
-                auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
+                if(KalravApplication.getInstance().getPrefs().getUser_id()!=null)
+                    auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
 //                RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
 //                task.execute();
+                postReq( KalravApplication.getInstance().getPrefs().getCustomer_id(),realname, username, auth_id, phone,address, city, state, zipcode);
             }
         }
     }
-    public void postReq(final String realname, final String username,final String auth_id,final String phone,
+    public void postReq(String Id, final String realname, final String username,final String auth_id,final String phone,
                         final String address,final String city,final String state,final String zipcode){
+        int id=Integer.parseInt(Id);
+        String put_update_user_url=properties.getProperty(Constants.API_URL_USER.put_update_user_url.name())+id;
 
-        String put_update_user_url=properties.getProperty(Constants.API_URL_USER.put_update_user_url.name());
-        KalravApplication.getInstance().getPrefs().showpDialog(getApplicationContext());
+        Log.d("realname","put_update_user_url   "  +put_update_user_url);
+        KalravApplication.getInstance().getPrefs().showDialog(SettingFragment.this);
+        JSONObject params = new JSONObject();
+        try {
+            String firstname,lastname,device;
 
+//            params.put("id", Integer.parseInt(Id));
+            params.put("realname", realname);
+            String[] splited = null;
 
-        StringRequest postRequest = new StringRequest(Request.Method.POST, put_update_user_url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.d("Response", response);
-                        KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+            Log.d("realname","realname   "  +realname);
 
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        if(error!=null && error.getMessage() !=null){
-                            Toast.makeText(getApplicationContext(),"error VOLLEY "+error.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_LONG).show();
-
-                        }Log.d("Error.Response", error.getMessage());
-                        KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
-
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams()
-            {
-                String firstname,lastname,device;
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("realname", realname);
-                String[] splited = null;
-
-                Log.d("realname","realname   "  +realname);
-
-                if (realname != null  && realname.contains(" ")) {
-                    splited =realname.split(" ");
-                    firstname = splited[0] == null ? "" : splited[0];
-                    lastname = splited[1] == null ? "" : splited[1];
-                } else {
-                    firstname = "";
-                    lastname = "";
-                }
-                device=KalravApplication.getInstance().getPrefs().getDevice_token();
-                if(device==null){
-                    KalravApplication.getInstance().invokeFCMService(getApplicationContext());
-                }
-                device=KalravApplication.getInstance().getPrefs().getDevice_token();
-                Log.d("realname","username   "  +username);
-                Log.d("realname","auth_id   "  +"auth_id");
-                Log.d("realname","phone   "  +phone);
-                Log.d("realname","address   "  +address);
-                Log.d("realname","city   "  +city);
-                Log.d("realname","state   "  +state);
-                Log.d("realname","zipcode   "  +zipcode);
-                Log.d("realname","device   "  +"device");
-                Log.d("realname","firstname   "  +firstname);
-                Log.d("realname","lastname   "  +lastname);
-
-                params.put("Content-type", "application/json");
-                params.put("Accept", "application/json");
-                params.put("username", username);
+            if (realname != null  && realname.contains(" ")) {
+                splited =realname.split(" ");
+                firstname = splited[0] == null ? "" : splited[0];
+                lastname = splited[1] == null ? "" : splited[1];
+            } else {
+                firstname = "";
+                lastname = "";
+            }
+            params.put("username", username);
+            if(auth_id!=null && auth_id.length()>0){
                 params.put("auth_id", auth_id);
-                params.put("phone", phone);
-                params.put("address", address);
-                params.put( "city" ,city);
-                params.put("state", state);
-                params.put("zipcode", zipcode);
-                params.put("provenance", "Google");
-                params.put("role", "GUEST");
-                params.put("group", "NONE");
-                params.put("notification", String.valueOf(false));
-                params.put("enabled", String.valueOf(false));
+            }
+            else{
+                params.put("auth_id", "auth_id");
+            }
+            params.put("phone", phone);
+            params.put("address", address);
+            params.put( "city" ,city);
+            params.put("state", state);
+            params.put("zipcode", zipcode);
+            params.put("provenance", "Google");
+            params.put("role", "GUEST");
+            params.put("group", "NONE");
+            params.put("notification", String.valueOf(false));
+            params.put("enabled", String.valueOf(false));
+            device=KalravApplication.getInstance().getPrefs().getDevice_token();
+            if(device!=null && device.length()>0){
                 params.put("device", device);
-                params.put("firstname", firstname);
-                params.put("lastname", lastname);
-
-                return params;
             }
-        };
-//        queue.add(postRequest);
-        KalravApplication.getInstance().addToRequestQueue(postRequest);
-
-    }
-
-
-    //Register and inserting  user records
-    private class RegisteredTask extends AsyncTask<String, Void, String> {
-        String auth_id, username, realname, phone, city, state, zipcode,address;
-        int statusCode;
-        ProgressDialog dialog;
-
-        public RegisteredTask(String realname, String username, String auth_id,
-                              String phone, String address, String city, String state, String zipcode) {
-            this.username = username;
-            this.realname = realname;
-            this.phone = phone;
-            this.auth_id = auth_id;
-            this.city = city;
-            this.address = address;
-            this.state = state;
-            this.zipcode = zipcode;
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog = new ProgressDialog(SettingFragment.this);
-            dialog.setMessage("Loading");
-            dialog.setCancelable(false);
-            dialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... place) {
-
-            try {
-                String postParameters, firstname, lastname;
-                String[] splited = null;
-                if (this.realname != null && this.realname.length() > 0 && this.realname.contains(" ")) {
-                    splited = this.realname.split(" ");
-                    firstname = splited[0] == null ? "" : splited[0];
-                    lastname = splited[1] == null ? "" : splited[1];
-                } else {
-                    firstname = "-";
-                    lastname = "-";
-                }
-                /*http://192.168.0.19:8080/createuser/0/priyank%20doshi/doshipriyank@gmail.com/authid124fnfj
-                /8097526387/location/provenance/2017-05-13%2000:00:00/true/true/device/address/city/state/401107/company_name
-                /priyank/doshi/group/role*/
-
-                postParameters = "" + 0 + "/" + this.realname + "/" + this.username + "/" + this.auth_id + "/" + this.phone
-                        + "/provenance/2017-05-16 17:09:51/" + true + "/" + true + "/android/"+ this.address+"/" + this.city
-                        + "/"+this.state+"/"+this.zipcode+"/" + firstname + "/" + lastname + "/None/None";
-                postParameters = postParameters.replace(" ", "%20");
-
-                String post_create_user_url=properties.getProperty(Constants.API_URL_USER.post_create_user_url.name())+postParameters;
-                URL urlToRequest = new URL(post_create_user_url);
-                Log.d("", "Test doInBackground urlToRequest " + urlToRequest);
-
-                HttpURLConnection urlConnection =
-                        (HttpURLConnection) urlToRequest.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type",
-                        "application/json");
-                Log.d("", "Test doInBackground urlConnection " + urlConnection);
-                urlConnection.setFixedLengthStreamingMode(
-                        postParameters.getBytes().length);
-                Log.d("", "Test doInBackground postParameters " + postParameters);
-
-                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
-                out.print(postParameters);
-
-                out.close();
-                // handle issues
-                statusCode = urlConnection.getResponseCode();
-                Log.d("", "Test doInBackground statusCode" + statusCode);
-
-
-                if (statusCode > 0) {
-                    Log.d("", "Test doInBackground Status-Code 409: Conflict. " + statusCode);
-
-                    InputStream in =
-                            new BufferedInputStream(urlConnection.getInputStream());
-                    try {
-
-                        String values = getResponseText(in);
-                        Log.d("", "Test doInBackground Status-Code 409: .Conflict values " + values);
-
-                        return values;
-                    } catch (IOException e) {
-                        Log.d("", "Test doInBackground Status-Code 409: .Conflict IOException " + e);
-
-                    }
-
-                }
-
-
-            } catch (Exception e) {
-                Log.d("", "Test doInBackground Exception " + e);
+            else{
+                params.put("device", "device");
             }
-            return null;
+            params.put("firstname", firstname);
+            params.put("lastname", lastname);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.PUT,
+                put_update_user_url, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response","Rest response " +response);
+                        try{
+                            KalravApplication.getInstance().getPrefs().hidepDialog(SettingFragment.this);
+                            JSONObject jsonObject = new JSONObject(String.valueOf(response));
 
-        private String getResponseText(InputStream inputStream) throws IOException {
-            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+                            userInfo = new UserInfo();
 
-            StringBuilder total = new StringBuilder();
-            String line;
-            while ((line = r.readLine()) != null) {
-                total.append(line).append('\n');
-            }
-            String ResponseString = total.toString();
-            Log.d("", "Test getResponseText ResponseString " + ResponseString);
+                            userInfo.setId(jsonObject.getInt("id"));
 
-            r.close();
-            return ResponseString;
-        }
+                            userInfo.setName(jsonObject.getString("realname"));
 
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Log.d("", "Test onPostExecute result " + result);
-            try {
-                if (result != null) {
-                    JSONObject jsonObject = new JSONObject(result);
+                            userInfo.setEmail(jsonObject.getString("username"));
 
-                    userInfo = new UserInfo();
-                    userInfo.setId(jsonObject.getInt("id"));
-                    userInfo.setName(jsonObject.getString("realname"));
-                    userInfo.setEmail(jsonObject.getString("username"));
-                    if (fb_id != null)
-                        userInfo.setFb_id(fb_id);
-                    if (google_id != null)
-                        userInfo.setGoogle_id(google_id);
-                    userInfo.setPhoneNo(jsonObject.getString("phone"));
-                    userInfo.setAddress(jsonObject.getString("address"));
-                    userInfo.setCity(jsonObject.getString("city"));
-                    userInfo.setState(jsonObject.getString("state"));
-                    userInfo.setZipcode(jsonObject.getString("zipcode"));
-                    userInfo.setLoggedIn(Constants.LOG_IN);
+                            if (fb_id != null)
+                                userInfo.setFb_id(fb_id);
+
+                            if (google_id != null)
+                                userInfo.setGoogle_id(google_id);
+
+                            userInfo.setPhoneNo(jsonObject.getString("phone"));
+
+                            KalravApplication.getInstance().getPrefs().setMobile(userInfo.getPhoneNo());
+                            userInfo.setAddress(jsonObject.getString("address"));
+
+                            userInfo.setCity(jsonObject.getString("city"));
+
+                            userInfo.setState(jsonObject.getString("state"));
+
+                            userInfo.setZipcode(jsonObject.getString("zipcode"));
+
+                            userInfo.setGroupname(jsonObject.getString("group"));
+
+                            userInfo.setRole(jsonObject.getString("role"));
+
+                            userInfo.setDevice(jsonObject.getString("device"));
+
+                            userInfo.setProvenance(jsonObject.getString("provenance"));
+
+                            userInfo.setEnabled(jsonObject.getBoolean("enabled"));
+
+                            userInfo.setNotification(jsonObject.getBoolean("notification"));
+
+
+                            userInfo.setLoggedIn(Constants.LOG_IN);
 //                        //save to the database
+                            userDaoImpl.addUser(userInfo);
 
-                    KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
-                    KalravApplication.getInstance().setGlobalUserObject(userInfo);
-                    Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
-                    userDaoImpl.addUser(userInfo);
-                    KalravApplication.getInstance().getPrefs().setIsLogin(true);
+//                          setting customer id
+                            KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+                            KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
+                            KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
 
-                    dialog.dismiss();
-//                    KalravApplication.getInstance().showDialog(RegisterActivity.this, "User Created Successfully !!!");
-                    Intent i = new Intent(SettingFragment.this, HomeActivity.class);
-                    startActivity(i);
-                    finish();
+                            KalravApplication.getInstance().setGlobalUserObject(userInfo);
 
+                            Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
+                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
 
-                } else {
-                    dialog.dismiss();
+                            Intent i = new Intent(SettingFragment.this, HomeActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        //  YOUR RESPONSE
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                Log.d("Response","Rest volleyError" +volleyError);
+
+                String json = null;
+                String str=null;
+                byte[] response=null;
+                if(volleyError.networkResponse.data!=null)
+                 response = volleyError.networkResponse.data;
+                Log.d("Response","Rest volleyError response " +response);
+                try {
+                    if (response != null && response.length > 0) {
+                        str = new String(response, "UTF-8");
+                        Log.d("Response", "Rest volleyError str toString  " + str.toString());
+
+                        try {
+                            JSONObject object = new JSONObject(str.toString());
+                            Log.d("Response", "Rest inside object  " + object);
+
+                            int statusCode = object.getInt("statusCode");
+                            Log.d("Response", "Rest inside statusCode  " + statusCode);
+
+                            if (statusCode == 400) {
+                                String msg = object.getString("msg");
+                                displayMessage(msg);
+                            } else if (statusCode == 406) {
+                                String msg = object.getString("msg");
+                                displayMessage(msg);
+                            } else if (statusCode == 404) {
+                                String msg = object.getString("msg");
+                                displayMessage(msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch(UnsupportedEncodingException e){
+                        e.printStackTrace();
                 }
-            } catch (Exception e) {
-//                KalravApplication.getInstance().showDialog(RegisterActivity.this,"Please check your  network connection");
-                Log.d("", "onPostExecute Exception " + e);
+
+                KalravApplication.getInstance().getPrefs().hidepDialog(SettingFragment.this);
 
             }
-        }
+
+            //Somewhere that has access to a context
+            public void displayMessage(String toastString){
+                Log.d("Response","Rest volleyError toastString  " +toastString );
+
+                Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+        KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
+
     }
+
 
 
 }

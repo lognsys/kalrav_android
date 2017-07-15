@@ -150,7 +150,7 @@ public class AuditoriumListFragment extends Fragment {
             public void onDateClick(DateTime dateTime) {
                 myRecyclerView.removeAllViews();
                String strDate = fmt.print(dateTime);
-                KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
+                KalravApplication.getInstance().getPrefs().showDialog(getActivity());
 
                 requestAuditoriumDateTime(dramaInfoId,strDate);
                 Toast.makeText(getActivity(), "You Selected " + strDate, Toast
@@ -165,7 +165,7 @@ public class AuditoriumListFragment extends Fragment {
                         " Forward: " + forward, Toast.LENGTH_SHORT).show();
             }
         });*/
-        KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
+        KalravApplication.getInstance().getPrefs().showDialog(getActivity());
         requestAuditoriumDateTime(dramaInfoId,strDate);
         Log.d(TAG,"requestAuditoriumDateTime strDate "+strDate);
 

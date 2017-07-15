@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.lognsys.kalrav.model.UserInfo;
+
 /**
  * Created by pdoshi on 27/12/16.
  */
@@ -27,30 +29,49 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TIMESTAMP = "last_edit";
 
-    //user table
-    public static final String TABLE_USER = "user";
-    public static final String COLUMN_USER_NAME = "name";
-    public static final String COLUMN_USER_EMAIL = "email";
-    public static final String COLUMN_USER_PROFILELINK = "profile_link";
-    public static final String COLUMN_USER_BIRTHDAY = "birthday";
-    public static final String COLUMN_USER_LOGGEDIN = "logged";
-    public static final String COLUMN_USER_LOCATION = "location";
-    public static final String COLUMN_USER_FBID = "fb_id";
-    public static final String COLUMN_USER_GROUPNAME = "groupname";
-    public static final String COLUMN_USER_PHONENO = "phoneno";
-    public static final String COLUMN_USER_GOOGLEID = "google_id";
+ /*   //user table
+          "id": 21,
+         "auth_id": "abcd786876bbnns",
+         "username": "lognsystems@gmail.com",
+         "realname": "Omkar Gude",
+         "phone": "4987765678",
+         "provenance": "",
+         "birthdate": null,
+         "enabled": true,
+         "notification": false,
+         "device": "",
+         "address": "Fremont California",
+         "city": "mumbai",
+         "state": "maharashtra",
+         "zipcode": "400064",
+         "firstname": "Omkar",
+         "lastname": "Gude",
+         "role": "GROUP_USER",
+         "group": "NONE"
+    */
+// USER TABLE CREATE
 
+    public static final String TABLE_USER = "user";
     private static final String DATABASE_CREATE_USER = "create table if not exists "
-            + TABLE_USER + "(" + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_USER_FBID + " TEXT, "
-            + COLUMN_USER_NAME + " TEXT, "
-            + COLUMN_USER_EMAIL + " TEXT, "
-            + COLUMN_USER_BIRTHDAY + " TEXT, "
-            + COLUMN_USER_LOCATION + " TEXT, "
-            + COLUMN_USER_GROUPNAME + " TEXT, "
-            + COLUMN_USER_PHONENO + " TEXT, "
-            + COLUMN_USER_GOOGLEID + " TEXT, "
-            + COLUMN_USER_LOGGEDIN + " BOOLEAN NOT NULL CHECK ("+COLUMN_USER_LOGGEDIN+" IN (0,1)), "
+            + UserInfo.TABLE_USER + "("
+            + UserInfo.COLUMN_ID + " integer primary key autoincrement , "
+            + UserInfo.COLUMN_USER_FBID + " TEXT , "
+            + UserInfo.COLUMN_USER_GOOGLEID + " TEXT , "
+            + UserInfo.COLUMN_USER_NAME + " TEXT , "
+            + UserInfo.COLUMN_USER_REALNAME+ " TEXT , "
+            + UserInfo.COLUMN_USER_PHONENO + " TEXT , "
+            + UserInfo.COLUMN_USER_PROVENANCE + " TEXT , "
+            + UserInfo.COLUMN_USER_BIRTHDAY + " TEXT , "
+            + UserInfo.COLUMN_USER_ENABLED + "  BOOLEAN NOT NULL , "
+            + UserInfo.COLUMN_USER_IS_NOTIFICATION + "  BOOLEAN NOT NULL , "
+            + UserInfo.COLUMN_USER_DEVICE_TOKEN + " TEXT , "
+            + UserInfo.COLUMN_USER_ADDRESS + " TEXT , "
+            + UserInfo.COLUMN_USER_CITY + " TEXT , "
+            + UserInfo.COLUMN_USER_STATE + " TEXT , "
+            + UserInfo.COLUMN_USER_ZIPCODE + " TEXT , "
+            + UserInfo.COLUMN_USER_ROLE + " TEXT , "
+            + UserInfo.COLUMN_USER_GROUP_NAME + " TEXT , "
+            + UserInfo.COLUMN_USER_LOGGEDIN + " BOOLEAN NOT NULL CHECK ("+UserInfo.COLUMN_USER_LOGGEDIN+" IN (0,1)), "
             + COLUMN_TIMESTAMP+ " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
     //Drama Column
@@ -133,7 +154,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_NO_OF_SEATS_BOOKED + " TEXT, "
             + COLUMN_SEAT_NO + " TEXT, "
             + COLUMN_AUDITORIUM_NAME + " TEXT, "
-            + COLUMN_USER_NAME + " TEXT, "
+            + UserInfo.COLUMN_USER_NAME + " TEXT, "
             + COLUMN_USER_EMAIL_ID + " TEXT, "
             + COLUMN_QRCODE_BITMAP + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";

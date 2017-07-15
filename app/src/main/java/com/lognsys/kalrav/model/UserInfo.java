@@ -12,6 +12,33 @@ public class UserInfo implements Serializable {
     //User fields
     // TODO : Pending phoneNo & zipcode validation
 
+    //user table
+    public static final String TABLE_USER = "user";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_USER_FBID = "fb_id";
+    public static final String COLUMN_USER_GOOGLEID = "google_id";
+    public static final String COLUMN_USER_NAME = "username";
+    public static final String COLUMN_USER_REALNAME = "realname";
+    public static final String COLUMN_USER_PHONENO = "phone";
+    public static final String COLUMN_USER_PROVENANCE = "provenance";
+    public static final String COLUMN_USER_BIRTHDAY = "birthday";
+    public static final String COLUMN_USER_ENABLED = "enabled";
+    public static final String COLUMN_USER_IS_NOTIFICATION = "notification";
+    public static final String COLUMN_USER_DEVICE_TOKEN = "device";
+    public static final String COLUMN_USER_ADDRESS = "address";
+    public static final String COLUMN_USER_CITY = "city";
+    public static final String COLUMN_USER_STATE = "state";
+    public static final String COLUMN_USER_ZIPCODE = "zipcode";
+    public static final String COLUMN_USER_ROLE = "role";
+    public static final String COLUMN_USER_GROUP_NAME = "groupname";
+    public static final String COLUMN_USER_PROFILELINK = "profile_link";
+    public static final String COLUMN_USER_LOGGEDIN = "logged";
+    public static final String COLUMN_USER_LOCATION = "location";
+
+    private boolean enabled;
+    private boolean notification;
+    private String device;
+    private String provenance;
     private int id;
     private String phoneNo;
     private String address;
@@ -27,7 +54,48 @@ public class UserInfo implements Serializable {
     private String groupname;
     private String picture;
     private String fb_id;
+    private String role;
 
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isNotification() {
+        return notification;
+    }
+
+    public void setNotification(boolean notification) {
+        this.notification = notification;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+    }
+
+    public String getProvenance() {
+        return provenance;
+    }
+
+    public void setProvenance(String provenance) {
+        this.provenance = provenance;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public int getId() {
         return id;
@@ -179,7 +247,11 @@ public class UserInfo implements Serializable {
     @Override
     public String toString() {
         return "UserInfo{" +
-                "id=" + id +
+                "enabled=" + enabled +
+                ", notification=" + notification +
+                ", device='" + device + '\'' +
+                ", provenance='" + provenance + '\'' +
+                ", id=" + id +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", address='" + address + '\'' +
                 ", city='" + city + '\'' +
@@ -194,6 +266,7 @@ public class UserInfo implements Serializable {
                 ", groupname='" + groupname + '\'' +
                 ", picture='" + picture + '\'' +
                 ", fb_id='" + fb_id + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 }

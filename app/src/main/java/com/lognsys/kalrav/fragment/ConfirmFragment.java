@@ -296,7 +296,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                              TotalTicketBooked ="Total Ticket numbers :"+editNoOfSeatsBooked.getText().toString();
                              TotalPrice="TotalPrice Rs : "+String.valueOf(totalPrice);
                              dialog.dismiss();
-                             KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+                             KalravApplication.getInstance().getPrefs().showDialog(getContext());
 
                              new ConfirmFragment.GenerateQRCodeTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,BookingDateTime,UserName,
                                      TotalTicketBooked,TotalPrice, bitmapQRCode).execute();

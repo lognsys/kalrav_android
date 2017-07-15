@@ -44,7 +44,7 @@ public class KalravApplication extends Application {
         mInstance = this;
         prefs = new Preference(this);
          cm =  (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        invokeFCMService(this);
+
     }
     public Preference getPrefs() {
         return prefs;
@@ -112,13 +112,7 @@ public  void invokeService(Context context){
 
     Intent i= new Intent(context, KalravDramaByGroupService.class);
     context.startService(i);
-}public  void invokeFCMService(Context context){
-        // use this to start and trigger a service
-        Log.d(TAG, "Service OnCreate invokeService context- " +context);
-
-        Intent i= new Intent(context, FCMInstanceIdService.class);
-        context.startService(i);
-    }
+}
 public void showDialog(Context context, String message){
     AlertDialog alertDialog = new AlertDialog.Builder(
             context).create();

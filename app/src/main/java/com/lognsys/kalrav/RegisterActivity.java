@@ -23,6 +23,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -120,46 +122,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    /**
-     * A method to download json data from url
-     */
-    private String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-
-            // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            // Connecting to url
-            urlConnection.connect();
-
-            // Reading data from url
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb = new StringBuffer();
-
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        } catch (Exception e) {
-            Log.d("", "Exception" + e);
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
 
     @Override
     public void onClick(View v) {
@@ -207,8 +169,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 KalravApplication.getInstance().getPrefs().setName(realname);
 
                 KalravApplication.getInstance().getPrefs().setEmail(username);
-                KalravApplication.getInstance().getPrefs().setMobile(phone);
                 String auth_id = null;
+                if(KalravApplication.getInstance().getPrefs().getUser_id()!=null)
                 auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
                /* RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
                 task.execute();*/
@@ -221,95 +183,181 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         final String address,final String city,final String state,final String zipcode){
 
         String post_create_user_url=properties.getProperty(Constants.API_URL_USER.post_create_user_url.name());
-        KalravApplication.getInstance().getPrefs().showpDialog(RegisterActivity.this);
+        KalravApplication.getInstance().getPrefs().showDialog(RegisterActivity.this);
+        JSONObject params = new JSONObject();
+        try {
+            String firstname,lastname,device;
 
+            params.put("realname", realname);
+            String[] splited = null;
 
-        StringRequest postRequest = new StringRequest(Request.Method.POST, post_create_user_url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.d("Response", response);
-                        KalravApplication.getInstance().getPrefs().hidepDialog(RegisterActivity.this);
+            Log.d("realname","realname   "  +realname);
 
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        if(error!=null && error.getMessage() !=null){
-                            Toast.makeText(getApplicationContext(),"error VOLLEY "+error.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_LONG).show();
-
-                        }Log.d("Error.Response", error.getMessage());
-                        KalravApplication.getInstance().getPrefs().hidepDialog(RegisterActivity.this);
-
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams()
-            {
-                String firstname,lastname,device;
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("realname", realname);
-                String[] splited = null;
-
-                Log.d("realname","realname   "  +realname);
-
-                if (realname != null  && realname.contains(" ")) {
-                    splited =realname.split(" ");
-                    firstname = splited[0] == null ? "" : splited[0];
-                    lastname = splited[1] == null ? "" : splited[1];
-                } else {
-                    firstname = "";
-                    lastname = "";
-                }
-                device=KalravApplication.getInstance().getPrefs().getDevice_token();
-                if(device==null){
-                    KalravApplication.getInstance().invokeFCMService(getApplicationContext());
-                }
-                device=KalravApplication.getInstance().getPrefs().getDevice_token();
-                Log.d("realname","username   "  +username);
-                Log.d("realname","auth_id   "  +"auth_id");
-                Log.d("realname","phone   "  +phone);
-                Log.d("realname","address   "  +address);
-                Log.d("realname","city   "  +city);
-                Log.d("realname","state   "  +state);
-                Log.d("realname","zipcode   "  +zipcode);
-                Log.d("realname","device   "  +"device");
-                Log.d("realname","firstname   "  +firstname);
-                Log.d("realname","lastname   "  +lastname);
-
-                params.put("Content-type", "application/json");
-                params.put("Accept", "application/json");
-                params.put("username", username);
-                params.put("auth_id", auth_id);
-                params.put("phone", phone);
-                params.put("address", address);
-                params.put( "city" ,city);
-                params.put("state", state);
-                params.put("zipcode", zipcode);
-                params.put("provenance", "Google");
-                params.put("role", "GUEST");
-                params.put("group", "NONE");
-                params.put("notification", String.valueOf(false));
-                params.put("enabled", String.valueOf(false));
-                params.put("device", device);
-                params.put("firstname", firstname);
-                params.put("lastname", lastname);
-
-                return params;
+            if (realname != null  && realname.contains(" ")) {
+                splited =realname.split(" ");
+                firstname = splited[0] == null ? "" : splited[0];
+                lastname = splited[1] == null ? "" : splited[1];
+            } else {
+                firstname = "";
+                lastname = "";
             }
-        };
-//        queue.add(postRequest);
-        KalravApplication.getInstance().addToRequestQueue(postRequest);
+            params.put("username", username);
+            if(auth_id!=null && auth_id.length()>0){
+                params.put("auth_id", auth_id);
+            }
+            else{
+                params.put("auth_id", "auth_id");
+            }
+            params.put("phone", phone);
+            params.put("address", address);
+            params.put( "city" ,city);
+            params.put("state", state);
+            params.put("zipcode", zipcode);
+            params.put("provenance", "Google");
+            params.put("role", "GUEST");
+            params.put("group", "NONE");
+            params.put("notification", String.valueOf(false));
+            params.put("enabled", String.valueOf(false));
+            device=KalravApplication.getInstance().getPrefs().getDevice_token();
+            if(device!=null && device.length()>0){
+                params.put("device", device);
+            }
+            else{
+                params.put("device", "device");
+            }
+            params.put("firstname", firstname);
+            params.put("lastname", lastname);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST,
+                post_create_user_url, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response","Rest response " +response);
+                       try{
+                           KalravApplication.getInstance().getPrefs().hidepDialog(RegisterActivity.this);
+                           JSONObject jsonObject = new JSONObject(String.valueOf(response));
+
+                           userInfo = new UserInfo();
+
+                           userInfo.setId(jsonObject.getInt("id"));
+
+                           userInfo.setName(jsonObject.getString("realname"));
+
+                           userInfo.setEmail(jsonObject.getString("username"));
+
+                           if (fb_id != null)
+                               userInfo.setFb_id(fb_id);
+
+                           if (google_id != null)
+                               userInfo.setGoogle_id(google_id);
+
+                           userInfo.setPhoneNo(jsonObject.getString("phone"));
+
+                           KalravApplication.getInstance().getPrefs().setMobile(userInfo.getPhoneNo());
+                           userInfo.setAddress(jsonObject.getString("address"));
+
+                           userInfo.setCity(jsonObject.getString("city"));
+
+                           userInfo.setState(jsonObject.getString("state"));
+
+                           userInfo.setZipcode(jsonObject.getString("zipcode"));
+
+                           userInfo.setGroupname(jsonObject.getString("group"));
+
+                           userInfo.setRole(jsonObject.getString("role"));
+
+                           userInfo.setDevice(jsonObject.getString("device"));
+
+                           userInfo.setProvenance(jsonObject.getString("provenance"));
+
+                           userInfo.setEnabled(jsonObject.getBoolean("enabled"));
+
+                           userInfo.setNotification(jsonObject.getBoolean("notification"));
+
+
+                           userInfo.setLoggedIn(Constants.LOG_IN);
+//                        //save to the database
+                           userDaoImpl.addUser(userInfo);
+
+//                          setting customer id
+                           KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
+                           KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
+                           KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
+
+                           KalravApplication.getInstance().setGlobalUserObject(userInfo);
+
+                           Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
+                           KalravApplication.getInstance().getPrefs().setIsLogin(true);
+
+                           Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
+                           startActivity(i);
+                           finish();
+                       }
+                       catch (JSONException e){
+                           e.printStackTrace();
+                       }
+                        //  YOUR RESPONSE
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
+
+                String json = null;
+                String str=null;
+                byte[] response = volleyError.networkResponse.data;
+                Log.d("Response","Rest volleyError response " +response);
+                try {
+                     str = new String(response, "UTF-8");
+                    Log.d("Response","Rest volleyError str toString  " +str.toString() );
+
+                    try {
+                        JSONObject object=new JSONObject(str.toString());
+                        Log.d("Response","Rest inside object  " +object);
+
+                        int  statusCode=object.getInt("statusCode");
+                        Log.d("Response","Rest inside statusCode  " +statusCode);
+
+                        if(statusCode==400){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                        else if(statusCode==406){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        } else if(statusCode==404){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+              KalravApplication.getInstance().getPrefs().hidepDialog(RegisterActivity.this);
+
+            }
+
+            //Somewhere that has access to a context
+            public void displayMessage(String toastString){
+                Log.d("Response","Rest volleyError toastString  " +toastString );
+
+                Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+        KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
 
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
 }

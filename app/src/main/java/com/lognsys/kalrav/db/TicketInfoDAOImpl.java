@@ -64,7 +64,7 @@ public class TicketInfoDAOImpl implements TicketInfoDAO {
             values.put(SQLiteHelper.COLUMN_NO_OF_SEATS_BOOKED, ticketsInfo.getSeats_no_of_seats_booked());
             values.put(SQLiteHelper.COLUMN_SEAT_NO, ticketsInfo.getSeart_seat_no());
             values.put(SQLiteHelper.COLUMN_AUDITORIUM_NAME, ticketsInfo.getAuditorium_name());
-            values.put(SQLiteHelper.COLUMN_USER_NAME, ticketsInfo.getUser_name());
+            values.put(UserInfo.COLUMN_USER_REALNAME, ticketsInfo.getUser_name());
             values.put(SQLiteHelper.COLUMN_USER_EMAIL_ID, ticketsInfo.getUser_emailid());
             Log.d("","Test insert ticketsInfo.getBitmapQRCode() "+ticketsInfo.getBitmapQRCode());
             Log.d("","Test insert BitMapToString(ticketsInfo.getBitmapQRCode()) "+ BitMapToString(ticketsInfo.getBitmapQRCode()));
@@ -117,7 +117,7 @@ public class TicketInfoDAOImpl implements TicketInfoDAO {
         values.put(SQLiteHelper.COLUMN_NO_OF_SEATS_BOOKED, ticketsInfo.getSeats_no_of_seats_booked());
         values.put(SQLiteHelper.COLUMN_SEAT_NO, ticketsInfo.getSeart_seat_no());
         values.put(SQLiteHelper.COLUMN_AUDITORIUM_NAME, ticketsInfo.getAuditorium_name());
-        values.put(SQLiteHelper.COLUMN_USER_NAME, ticketsInfo.getUser_name());
+        values.put(UserInfo.COLUMN_USER_REALNAME, ticketsInfo.getUser_name());
         values.put(SQLiteHelper.COLUMN_USER_EMAIL_ID, ticketsInfo.getUser_emailid());
         Log.d("","Test updateTicket ticketsInfo.getBitmapQRCode() "+ticketsInfo.getBitmapQRCode());
         Log.d("","Test updateTicket BitMapToString(ticketsInfo.getBitmapQRCode()) "+ BitMapToString(ticketsInfo.getBitmapQRCode()));
@@ -182,7 +182,7 @@ public class TicketInfoDAOImpl implements TicketInfoDAO {
                 ticketsInfo.setSeats_no_of_seats_booked(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_NO_OF_SEATS_BOOKED)).toString());
                 ticketsInfo.setSeart_seat_no(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_SEAT_NO)).toString());
                 ticketsInfo.setAuditorium_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_AUDITORIUM_NAME)).toString());
-                ticketsInfo.setUser_name(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_USER_NAME)).toString());
+                ticketsInfo.setUser_name(c.getString(c.getColumnIndex(UserInfo.COLUMN_USER_REALNAME)).toString());
                 ticketsInfo.setUser_emailid(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_USER_EMAIL_ID)).toString());
                 Log.d("","Test getAllTicket SQLiteHelper.COLUMN_QRCODE_BITMAP "+c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_QRCODE_BITMAP)).toString());
                 Log.d("","Test getAllTicket StringToBitMap(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_QRCODE_BITMAP)).toString()) "+StringToBitMap(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_QRCODE_BITMAP)).toString()));

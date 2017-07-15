@@ -181,7 +181,7 @@ public class FragmentDramaDetail extends Fragment  {
                         if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null) {
 
                             String ratedrama=properties.getProperty(Constants.API_URL_DRAMA.ratedrama.name());
-                            KalravApplication.getInstance().getPrefs().showpDialog(getActivity());
+                            KalravApplication.getInstance().getPrefs().showDialog(getActivity());
                             callAPI.rateDrama(Double.parseDouble(tvRatingStar.getText().toString()), dramaInfo,
                                     Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()),ratedrama);
                             KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
@@ -230,7 +230,7 @@ public class FragmentDramaDetail extends Fragment  {
        String dramaDetailURLByID=getdramadetailbyid+dramaInfo.getId();
         Log.d("","displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
 
-        KalravApplication.getInstance().getPrefs().showpDialog(getContext());
+        KalravApplication.getInstance().getPrefs().showDialog(getContext());
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 dramaDetailURLByID, null, new Response.Listener<JSONObject>() {
 
