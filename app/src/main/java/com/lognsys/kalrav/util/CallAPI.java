@@ -177,136 +177,8 @@ public class CallAPI {
 
         });
         KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
-        /*
-        JSONObject post_dict = new JSONObject();
-
-        try {
-            Log.d("FCM","Rest sendDeviceToken device_token===================="+device_token);
-
-            post_dict.put("deviceToken" , device_token);
-            Log.d("FCM","Rest sendDeviceToken post_dict.length()===================="+post_dict.length());
-
-            if (post_dict.length() > 0) {
-                new SendDataToServer(sendREGTOKENURL).execute(String.valueOf(post_dict));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.d("FCM","Rest sendDeviceToken JSONException===================="+e);
-
-        }*/
-
-
-
- /*       sendREGTOKENURL=sendREGTOKENURL+device_token;
-        Log.d("FCM","FCM sendREGTOKENURL===================="+sendREGTOKENURL);
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, sendREGTOKENURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("FCM","FCM response===================="+response);
-
-                        Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("FCM","FCM error===================="+error.getMessage());
-
-                        Toast.makeText(getApplicationContext(),"FCM error",Toast.LENGTH_LONG).show();
-                    }
-                }) ;
-        KalravApplication.getInstance().addToRequestQueue(stringRequest);
-   */ }
-
-    static class SendDataToServer extends AsyncTask <String,String,String>{
-        String sendREGTOKENURL;
-        public SendDataToServer(String sendREGTOKENURL) {
-            this.sendREGTOKENURL=sendREGTOKENURL;
-            Log.d(TAG,"Rest  this.sendREGTOKENURL ============ "+  this.sendREGTOKENURL);
         }
 
-        @Override
-        protected String doInBackground(String... params) {
-            String JsonResponse = null;
-            String JsonDATA = params[0];
-            Log.d(TAG,"Rest  params ============ "+  params);
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            try {
-                URL url = new URL(sendREGTOKENURL);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                // is output buffer writter
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type", "application/json");
-                urlConnection.setRequestProperty("Accept", "application/json");
-//set headers and method
-                Writer writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
-                writer.write(JsonDATA);
-                Log.d(TAG,"Rest JsonDATA ============ "+ JsonDATA);
-// json data
-                writer.close();
-                InputStream inputStream = urlConnection.getInputStream();
-                Log.d(TAG,"Rest JsonDATA inputStream ============ "+ inputStream);
-//input stream
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                Log.i(TAG,"Rest JsonDATA reader ============ "+ reader);
-                String inputLine;
-                while ((inputLine = reader.readLine()) != null)
-                    buffer.append(inputLine + "\n");
-                Log.d(TAG,"Rest JsonDATA buffer.length() ============ "+ buffer.length());
-
-                if (buffer.length() == 0) {
-                    // Stream was empty. No point in parsing.
-                    return null;
-                }
-                JsonResponse = buffer.toString();
-//response data
-                Log.d(TAG, JsonResponse);
-                Log.d(TAG,"Rest JsonDATA JsonResponse ============ "+ JsonResponse);
-                //send to post execute
-                return JsonResponse;
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(TAG," JsonDATA IOException ============ "+ e);
-
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.d(TAG,"Rest JsonDATA finally IOException ============ "+ e);
-
-
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-
-            Log.i(TAG,"Rest JsonDATA String ============ "+ s);
-
-        }
-
-    }
 
 
     //   alreadyExist user checking
@@ -317,14 +189,6 @@ public class CallAPI {
 
         userDaoImpl = new UserInfoDAOImpl(mContext);
         String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name())+userInfo.getEmail();
-        /*JSONObject params = new JSONObject();
-        try {
-            Log.d(TAG,"Rest alReadyExsistUser  userInfo.getEmail() ============ "+ userInfo.getEmail());
-
-            params.put("username", userInfo.getEmail());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,alReadyExsistUser,
                 null,new Response.Listener<JSONObject>() {
