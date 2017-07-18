@@ -12,7 +12,7 @@ public class Constants {
     public static final int LOG_IN = 1;
     public static final int LOG_OUT = 0;
 
-    //Notification fragment Genre
+    //NotificationInfo fragment Genre
     public static final String GENRE_TRIP = "Trip";
     public static final String GENRE_CHARITY = "Charity";
     public static final String GENRE_GENERAL = "Message";

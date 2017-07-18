@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lognsys.kalrav.R;
-import com.lognsys.kalrav.model.Notification;
+import com.lognsys.kalrav.model.NotificationInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
 
@@ -23,22 +23,22 @@ import java.util.List;
 public class CustomListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
-    private List<Notification> notifications;
+    private List<NotificationInfo> notificationInfos;
     ImageLoader imageLoader = KalravApplication.getInstance().getImageLoader();
 
-    public CustomListAdapter(Context context, List<Notification> notifications) {
+    public CustomListAdapter(Context context, List<NotificationInfo> notificationInfos) {
         this.context = context;
-        this.notifications = notifications;
+        this.notificationInfos = notificationInfos;
     }
 
     @Override
     public int getCount() {
-        return notifications.size();
+        return notificationInfos.size();
     }
 
     @Override
     public Object getItem(int location) {
-        return notifications.get(location);
+        return notificationInfos.get(location);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CustomListAdapter extends BaseAdapter {
         TextView timeStamp = (TextView) convertView.findViewById(R.id.timestamp);
 
         // getting movie data for the row
-        Notification m = notifications.get(position);
+        NotificationInfo m = notificationInfos.get(position);
 
         // thumbnail image
         thumbNail.setImageUrl(m.getImageUrl(), imageLoader);

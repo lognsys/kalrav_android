@@ -3,9 +3,9 @@ package com.lognsys.kalrav.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.lognsys.kalrav.model.NotificationInfo;
 import com.lognsys.kalrav.model.UserInfo;
 
 /**
@@ -50,8 +50,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
          "group": "NONE"
     */
 // USER TABLE CREATE
-
-    public static final String TABLE_USER = "user";
+  public static final String TABLE_USER = "user";
     private static final String DATABASE_CREATE_USER = "create table if not exists "
             + UserInfo.TABLE_USER + "("
             + UserInfo.COLUMN_ID + " integer primary key autoincrement , "
@@ -160,6 +159,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
 
+    // NOTIFICATION TABLE CREATE
+    public static final String TABLE_NOTIFICATION = "notification";
+    private static final String DATABASE_CREATE_NOTIFICATION = "create table if not exists "
+            + NotificationInfo.TABLE_NOTIFICATION + "("
+            + NotificationInfo.COLUMN_ID + " integer primary key autoincrement , "
+            + NotificationInfo.COLUMN_NOTIFICATION_DRAMA_ID + " integer , "
+            + NotificationInfo.COLUMN_NOTIFICATION_USER_ID + " integer , "
+            + NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME + " TEXT , "
+            + NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE + " TEXT , "
+            + NotificationInfo.COLUMN_NOTIFICATION_MESSAGE + " TEXT , "
+            + COLUMN_TIMESTAMP+ " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
+
 
 
 
@@ -180,6 +191,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(DATABASE_CREATE_DRAMA);
         db.execSQL(DATABASE_CREATE_FAVOURITE);
         db.execSQL(DATABASE_CREATE_TICKET);
+        db.execSQL(DATABASE_CREATE_NOTIFICATION);
 
     }
 

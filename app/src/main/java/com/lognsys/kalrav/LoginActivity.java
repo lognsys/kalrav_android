@@ -146,9 +146,6 @@ public class LoginActivity extends AppCompatActivity implements
 
     //Shared preference variables;
     private String fb_id,google_id,email = "";
-    private boolean login_status = false;
-    private String oauthId = "";
-    private String device_token_id = "";
     UserInfoDAOImpl userDaoImpl;
     SharedPreferences sharedpreferences;
     CallAPI callAPI;
@@ -176,7 +173,7 @@ public class LoginActivity extends AppCompatActivity implements
         if( userDaoImpl.lastUserLoggedIn()!=null)
          user = userDaoImpl.lastUserLoggedIn();
 
-//       invokeFCMService();
+       invokeFCMService();
 
         if (null != user && KalravApplication.getInstance().getPrefs().getIsLogin()) {
             Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
@@ -187,7 +184,6 @@ public class LoginActivity extends AppCompatActivity implements
                 Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
                 if (user.getEmail() != null && user.getEmail().length() > 0) {
                     callAPI.alReadyExsistUser(user, fb_id, google_id);
-
                 }
             }
         } else {

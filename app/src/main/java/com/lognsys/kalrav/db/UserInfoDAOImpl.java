@@ -282,7 +282,15 @@ public class UserInfoDAOImpl implements UserInfoDAO {
     public boolean isUserExist(UserInfo user) {
 
         db = sqLiteHelper.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT COUNT(*) FROM USER", null);
+        Cursor c = db.rawQuery("SELECT * FROM user where id=? ", new String[]{String.valueOf(user.getId())});
+        if(c!= null && c.getCount()>0){
+            return true;
+        }
+        else
+            return false;
+
+
+       /* Cursor cur = db.rawQuery("SELECT COUNT(*) FROM USER", null);
         if (cur != null) {
             cur.moveToFirst();                       // Always one row returned.
             if (cur.getInt(0) == 0) {               // Zero count means empty table.
@@ -296,7 +304,7 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             return false;
         }
 
-        return true;
+        return true;*/
 
     }
 

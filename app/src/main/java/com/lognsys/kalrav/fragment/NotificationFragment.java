@@ -1,35 +1,16 @@
 package com.lognsys.kalrav.fragment;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.CustomListAdapter;
-import com.lognsys.kalrav.model.Notification;
-import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.MockObjects;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class NotificationFragment extends Fragment {
@@ -38,7 +19,7 @@ public class NotificationFragment extends Fragment {
     // Log tag
     private static final String TAG = NotificationFragment.class.getSimpleName();
     private ProgressDialog pDialog;
-   // private List<Notification> notificationList = new ArrayList<Notification>();
+   // private List<NotificationInfo> notificationList = new ArrayList<NotificationInfo>();
     private ListView listView;
     private CustomListAdapter adapter;
 
@@ -51,7 +32,7 @@ public class NotificationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
 
         listView = (ListView) view.findViewById(R.id.list);
-        adapter = new CustomListAdapter(this.getContext(), MockObjects.getNotificationList());
+        adapter = new CustomListAdapter(this.getContext(), MockObjects.getNotificationInfoList());
         listView.setAdapter(adapter);
 
         pDialog = new ProgressDialog(getContext());
