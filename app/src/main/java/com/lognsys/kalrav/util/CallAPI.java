@@ -153,8 +153,8 @@ public class CallAPI {
                         KalravApplication.getInstance().setGlobalUserObject(userInfo);
                         Log.d("", "Rest alReadyExsistUser Global object  " + KalravApplication.getInstance().getGlobalUserObject());
 
-                        if(KalravApplication.getInstance().getPrefs().getDevice_token()!=null)
-                            userInfo.setDevice(KalravApplication.getInstance().getPrefs().getDevice_token());
+                            userInfo.setDevice(jsonObject.getString("device"));
+                        KalravApplication.getInstance().getPrefs().setDevice_token(userInfo.getDevice());
                         Log.d("", "Rest alReadyExsistUser userInfo getDevice " + userInfo.getDevice());
 
                         userDaoImpl.addUser(userInfo);

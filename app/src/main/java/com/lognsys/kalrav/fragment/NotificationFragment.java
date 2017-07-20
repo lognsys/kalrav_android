@@ -10,7 +10,10 @@ import android.widget.ListView;
 
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.adapter.CustomListAdapter;
-import com.lognsys.kalrav.util.MockObjects;
+import com.lognsys.kalrav.db.NotificationDAOImpl;
+import com.lognsys.kalrav.model.NotificationInfo;
+
+import java.util.List;
 
 
 public class NotificationFragment extends Fragment {
@@ -22,7 +25,9 @@ public class NotificationFragment extends Fragment {
    // private List<NotificationInfo> notificationList = new ArrayList<NotificationInfo>();
     private ListView listView;
     private CustomListAdapter adapter;
-
+    NotificationDAOImpl impl;
+    NotificationInfo info;
+    List<NotificationInfo> listNotificationInfo;
 
 
     @Override
@@ -30,70 +35,22 @@ public class NotificationFragment extends Fragment {
                                 Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
+        impl=new NotificationDAOImpl(getActivity());
 
         listView = (ListView) view.findViewById(R.id.list);
-        adapter = new CustomListAdapter(this.getContext(), MockObjects.getNotificationInfoList());
-        listView.setAdapter(adapter);
-
-        pDialog = new ProgressDialog(getContext());
-        // Showing progress dialog before making http request
-        pDialog.setMessage("Loading...");
-        pDialog.show();
-
-//        // Creating volley request obj
-//        JsonArrayRequest movieReq = new JsonArrayRequest(url,
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        Log.d(TAG, response.toString());
-//                        hidePDialog();
-
-//                        // Parsing json
-//                        for (int i = 0; i < response.length(); i++) {
-//                            try {
-//
-//                                JSONObject obj = response.getJSONObject(i);
-//                                Movie movie = new Movie();
-//                                movie.setTitle(obj.getString("title"));
-//                                movie.setThumbnailUrl(obj.getString("image"));
-//                                movie.setRating(((Number) obj.get("rating"))
-//                                        .doubleValue());
-//                                movie.setYear(obj.getInt("releaseYear"));
-//
-//                                // Genre is json array
-//                                JSONArray genreArry = obj.getJSONArray("genre");
-//                                ArrayList<String> genre = new ArrayList<String>();
-//                                for (int j = 0; j < genreArry.length(); j++) {
-//                                    genre.add((String) genreArry.get(j));
-//                                }
-//                                movie.setGenre(genre);
-//
-//                                // adding movie to movies array
-//                                movieList.add(movie);
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                        }
-
-                        // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
-//                        adapter.notifyDataSetChanged();
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                VolleyLog.d(TAG, "Error: " + error.getMessage());
-//                hidePDialog();
-//
-//            }
-//        });
-
-        // Adding request to request queue
-  //      KalravApplication.getInstance().addToRequestQueue(movieReq);
+        readNotification();
+//       adapter = new CustomListAdapter(this.getContext(), MockObjects.getNotificationInfoList());
+//        listView.setAdapter(adapter);
 
         return view;
+    }
+
+    private void readNotification() {
+        listNotificationInfo=impl.getAllNotificationInfo();
+
+        adapter = new CustomListAdapter(this.getContext(), listNotificationInfo);
+        listView.setAdapter(adapter);
+
     }
 
     @Override

@@ -53,7 +53,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
   public static final String TABLE_USER = "user";
     private static final String DATABASE_CREATE_USER = "create table if not exists "
             + UserInfo.TABLE_USER + "("
-            + UserInfo.COLUMN_ID + " integer primary key autoincrement , "
+            + UserInfo.COLUMN_ID + " integer primary key , "
             + UserInfo.COLUMN_USER_FBID + " TEXT , "
             + UserInfo.COLUMN_USER_GOOGLEID + " TEXT , "
             + UserInfo.COLUMN_USER_NAME + " TEXT , "

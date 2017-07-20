@@ -305,11 +305,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
+//                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
 
                 String json = null;
                 String str=null;
-                byte[] response = volleyError.networkResponse.data;
+                byte[] response=null;
+                if(volleyError.networkResponse.data!=null)
+                response = volleyError.networkResponse.data;
                 Log.d("Response","Rest volleyError response " +response);
                 try {
                      str = new String(response, "UTF-8");

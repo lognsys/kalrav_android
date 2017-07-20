@@ -76,49 +76,6 @@ public class NotificationInfo {
         this.dramaTitle = dramaTitle;
     }
 
-    private String id = "";
-    private String title = "";
-
-    private String timeStamp = "";
-    private String genre = ""; //eg Drama, Charity, General Announcement, Holiday Trip
-    private String description = "";
-    private String imageUrl = "";
-    private int imageResourceId;
-
-
-
-
-
-
-
-    public NotificationInfo(String title, String timeStamp, String genre, String message, String description) {
-        this.id = id;
-        this.title = title;
-        this.timeStamp = timeStamp;
-        this.genre = genre;
-        this.message = message;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.imageResourceId = imageResourceId;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public int getImageResourceId() {
-        return imageResourceId;
-    }
-
-    public void setImageResourceId(int imageResourceId) {
-        this.imageResourceId = imageResourceId;
-    }
-
-
     public String getMessage() {
         return message;
     }
@@ -127,46 +84,15 @@ public class NotificationInfo {
         this.message = message;
     }
 
-    public String getDescription() {
-        return description;
+    @Override
+    public String toString() {
+        return "NotificationInfo{" +
+                "_id=" + _id +
+                ", dramaId=" + dramaId +
+                ", userId=" + userId +
+                ", realname='" + realname + '\'' +
+                ", dramaTitle='" + dramaTitle + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-
 }

@@ -66,6 +66,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.hanks.htextview.HTextView;
 import com.hanks.htextview.HTextViewType;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
@@ -312,11 +313,13 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void invokeFCMService() {
-            // use this to start and trigger a service
-            Log.d(TAG, "Rest invokeFCMService context- ");
 
+        if(KalravApplication.getInstance().getPrefs().getDevice_token()==null){
             Intent i= new Intent(LoginActivity.this, FCMInstanceIdService.class);
             startService(i);
+        }
+//            Intent i= new Intent(LoginActivity.this, FCMInstanceIdService.class);
+//            startService(i);
 
     }
 

@@ -36,13 +36,6 @@ private static String REG_TOKEN="REG_TOKEN";
         REG_TOKEN=recentToken;
 
         KalravApplication.getInstance().getPrefs().setDevice_token(REG_TOKEN);
-        propertyReader = new PropertyReader(getApplicationContext());
-        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
-
-
-        String sendREGTOKENURL=properties.getProperty(Constants.API_URL_USER.sendDeviceToken.name());
         Log.d(TAG, "Rest onTokenRefresh getDevice_token- " +KalravApplication.getInstance().getPrefs().getDevice_token());
-
-//        CallAPI.sendDeviceToken(KalravApplication.getInstance().getPrefs().getDevice_token(),sendREGTOKENURL);
-    }
+   }
 }

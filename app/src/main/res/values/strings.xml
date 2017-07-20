@@ -26,6 +26,8 @@
         <item>Notification</item>
         <item>Bookmark</item>
         <item>Settings</item>
+        <item>Detail Drama</item>
+        <item>Detail Drama</item>
     </string-array>
 
     <string name="action_clear_all">Clear All</string>

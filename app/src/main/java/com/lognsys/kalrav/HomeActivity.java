@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.fragment.BookmarkFragment;
 import com.lognsys.kalrav.fragment.DramaFragment;
+import com.lognsys.kalrav.fragment.FragmentDramaDetail;
 import com.lognsys.kalrav.fragment.MyDramaFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
 import com.lognsys.kalrav.fragment.MyticketListFragment;
@@ -64,7 +65,9 @@ public class HomeActivity extends AppCompatActivity {
    // private static final String urlProfileImg = "https://lh3.googleusercontent.com/eCtE_G34M9ygdkmOpYvCag1vBARCmZwnVS6rS5t4JLzJ6QgQSBquM0nuTsCpLhYbKljoyS-txg";
 
     // index to identify current nav menu item
-    public static int navItemIndex = 0;
+    public static int navItemIndex;
+    public static int dramaId;
+    public static boolean isNotifiction;
 
     // tags used to attach the fragments
     private static final String TAG_DRAMA = "drama";
@@ -102,7 +105,14 @@ public class HomeActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        dramaId=getIntent().getIntExtra("id",0);
+        navItemIndex=getIntent().getIntExtra("navItemIndex",0);
+        if(dramaId>0 && navItemIndex>0){
+            isNotifiction=true;
+        }
+        else{
+            isNotifiction=false;
+        }
 
         mHandler = new Handler();
 
@@ -126,9 +136,17 @@ public class HomeActivity extends AppCompatActivity {
 //
         // initializing navigation menu
         setUpNavigationView();
+        Log.d("FCM","FCM generateNotification isNotifiction ========================================== "+isNotifiction);
+        Log.d("FCM","FCM generateNotification navItemIndex ========================================== "+navItemIndex);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null && !isNotifiction) {
             navItemIndex = 0;
+            CURRENT_TAG = TAG_DRAMA;
+            loadHomeFragment();
+        }
+        else{
+            Log.d("FCM","FCM generateNotification navItemIndex ========================================== "+navItemIndex);
+
             CURRENT_TAG = TAG_DRAMA;
             loadHomeFragment();
         }
@@ -205,12 +223,27 @@ public class HomeActivity extends AppCompatActivity {
             public void run() {
                 // update the main content by replacing fragments
                 Fragment fragment = getHomeFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null);
-                fragmentTransaction.commitAllowingStateLoss();
+                Log.d("FCM","FCM generateNotification dramaId ========================================== "+dramaId);
 
+                if(isNotifiction){
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("dramaId", dramaId);
+                    fragment.setArguments(bundle);
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                          android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null);
+                    fragmentTransaction.commitAllowingStateLoss();
+
+              }
+              else{
+                  FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                  fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                          android.R.anim.fade_out);
+                  fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null);
+                  fragmentTransaction.commitAllowingStateLoss();
+
+              }
 
             }
         };
@@ -253,6 +286,10 @@ public class HomeActivity extends AppCompatActivity {
                 // notification
                 MyDramaFragment myDramaFragment = new MyDramaFragment();
                 return myDramaFragment;
+            case 5:
+                // notification
+                FragmentDramaDetail fragmentDramaDetail = new FragmentDramaDetail();
+                return fragmentDramaDetail;
             default:
                 return new DramaFragment();
         }

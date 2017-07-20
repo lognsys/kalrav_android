@@ -72,7 +72,7 @@ public class FragmentDramaDetail extends Fragment  {
     private PropertyReader propertyReader;
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
-
+    int dramaId;
     CallAPI callAPI;
     DramaInfo dramaInfo;
     TextView tvRateDrama, tvAllreviewUsers,tvAllreviewCritics, textGroupname;
@@ -83,7 +83,11 @@ public class FragmentDramaDetail extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         dramaInfo = (DramaInfo) getArguments().getSerializable("dramaInfo");
+        if(dramaInfo!=null)
         Log.d("","Detail Fragment dramaInfo "+dramaInfo);
+
+        dramaId= (int) getArguments().get("dramaId");
+        Log.d("","Rest Detail Fragment dramaId "+dramaId);
 
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);
@@ -109,11 +113,11 @@ public class FragmentDramaDetail extends Fragment  {
         rbRatingBar.setRating(4.0F);
         textRatingvalue.setText("4.0");
         if(dramaInfo!= null){
-            displayDramaDetail(dramaInfo);
-
-
-
-      }
+            displayDramaDetail(dramaInfo,0);
+        }
+        else{
+            displayDramaDetail(null,dramaId);
+        }
         viewPager=(ViewPager)view.findViewById(R.id.viewpager);
         btnbook=(Button)view.findViewById(R.id.btnbook);
         btnbook.setOnClickListener(new View.OnClickListener() {
@@ -222,13 +226,21 @@ public class FragmentDramaDetail extends Fragment  {
 
 
 
-    private void displayDramaDetail(DramaInfo dramaInfo) {
-    String groupname=dramaInfo.getGroup_name();
-        textGroupname.setText(groupname);
+    public void displayDramaDetail(DramaInfo dramaInfo, int dramaId) {
         String getdramadetailbyid=properties.getProperty(Constants.API_URL_DRAMA.getdramadetailbyid.name());
+        String dramaDetailURLByID = null;
+        if(dramaInfo!=null){
+            String groupname=dramaInfo.getGroup_name();
+            textGroupname.setText(groupname);
+            dramaDetailURLByID=getdramadetailbyid+dramaInfo.getId();
+        }
+        else{
+            if(dramaId>0)
+            dramaDetailURLByID=getdramadetailbyid+dramaId;
 
-       String dramaDetailURLByID=getdramadetailbyid+dramaInfo.getId();
-        Log.d("","displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
+        }
+
+        Log.d("","Rest displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
 
         KalravApplication.getInstance().getPrefs().showDialog(getContext());
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,

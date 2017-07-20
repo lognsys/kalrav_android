@@ -35,7 +35,6 @@ public class NotificationDAOImpl implements NotificationDAO {
 
             Log.d(TAG, "Rest Adding New NotificationInfo - " + notificationInfo.toString());
             ContentValues values = new ContentValues();
-            values.put(NotificationInfo.COLUMN_ID, notificationInfo.getId());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_DRAMA_ID, notificationInfo.getDramaId());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_USER_ID, notificationInfo.getUserId());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME, notificationInfo.getRealname());
@@ -53,7 +52,13 @@ public class NotificationDAOImpl implements NotificationDAO {
         List<NotificationInfo>  infos=new ArrayList<NotificationInfo>();
         NotificationInfo notificationInfo = null;
 
-        Cursor c = db.rawQuery("SELECT  * FROM notification ", null);
+        Cursor c = db.rawQuery("SELECT " + NotificationInfo.COLUMN_ID + "," +
+                NotificationInfo.COLUMN_NOTIFICATION_DRAMA_ID + "," +
+                NotificationInfo.COLUMN_NOTIFICATION_USER_ID + "," +
+                NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME + "," +
+                NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE +"," +
+                NotificationInfo.COLUMN_NOTIFICATION_MESSAGE +
+                " FROM notification", null);
         if(c!=null)
             Log.d(TAG,"Rest getAllNotificationInfo getCount - "+c.getCount());
 

@@ -1,6 +1,13 @@
 package com.lognsys.kalrav.adapter;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +16,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.FragmentDramaDetail;
 import com.lognsys.kalrav.model.NotificationInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
@@ -21,7 +30,7 @@ import java.util.List;
  */
 
 public class CustomListAdapter extends BaseAdapter {
-    private Context context;
+     Context context;
     private LayoutInflater inflater;
     private List<NotificationInfo> notificationInfos;
     ImageLoader imageLoader = KalravApplication.getInstance().getImageLoader();
@@ -67,9 +76,10 @@ public class CustomListAdapter extends BaseAdapter {
         TextView timeStamp = (TextView) convertView.findViewById(R.id.timestamp);
 
         // getting movie data for the row
-        NotificationInfo m = notificationInfos.get(position);
+        NotificationInfo info = notificationInfos.get(position);
 
-        // thumbnail image
+
+     /*   // thumbnail image
         thumbNail.setImageUrl(m.getImageUrl(), imageLoader);
 
 
@@ -89,21 +99,48 @@ public class CustomListAdapter extends BaseAdapter {
             default:
                 thumbNail.setDefaultImageResId(Constants.notificationImages[0]);
 
-        }
+        }*/
+        Log.d("NotificationListView","Rest Notification List info.getDramaId()============== "+info.getDramaId());
 
 
         // title
-        title.setText(m.getTitle());
+//        title.setText(info.getTitle());
+        if(info.getDramaTitle()!=null)
+        title.setText(info.getDramaTitle());
 
         // rating
-        message.setText(m.getMessage());
+//        message.setText(m.getMessage());
+
+        if(info.getMessage()!=null)
+            message.setText(info.getMessage());
+
 
         // genre
-        genre.setText(m.getGenre());
+      //  genre.setText(m.getGenre());
+
+        if(info.getRealname()!=null)
+            genre.setText(info.getRealname());
 
         // timeStamp
-        timeStamp.setText(String.valueOf(m.getTimeStamp()));
-
+//        timeStamp.setText(String.valueOf(m.getTimeStamp()));
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationInfo notificationInfo=(NotificationInfo) v.getTag();
+                 if(notificationInfo.getDramaId()!=0){
+                     int dramaId = notificationInfo.getDramaId();
+                    Log.d("FCM","FCM generateNotification dramaId "+dramaId);
+                    boolean isNotification=true;
+                    int navItemIndex=5;
+                    Intent notificationIntent=new Intent(context, HomeActivity.class);
+                    notificationIntent.putExtra("id", dramaId);
+                    notificationIntent.putExtra("navItemIndex", navItemIndex);
+                    notificationIntent.putExtra("isNotification", isNotification);
+                    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(notificationIntent);
+                }
+            }
+        });
         return convertView;
     }
 
