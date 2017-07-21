@@ -66,6 +66,12 @@ public class CustomGridArrayAdapter extends BaseAdapter{
 
             }
         });*/
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         return convertView;
     }
     public class Holder

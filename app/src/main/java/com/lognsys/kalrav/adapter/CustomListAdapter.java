@@ -12,17 +12,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.fragment.FragmentDramaDetail;
 import com.lognsys.kalrav.model.NotificationInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,6 +42,8 @@ public class CustomListAdapter extends BaseAdapter {
     public CustomListAdapter(Context context, List<NotificationInfo> notificationInfos) {
         this.context = context;
         this.notificationInfos = notificationInfos;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     }
 
     @Override
@@ -56,78 +62,66 @@ public class CustomListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        Holder holder;
 
-        if (inflater == null)
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null) {
+            // Inflate the view since it does not exist
+            convertView = inflater.inflate(R.layout.list_row, parent, false);
 
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.list_row, null);
-
+            // Create and save off the holder in the tag so we get quick access to inner fields
+            // This must be done for performance reasons
+            holder = new Holder();
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.message = (TextView) convertView.findViewById(R.id.message);
+            holder.realname = (TextView) convertView.findViewById(R.id.genre);
+            convertView.setTag(holder);
+        } else {
+            holder = (Holder) convertView.getTag();
+        }
         if (imageLoader == null)
             imageLoader = KalravApplication.getInstance().getImageLoader();
 
         NetworkImageView thumbNail = (NetworkImageView) convertView
                 .findViewById(R.id.thumbnail);
 
-        TextView title = (TextView) convertView.findViewById(R.id.title);
-        TextView message = (TextView) convertView.findViewById(R.id.message);
-        TextView genre = (TextView) convertView.findViewById(R.id.genre);
-        TextView timeStamp = (TextView) convertView.findViewById(R.id.timestamp);
 
         // getting movie data for the row
         NotificationInfo info = notificationInfos.get(position);
 
-
-     /*   // thumbnail image
-        thumbNail.setImageUrl(m.getImageUrl(), imageLoader);
-
-
-        String genreType = m.getGenre();
-
-        switch (genreType) {
-
-            case Constants.GENRE_CHARITY:
-                thumbNail.setDefaultImageResId(Constants.notificationImages[2]);
-                break;
-            case Constants.GENRE_TRIP:
-                thumbNail.setDefaultImageResId(Constants.notificationImages[1]);
-                break;
-            case Constants.GENRE_GENERAL:
-                thumbNail.setDefaultImageResId(Constants.notificationImages[0]);
-                break;
-            default:
-                thumbNail.setDefaultImageResId(Constants.notificationImages[0]);
-
-        }*/
         Log.d("NotificationListView","Rest Notification List info.getDramaId()============== "+info.getDramaId());
 
 
+        holder.pos = position;
         // title
 //        title.setText(info.getTitle());
         if(info.getDramaTitle()!=null)
-        title.setText(info.getDramaTitle());
+            holder.title.setText(info.getDramaTitle());
 
         // rating
 //        message.setText(m.getMessage());
 
         if(info.getMessage()!=null)
-            message.setText(info.getMessage());
+            holder.message.setText(info.getMessage());
 
 
         // genre
       //  genre.setText(m.getGenre());
 
         if(info.getRealname()!=null)
-            genre.setText(info.getRealname());
+            holder.realname.setText(info.getRealname());
 
         // timeStamp
 //        timeStamp.setText(String.valueOf(m.getTimeStamp()));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotificationInfo notificationInfo=(NotificationInfo) v.getTag();
-                 if(notificationInfo.getDramaId()!=0){
+
+                Holder holder = (Holder) v.getTag();
+                NotificationInfo notificationInfo = (NotificationInfo) getItem(holder.pos);
+                Log.d("FCM","FCM convertView notificationInfo "+notificationInfo);
+
+                if(notificationInfo!=null && notificationInfo.getDramaId()!=0){
                      int dramaId = notificationInfo.getDramaId();
                     Log.d("FCM","FCM generateNotification dramaId "+dramaId);
                     boolean isNotification=true;
@@ -139,9 +133,17 @@ public class CustomListAdapter extends BaseAdapter {
                     notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(notificationIntent);
                 }
+
             }
         });
         return convertView;
     }
 
+    /** View holder for the views we need access to */
+    private static class Holder {
+        public TextView title;
+        public TextView message;
+        public TextView realname;
+        int pos;
+    }
 }
