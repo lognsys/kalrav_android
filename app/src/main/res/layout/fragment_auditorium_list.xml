@@ -19,4 +19,14 @@
         android:layout_below="@+id/weekCalendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textError"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textColor="@color/cardview_shadow_end_color"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

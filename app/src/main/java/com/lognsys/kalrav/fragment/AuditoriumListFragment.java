@@ -42,6 +42,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -55,6 +56,8 @@ import java.util.Scanner;
 
 import noman.weekcalendar.WeekCalendar;
 import noman.weekcalendar.listener.OnDateClickListener;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -80,7 +83,7 @@ public class AuditoriumListFragment extends Fragment {
     List<AuditoriumPriceRange> auditoriumPriceRangeList;
     Auditorium auditorium;
     MyAdapter adapter;
-
+    TextView textError;
     static List<SeatExample> itemsList;
 
 
@@ -135,7 +138,7 @@ public class AuditoriumListFragment extends Fragment {
         final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
          strDate = fmt.print(new DateTime());
-
+         textError=(TextView) view.findViewById(R.id.textError);
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
@@ -173,9 +176,8 @@ public class AuditoriumListFragment extends Fragment {
     }
 
     private void requestAuditoriumDateTime(int dramaInfoId, String strDate) {
-        auditoriumList=new ArrayList<Auditorium>();
 
-        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name())+dramaInfoId;
+        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name())+dramaInfoId+"/"+strDate;
         Log.d(TAG, "requestAuditoriumDateTime auditoriumlist..."+auditoriumlist);
 
         JsonArrayRequest req = new JsonArrayRequest(auditoriumlist,
@@ -183,68 +185,72 @@ public class AuditoriumListFragment extends Fragment {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
-                    Log.d("","requestAuditoriumDateTime response "+ response.toString());
-                    for(int i=0;i<response.length();i++){
-                        auditorium=new Auditorium();
-                        auditoriumPriceRangeList=new ArrayList<AuditoriumPriceRange>();
-
-                        JSONObject jsonObject= response.getJSONObject(i);
-
-                        int auditoriumid = jsonObject.getInt("auditoriumid");
-                        auditorium.setAudiId(String.valueOf(auditoriumid));
-
-                        String auditoriumname = jsonObject.getString("auditoriumname");
-                        auditorium.setAudiName(auditoriumname);
-
-                        String time=jsonObject.getString("time");
-
-                        JSONArray jsontimeArray=new JSONArray(time);
-                        StringBuilder sb=new StringBuilder();
-                            for(int j=0;j<jsontimeArray.length();j++)
+                            if(response!=null)
                             {
-                                String timevalue= jsontimeArray.getString(j);
-                                sb.append(timevalue+" ");
-                            }
-                        auditorium.setDatetime(sb.toString());
+                            Log.d("", "requestAuditoriumDateTime response " + response.toString());
+                                auditoriumList = new ArrayList<Auditorium>();
+                                myRecyclerView.setVisibility(View.VISIBLE);
+                                for (int i = 0; i < response.length(); i++) {
+                                auditorium = new Auditorium();
+                                auditoriumPriceRangeList = new ArrayList<AuditoriumPriceRange>();
+
+                                JSONObject jsonObject = response.getJSONObject(i);
+
+                                int auditoriumid = jsonObject.getInt("id");
+                                auditorium.setAudiId(String.valueOf(auditoriumid));
+
+                                String auditoriumname = jsonObject.getString("auditorium_name");
+                                auditorium.setAudiName(auditoriumname);
+
+                                String time = jsonObject.getString("time");
+
+//                        JSONArray jsontimeArray=new JSONArray(time);
+//                        StringBuilder sb=new StringBuilder();
+//                            for(int j=0;j<jsontimeArray.length();j++)
+//                            {
+//                                String timevalue= jsontimeArray.getString(j);
+//                                sb.append(timevalue+" ");
+//                            }
+                                auditorium.setDatetime(time);
 
 //                        String auditoriumpricerange = ;
-                        JSONArray jsonArrayprice=new JSONArray(jsonObject.getString("auditoriumpricerange"));
-                        Log.d("","requestAuditoriumDateTime jsonArrayprice =======  length "+jsonArrayprice.length());
+                                JSONArray jsonArrayprice = new JSONArray(jsonObject.getString("auditoriumpricelist"));
+                                Log.d("", "requestAuditoriumDateTime jsonArrayprice =======  length " + jsonArrayprice.length());
 
-                        for(int p=0;p<jsonArrayprice.length();p++){
-                            JSONObject jsonObjectpricerange= jsonArrayprice.getJSONObject(p);
-                            AuditoriumPriceRange auditoriumPriceRange=new AuditoriumPriceRange();
+                                for (int p = 0; p < jsonArrayprice.length(); p++) {
+                                    JSONObject jsonObjectpricerange = jsonArrayprice.getJSONObject(p);
+                                    AuditoriumPriceRange auditoriumPriceRange = new AuditoriumPriceRange();
 
 
-                            int istart = jsonObjectpricerange.getInt("istart");
-                            auditoriumPriceRange.setIstart(istart);
+                                    int istart = jsonObjectpricerange.getInt("istart");
+                                    auditoriumPriceRange.setIstart(istart);
 
-                            Log.d("","requestAuditoriumDateTime jsonObjectpricerange ======= istart "+istart);
+                                    Log.d("", "requestAuditoriumDateTime jsonObjectpricerange ======= istart " + istart);
 
-                            int iend = jsonObjectpricerange.getInt("iend");
-                            auditoriumPriceRange.setIend(iend);
+                                    int iend = jsonObjectpricerange.getInt("iend");
+                                    auditoriumPriceRange.setIend(iend);
 
-                            Log.d("","requestAuditoriumDateTime jsonObjectpricerange ======= iend "+iend);
+                                    Log.d("", "requestAuditoriumDateTime jsonObjectpricerange ======= iend " + iend);
 
-                            int price = jsonObjectpricerange.getInt("price");
-                            auditoriumPriceRange.setPrice(price);
+                                    int price = jsonObjectpricerange.getInt("price");
+                                    auditoriumPriceRange.setPrice(price);
 
-                            auditoriumPriceRange.setAudiId(auditorium.getAudiId());
-                            Log.d("","requestAuditoriumDateTime jsonObjectpricerange ======= price "+price);
-                            auditoriumPriceRangeList.add(auditoriumPriceRange);
+                                    auditoriumPriceRange.setAudiId(auditorium.getAudiId());
+                                    Log.d("", "requestAuditoriumDateTime jsonObjectpricerange ======= price " + price);
+                                    auditoriumPriceRangeList.add(auditoriumPriceRange);
+                                }
+                                auditorium.setAuditoriumPriceRanges((ArrayList<AuditoriumPriceRange>) auditoriumPriceRangeList);
+
+                                auditoriumList.add(auditorium);
+
+                            }
+                            if (auditoriumList.size() > 0 & auditoriumList != null) {
+                                adapter = new MyAdapter(auditoriumList);
+                                myRecyclerView.setAdapter(adapter);
+                            }
+
+                            KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
                         }
-                        auditorium.setAuditoriumPriceRanges((ArrayList<AuditoriumPriceRange>) auditoriumPriceRangeList);
-
-                        auditoriumList.add(auditorium);
-
-                    }
-                    if (auditoriumList.size() > 0 & auditoriumList != null) {
-                        adapter= new MyAdapter(auditoriumList);
-                        myRecyclerView.setAdapter(adapter);
-                    }
-
-                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
-
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -261,11 +267,57 @@ public class AuditoriumListFragment extends Fragment {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("","requestAuditoriumDateTime VolleyError "+error);
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.d("","requestAuditoriumDateTime VolleyError "+volleyError);
+                Log.d("Response","Rest volleyError" +volleyError);
+                Log.d("","requestAuditoriumDateTime VolleyError auditoriumList.size() "+auditoriumList.size());
+                Log.d("","requestAuditoriumDateTime VolleyError adapter getItemCount "+adapter.getItemCount());
+                Log.d("","requestAuditoriumDateTime VolleyError adapter "+adapter);
+                myRecyclerView.setVisibility(View.GONE);
+                String json = null;
+                String str=null;
+                byte[] response=null;
+                if(volleyError.networkResponse.data!=null)
+                    response = volleyError.networkResponse.data;
+                Log.d("Response","Rest volleyError response " +response);
+                try {
+                    if (response != null && response.length > 0) {
+                        str = new String(response, "UTF-8");
+                        Log.d("Response", "Rest volleyError str toString  " + str.toString());
+                        textError.setText(str.toString());
+                        textError.setVisibility(View.VISIBLE);
+                        Toast.makeText(getActivity(),
+                                str.toString(), Toast.LENGTH_SHORT).show();
+                        /*try {
+                            JSONObject object = new JSONObject(str.toString());
+                            Log.d("Response", "Rest inside object  " + object);
 
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                            int statusCode = object.getInt("statusCode");
+                            Log.d("Response", "Rest inside statusCode  " + statusCode);
+
+                            if (statusCode == 400) {
+                                String msg = object.getString("msg");
+                                Toast.makeText(getActivity(),
+                                        msg, Toast.LENGTH_SHORT).show();
+                            } else if (statusCode == 406) {
+                                String msg = object.getString("msg");
+                                Toast.makeText(getActivity(),
+                                        msg, Toast.LENGTH_SHORT).show();
+                            } else if (statusCode == 404) {
+                                String msg = object.getString("msg");
+                              Toast.makeText(getActivity(),
+                                        msg, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                    }
+                } catch(UnsupportedEncodingException e){
+                    e.printStackTrace();
+                }
+
+
+
                 // hide the progress dialog
                 KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 

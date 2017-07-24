@@ -212,7 +212,7 @@
                     <Button
                         android:id="@+id/btnbook"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="37dp"
                         android:gravity="center"
                         android:background="@drawable/round_btn_white_red"
                         android:text="Book"

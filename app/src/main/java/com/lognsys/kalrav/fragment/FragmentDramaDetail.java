@@ -86,8 +86,7 @@ public class FragmentDramaDetail extends Fragment  {
         if(dramaInfo!=null)
         Log.d("","Detail Fragment dramaInfo "+dramaInfo);
 
-        dramaId= (int) getArguments().get("dramaId");
-        Log.d("","Rest Detail Fragment dramaId "+dramaId);
+        dramaId= (int) getArguments().getInt("dramaId");
 
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         View view = inflater.inflate(R.layout.fragment_dramadetai, container, false);

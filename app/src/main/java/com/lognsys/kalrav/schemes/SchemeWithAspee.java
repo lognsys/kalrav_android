@@ -56,7 +56,8 @@ public class SchemeWithAspee extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.basic_scheme_fragment, container, false);
+
+         View rootView = inflater.inflate(R.layout.basic_scheme_fragment, container, false);
 
         auditorium= (Auditorium) getArguments().getSerializable("auditorium");
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
