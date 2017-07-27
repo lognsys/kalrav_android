@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class SettingFragment extends AppCompatActivity implements View.OnClickListener {
+public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
     private UserInfo userInfo;
     private EditText editUsername;
     private EditText editName;
@@ -241,9 +241,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
                 String auth_id = null;
                 if(KalravApplication.getInstance().getPrefs().getUser_id()!=null)
                     auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
-//                RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
-//                task.execute();
-                postReq( KalravApplication.getInstance().getPrefs().getCustomer_id(),realname, username, auth_id, phone,address, city, state, zipcode);
+               postReq( KalravApplication.getInstance().getPrefs().getCustomer_id(),realname, username, auth_id, phone,address, city, state, zipcode);
             }
         }
     }
@@ -253,7 +251,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
         String put_update_user_url=properties.getProperty(Constants.API_URL_USER.put_update_user_url.name())+id;
 
         Log.d("realname","put_update_user_url   "  +put_update_user_url);
-        KalravApplication.getInstance().getPrefs().showDialog(SettingFragment.this);
+        KalravApplication.getInstance().getPrefs().showDialog(SettingActivity.this);
         JSONObject params = new JSONObject();
         try {
             String firstname,lastname,device;
@@ -308,7 +306,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
                     public void onResponse(JSONObject response) {
                         Log.d("Response","Rest response " +response);
                         try{
-                            KalravApplication.getInstance().getPrefs().hidepDialog(SettingFragment.this);
+                            KalravApplication.getInstance().getPrefs().hidepDialog(SettingActivity.this);
                             JSONObject jsonObject = new JSONObject(String.valueOf(response));
 
                             userInfo = new UserInfo();
@@ -363,7 +361,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
                             Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
                             KalravApplication.getInstance().getPrefs().setIsLogin(true);
 
-                            Intent i = new Intent(SettingFragment.this, HomeActivity.class);
+                            Intent i = new Intent(SettingActivity.this, HomeActivity.class);
                             startActivity(i);
                             finish();
                         }
@@ -414,7 +412,7 @@ public class SettingFragment extends AppCompatActivity implements View.OnClickLi
                         e.printStackTrace();
                 }
 
-                KalravApplication.getInstance().getPrefs().hidepDialog(SettingFragment.this);
+                KalravApplication.getInstance().getPrefs().hidepDialog(SettingActivity.this);
 
             }
 

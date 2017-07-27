@@ -5,7 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.FavouritesInfo;
 import com.lognsys.kalrav.model.NotificationInfo;
+import com.lognsys.kalrav.model.TicketsInfo;
 import com.lognsys.kalrav.model.UserInfo;
 
 /**
@@ -26,7 +29,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     //database values
     private static final String DATABASE_NAME = "kalrav.db";
     private static final int DATABASE_VERSION = 1;
-    public static final String COLUMN_ID = "_id";
+//    public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TIMESTAMP = "last_edit";
 
  /*   //user table
@@ -61,8 +64,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + UserInfo.COLUMN_USER_PHONENO + " TEXT , "
             + UserInfo.COLUMN_USER_PROVENANCE + " TEXT , "
             + UserInfo.COLUMN_USER_BIRTHDAY + " TEXT , "
-            + UserInfo.COLUMN_USER_ENABLED + "  BOOLEAN NOT NULL , "
-            + UserInfo.COLUMN_USER_IS_NOTIFICATION + "  BOOLEAN NOT NULL , "
+            + UserInfo.COLUMN_USER_ENABLED + "  BOOLEAN ,  "
+            + UserInfo.COLUMN_USER_IS_NOTIFICATION + "  BOOLEAN , "
             + UserInfo.COLUMN_USER_DEVICE_TOKEN + " TEXT , "
             + UserInfo.COLUMN_USER_ADDRESS + " TEXT , "
             + UserInfo.COLUMN_USER_CITY + " TEXT , "
@@ -73,89 +76,62 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + UserInfo.COLUMN_USER_LOGGEDIN + " BOOLEAN NOT NULL CHECK ("+UserInfo.COLUMN_USER_LOGGEDIN+" IN (0,1)), "
             + COLUMN_TIMESTAMP+ " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
-    //Drama Column
-    public static final String TABLE_DRAMA = "drama";
-    public static final String COLUMN_GROUP_NAME = "group_name";
-    public static final String COLUMN_DRAMA_NAME = "drama_name";
-    public static final String COLUMN_LINK_PHOTO = "photo_link";
-    public static final String COLUMN_DATETIME = "datetime";
-    public static final String COLUMN_DRAMA_LENGTH = "drama_length";
-    public static final String COLUMN_DRAMA_LANGUAGE = "drama_language";
-    public static final String COLUMN_DRAMA_GENRE = "drama_genre";
-    public static final String COLUMN_DRAMA_TIME = "time";
-    public static final String COLUMN_DRAMA_DESCRIPTION = "briefDescription";
-
-    public static final String COLUMN_DRAMA_ISFAV = "isfav";
     //drama table
     private static final String DATABASE_CREATE_DRAMA = "create table if not exists "
-            + TABLE_DRAMA + "(" + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_GROUP_NAME + " TEXT, "
-            + COLUMN_DRAMA_NAME + " TEXT, "
-            + COLUMN_LINK_PHOTO + " TEXT, "
-            + COLUMN_DATETIME + " TEXT, "
-            + COLUMN_DRAMA_LENGTH + " TEXT, "
-            + COLUMN_DRAMA_LANGUAGE + " TEXT, "
-            + COLUMN_DRAMA_GENRE + " TEXT, "
-            + COLUMN_DRAMA_TIME + " TEXT, "
-            + COLUMN_DRAMA_DESCRIPTION + " TEXT, "
-            + COLUMN_DRAMA_ISFAV + " TEXT, "
+            + DramaInfo.TABLE_DRAMA + "("
+            + DramaInfo.COLUMN_ID + " integer primary key autoincrement, "
+            + DramaInfo.COLUMN_GROUP_NAME + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_NAME + " TEXT, "
+            + DramaInfo.COLUMN_LINK_PHOTO + " TEXT, "
+            + DramaInfo.COLUMN_DATETIME + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_LENGTH + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_LANGUAGE + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_GENRE + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_TIME + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_DESCRIPTION + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_CAST + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_WRITER + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_DIRECTOR + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_AVG_RATING + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_MUSIC + " TEXT, "
+            + DramaInfo.COLUMN_DRAMA_ISFAV + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
 
 
-    //favourite Column
-    public static final String TABLE_FAVOURITE = "favourite";
-    //    public static final String COLUMN_GROUP_NAME = "group_name";
-    public static final String COLUMN_FAVOURITE_ID = "_id";
-    public static final String COLUMN_DRAMA_ID = "drama_id";
-    public static final String COLUMN_ISFAV = "isfav";
-
     //fav table
     private static final String DATABASE_CREATE_FAVOURITE = "create table if not exists "
-            + TABLE_FAVOURITE + "(" + COLUMN_FAVOURITE_ID + " integer primary key autoincrement, "
-            + COLUMN_DRAMA_ID +  " integer, "
-            + COLUMN_ISFAV + " TEXT, "
+            + FavouritesInfo.TABLE_FAVOURITE + "(" + FavouritesInfo.COLUMN_FAVOURITE_ID + " integer primary key autoincrement, "
+            + FavouritesInfo.COLUMN_DRAMA_ID +  " integer, "
+            + FavouritesInfo.COLUMN_ISFAV + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL , "
-            + " FOREIGN KEY ("+COLUMN_DRAMA_ID+") REFERENCES "+TABLE_DRAMA+"("+COLUMN_ID+"));";
+            + " FOREIGN KEY ("+FavouritesInfo.COLUMN_DRAMA_ID+") REFERENCES "+DramaInfo.TABLE_DRAMA+"("+DramaInfo.COLUMN_ID+"));";
 
 
 
 
-    //Drama Column
-    public static final String TABLE_TICKET = "ticket";
-    //    public static final String COLUMN_DRAMA_ID = "drama_id";
-    public static final String COLUMN_USER_ID = "user_id";
-    public static final String COLUMN_BOOKED_TIME = "booked_time";
-    public static final String COLUMN_BOOKED_DATE = "booked_date";
-    public static final String COLUMN_CONFIRMATION_CODE = "confirmation_code";
-    public static final String COLUMN_SEAT_TOTAL_PRICE = "seats_total_price";
-    public static final String COLUMN_NO_OF_SEATS_BOOKED = "seats_no_of_seats_booked";
-    public static final String COLUMN_SEAT_NO = "seat_seat_no";
-    public static final String COLUMN_AUDITORIUM_NAME = "auditorium_name";
-    public static final String COLUMN_USER_EMAIL_ID = "user_emailid";
-
-    public static final String COLUMN_QRCODE_BITMAP ="bitmapQRCode";
 
     //drama table
     private static final String DATABASE_CREATE_TICKET = "create table if not exists "
-            + TABLE_TICKET + "(" + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_DRAMA_ID +  " integer, "
-            + COLUMN_USER_ID +  " integer, "
-            + COLUMN_DRAMA_NAME + " TEXT, "
-            + COLUMN_GROUP_NAME + " TEXT, "
-            + COLUMN_LINK_PHOTO + " TEXT, "
-            + COLUMN_DATETIME + " TEXT, "
-            + COLUMN_DRAMA_TIME + " TEXT, "
-            + COLUMN_BOOKED_TIME + " TEXT, "
-            + COLUMN_BOOKED_DATE + " TEXT, "
-            + COLUMN_CONFIRMATION_CODE + " TEXT, "
-            + COLUMN_SEAT_TOTAL_PRICE + " TEXT, "
-            + COLUMN_NO_OF_SEATS_BOOKED + " TEXT, "
-            + COLUMN_SEAT_NO + " TEXT, "
-            + COLUMN_AUDITORIUM_NAME + " TEXT, "
-            + UserInfo.COLUMN_USER_NAME + " TEXT, "
-            + COLUMN_USER_EMAIL_ID + " TEXT, "
-            + COLUMN_QRCODE_BITMAP + " TEXT, "
+            + TicketsInfo.TABLE_TICKET + "("
+            + TicketsInfo.COLUMN_ID + " integer primary key autoincrement, "
+            + TicketsInfo.COLUMN_DRAMA_ID +  " integer, "
+            + TicketsInfo.COLUMN_USER_ID +  " integer, "
+            + TicketsInfo.COLUMN_DRAMA_NAME + " TEXT, "
+            + TicketsInfo.COLUMN_GROUP_NAME + " TEXT, "
+            + TicketsInfo.COLUMN_LINK_PHOTO + " TEXT, "
+            + TicketsInfo.COLUMN_DATETIME + " TEXT, "
+            + TicketsInfo.COLUMN_DRAMA_TIME + " TEXT, "
+            + TicketsInfo.COLUMN_BOOKED_TIME + " TEXT, "
+            + TicketsInfo.COLUMN_BOOKED_DATE + " TEXT, "
+            + TicketsInfo.COLUMN_CONFIRMATION_CODE + " TEXT, "
+            + TicketsInfo.COLUMN_SEAT_TOTAL_PRICE + " TEXT, "
+            + TicketsInfo.COLUMN_NO_OF_SEATS_BOOKED + " TEXT, "
+            + TicketsInfo.COLUMN_SEAT_NO + " TEXT, "
+            + TicketsInfo.COLUMN_AUDITORIUM_NAME + " TEXT, "
+            + TicketsInfo.COLUMN_USER_NAME + " TEXT, "
+            + TicketsInfo.COLUMN_USER_EMAIL_ID + " TEXT, "
+            + TicketsInfo.COLUMN_QRCODE_BITMAP + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
 
@@ -170,18 +146,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE + " TEXT , "
             + NotificationInfo.COLUMN_NOTIFICATION_MESSAGE + " TEXT , "
             + COLUMN_TIMESTAMP+ " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {

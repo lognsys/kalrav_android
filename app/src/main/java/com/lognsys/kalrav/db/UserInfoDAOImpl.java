@@ -51,8 +51,8 @@ public class UserInfoDAOImpl implements UserInfoDAO {
             values.put(UserInfo.COLUMN_USER_PHONENO, user.getPhoneNo());
             values.put(UserInfo.COLUMN_USER_PROVENANCE, user.getGroupname());
             values.put(UserInfo.COLUMN_USER_BIRTHDAY, user.getBirthday());
-            values.put(UserInfo.COLUMN_USER_ENABLED, user.getGoogle_id());
-            values.put(UserInfo.COLUMN_USER_IS_NOTIFICATION, user.getEmail());
+            values.put(UserInfo.COLUMN_USER_ENABLED, user.isEnabled());
+            values.put(UserInfo.COLUMN_USER_IS_NOTIFICATION, user.isNotification());
             values.put(UserInfo.COLUMN_USER_DEVICE_TOKEN, user.getDevice());
             values.put(UserInfo.COLUMN_USER_ADDRESS, user.getAddress());
             values.put(UserInfo.COLUMN_USER_CITY, user.getCity());

@@ -28,7 +28,6 @@ import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.RegisterActivity;
-import com.lognsys.kalrav.SettingFragment;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.Ratings;
@@ -84,9 +83,12 @@ public class CallAPI {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void rateDrama(final double rating, DramaInfo dramaInfo, int customer_id, String url){
-        Ratings ratings=new Ratings();
-        ratings.setRating(rating);
+    public void rateDrama(double rating, DramaInfo dramaInfo, int customer_id, String url){String post_create_rating_url=url;
+        JSONObject params = new JSONObject();
+        try {
+            params.put("Content-Type","application/json");
+            params.put("Accept", "application/json");
+            params.put("rating", rating);
         // (1) get today's date
         Date today = Calendar.getInstance().getTime();
 
@@ -95,16 +97,94 @@ public class CallAPI {
 
         // (3) create a new String using the date format we want
         String rating_date = formatter.format(today);
-
-        ratings.setRating_date(rating_date);
-        ratings.setUsers_id(customer_id);
-        ratings.setDramas_id(dramaInfo.getId());
+            Log.d("Response","Rest rating_date  " +rating_date);
 
 
-        url=url+0+"/"+ratings.getRating()+"/"+ratings.getRating_date()+"/"+ratings.getUsers_id()+"/"+ratings.getDramas_id();
-        url=url.replace(" ","%20");
+            params.put("rating_date", rating_date);
+            params.put("users_id", customer_id);
+            params.put("dramas_id" ,dramaInfo.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST,
+                post_create_rating_url, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response","Rest response " +response);
+                        try{
+                            JSONObject jsonObject = new JSONObject(String.valueOf(response));
+                            Ratings ratings=new Ratings();
 
-        new RateDramaTask(url).execute("");
+                            ratings.setId(jsonObject.getInt("id"));
+
+                            ratings.setRating(jsonObject.getDouble("rating"));
+
+                            ratings.setRating_date(jsonObject.getString("rating_date"));
+
+                            ratings.setUsers_id(jsonObject.getInt("users_id"));
+
+                            ratings.setDramas_id(jsonObject.getInt("dramas_id"));
+
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        //  YOUR RESPONSE
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+//                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
+
+                String json = null;
+                String str=null;
+                byte[] response=null;
+                if(volleyError.networkResponse.data!=null)
+                    response = volleyError.networkResponse.data;
+                Log.d("Response","Rest volleyError response " +response);
+                try {
+                    str = new String(response, "UTF-8");
+                    Log.d("Response","Rest volleyError str toString  " +str.toString() );
+
+                    try {
+                        JSONObject object=new JSONObject(str.toString());
+                        Log.d("Response","Rest inside object  " +object);
+
+                        int  statusCode=object.getInt("statusCode");
+                        Log.d("Response","Rest inside statusCode  " +statusCode);
+
+                        if(statusCode==400){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                        else if(statusCode==406){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        } else if(statusCode==404){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //Somewhere that has access to a context
+            public void displayMessage(String toastString){
+                Log.d("Response","Rest volleyError toastString  " +toastString );
+
+                Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+        KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
+
     }
 
     //   alreadyExist user checking
@@ -143,17 +223,23 @@ public class CallAPI {
                         userInfo.setState(jsonObject.getString("state"));
                         userInfo.setZipcode(jsonObject.getString("zipcode"));
                         userInfo.setGroupname(jsonObject.getString("group"));
+                        userInfo.setNotification(jsonObject.getBoolean("notification"));
+
+                        userInfo.setRole(jsonObject.getString("role"));
+                        userInfo.setEnabled(jsonObject.getBoolean("enabled"));
                         userInfo.setLoggedIn(Constants.LOG_IN);
+                        userInfo.setDevice(jsonObject.getString("device"));
+                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
 
 //                      save to the database
                         KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
                         KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
 
                         KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
-                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
                         Log.d("", "Rest alReadyExsistUser Global object  " + KalravApplication.getInstance().getGlobalUserObject());
 
-                            userInfo.setDevice(jsonObject.getString("device"));
+
+
                         KalravApplication.getInstance().getPrefs().setDevice_token(userInfo.getDevice());
                         Log.d("", "Rest alReadyExsistUser userInfo getDevice " + userInfo.getDevice());
 
@@ -193,81 +279,6 @@ public class CallAPI {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         KalravApplication.getInstance().addToRequestQueue(req);
 
-    }
-
-    private class RateDramaTask extends AsyncTask<String, Void, String> {
-        String url;
-        String values;
-        public RateDramaTask(String url) {
-            this.url = url;
-        }
-        @Override
-        protected String doInBackground(String... place) {
-            Log.d("","rateDrama url " + url);
-            int statusCode;
-
-
-            try {
-                URL urlToRequest = new URL(this.url);
-                Log.d("", "rateDrama doInBackground this.url " + this.url);
-
-                HttpURLConnection urlConnection =
-                        (HttpURLConnection) urlToRequest.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type",
-                        "application/json");
-                Log.d("", "rateDrama doInBackground urlConnection " + urlConnection);
-                urlConnection.setFixedLengthStreamingMode(
-                        this.url.getBytes().length);
-                Log.d("", "rateDrama doInBackground this.url " + this.url);
-
-                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
-                out.print(this.url);
-
-                out.close();
-                // handle issues
-                statusCode = urlConnection.getResponseCode();
-
-
-                if (statusCode > 0) {
-                    Log.d("", "rateDrama doInBackground  " + statusCode);
-
-                    InputStream in =
-                            new BufferedInputStream(urlConnection.getInputStream());
-                    values = getResponseText(in);
-                    Log.d("", "Test doInBackground  values " + values);
-
-
-
-                }
-
-
-            } catch (Exception e) {
-                Log.d("", "Test doInBackground Exception " + e);
-            }
-            return values;
-        }
-        private String getResponseText(InputStream inputStream) throws IOException {
-            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-
-            StringBuilder total = new StringBuilder();
-            String line;
-            while ((line = r.readLine()) != null) {
-                total.append(line).append('\n');
-            }
-            String ResponseString = total.toString();
-            Log.d("", "Test getResponseText ResponseString " + ResponseString);
-
-            r.close();
-            return ResponseString;
-        }
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Log.d("", "Test onPostExecute result " + result);
-            Toast.makeText(getApplicationContext(),result,Toast.LENGTH_SHORT).show();
-        }
     }
 
     // update user
@@ -434,22 +445,15 @@ public class CallAPI {
                 } catch(UnsupportedEncodingException e){
                     e.printStackTrace();
                 }
-
                 KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
-
             }
-
             //Somewhere that has access to a context
             public void displayMessage(String toastString){
                 Log.d("Response","Rest volleyError toastString  " +toastString );
 
                 Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
             }
-
-
         });
         KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
-
     }
-
 }

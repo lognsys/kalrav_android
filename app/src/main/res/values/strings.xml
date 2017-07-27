@@ -55,7 +55,7 @@
 
     <string name="banner_ad_unit_id">ca-app-pub-2091012524875733/2660775800</string>
     <string name="title_activity_register">RegisterActivity</string>
-    <string name="title_activity_Setting">SettingFragment</string>
+    <string name="title_activity_Setting">SettingActivity</string>
     <string name="title_activity_basic_banner">BasicBannerActivity</string>
 
     <!--Confirm Screen -->

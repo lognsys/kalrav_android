@@ -411,7 +411,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_settings:
                         // launch new intent instead of loading fragment
-                        startActivity(new Intent(HomeActivity.this, SettingFragment.class));
+                        startActivity(new Intent(HomeActivity.this, SettingActivity.class));
                         drawer.closeDrawers();
                         break;
                     default:

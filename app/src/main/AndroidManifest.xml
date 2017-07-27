@@ -83,7 +83,7 @@
 
         </activity>
         <activity
-            android:name=".SettingFragment"
+            android:name=".SettingActivity"
             android:label="@string/title_activity_Setting"
             android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" >

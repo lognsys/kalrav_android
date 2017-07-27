@@ -9,6 +9,43 @@ import java.io.Serializable;
  */
 
 public class TicketsInfo implements Serializable {
+
+
+    //TicketsInfo Table
+    public static final String TABLE_TICKET = "ticket";
+    //    public static final String COLUMN_DRAMA_ID = "drama_id";
+    public static final String COLUMN_USER_ID = "user_id";
+    public static final String COLUMN_BOOKED_TIME = "booked_time";
+    public static final String COLUMN_BOOKED_DATE = "booked_date";
+    public static final String COLUMN_CONFIRMATION_CODE = "confirmation_code";
+    public static final String COLUMN_SEAT_TOTAL_PRICE = "seats_total_price";
+    public static final String COLUMN_NO_OF_SEATS_BOOKED = "seats_no_of_seats_booked";
+    public static final String COLUMN_SEAT_NO = "seat_seat_no";
+    public static final String COLUMN_AUDITORIUM_NAME = "auditorium_name";
+    public static final String COLUMN_DRAMA_NAME = "drama_name";
+    public static final String COLUMN_GROUP_NAME = "group_name";
+    public static final String COLUMN_DRAMA_ID= "drama_id";
+    public static final String COLUMN_LINK_PHOTO = "photo_link";
+    public static final String COLUMN_DATETIME = "datetime";
+    public static final String COLUMN_USER_NAME = "user_name";
+    public static final String COLUMN_USER_EMAIL_ID = "user_emailid";
+    public static final String COLUMN_DRAMA_TIME = "time";
+    public static final String COLUMN_ID = "id";
+
+    public static final String COLUMN_QRCODE_BITMAP ="bitmapQRCode";
+
+
+
+
+
+
+
+
+
+
+
+
+
     int _id;
     int drama_id;
     int user_id;

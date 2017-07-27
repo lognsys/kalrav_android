@@ -8,6 +8,24 @@ import java.io.Serializable;
 
 public class DramaInfo implements Serializable {
 
+    //Drama TABLE
+    public static final String TABLE_DRAMA = "drama";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_GROUP_NAME = "group_name";
+    public static final String COLUMN_DRAMA_NAME = "drama_name";
+    public static final String COLUMN_LINK_PHOTO = "photo_link";
+    public static final String COLUMN_DATETIME = "datetime";
+    public static final String COLUMN_DRAMA_LENGTH = "drama_length";
+    public static final String COLUMN_DRAMA_LANGUAGE = "drama_language";
+    public static final String COLUMN_DRAMA_GENRE = "drama_genre";
+    public static final String COLUMN_DRAMA_TIME = "time";
+    public static final String COLUMN_DRAMA_DESCRIPTION = "description";
+    public static final String COLUMN_DRAMA_CAST = "star_cast";
+    public static final String COLUMN_DRAMA_WRITER = "writer";
+    public static final String COLUMN_DRAMA_DIRECTOR = "director";
+    public static final String COLUMN_DRAMA_AVG_RATING = "avg_rating";
+    public static final String COLUMN_DRAMA_MUSIC = "music";
+    public static final String COLUMN_DRAMA_ISFAV = "isfav";
 
     private String group_name;
     private String title;

@@ -151,27 +151,35 @@ public class AuditoriumListFragment extends Fragment {
         weekCalendar.setOnDateClickListener(new OnDateClickListener() {
             @Override
             public void onDateClick(DateTime dateTime) {
-                myRecyclerView.removeAllViews();
-               String strDate = fmt.print(dateTime);
-                KalravApplication.getInstance().getPrefs().showDialog(getActivity());
+                if(KalravApplication.getInstance().isConnectedToInternet()){
+                    myRecyclerView.removeAllViews();
 
-                requestAuditoriumDateTime(dramaInfoId,strDate);
-                Toast.makeText(getActivity(), "You Selected " + strDate, Toast
-                        .LENGTH_SHORT).show();
+                    String strDate = fmt.print(dateTime);
+                    KalravApplication.getInstance().getPrefs().showDialog(getActivity());
+
+                    requestAuditoriumDateTime(dramaInfoId,strDate);
+                    Toast.makeText(getActivity(), "You Selected " + strDate, Toast
+                            .LENGTH_SHORT).show();
+
+                }
+                else{
+                    Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
+
+                }
             }
 
         });
-        /*weekCalendar.setOnWeekChangeListener(new OnWeekChangeListener() {
-            @Override
-            public void onWeekChange(DateTime firstDayOfTheWeek, boolean forward) {
-                Toast.makeText(getActivity(), "Week changed: " + firstDayOfTheWeek +
-                        " Forward: " + forward, Toast.LENGTH_SHORT).show();
-            }
-        });*/
-        KalravApplication.getInstance().getPrefs().showDialog(getActivity());
-        requestAuditoriumDateTime(dramaInfoId,strDate);
-        Log.d(TAG,"requestAuditoriumDateTime strDate "+strDate);
 
+        if(KalravApplication.getInstance().isConnectedToInternet()) {
+
+            KalravApplication.getInstance().getPrefs().showDialog(getActivity());
+            requestAuditoriumDateTime(dramaInfoId, strDate);
+            Log.d(TAG, "requestAuditoriumDateTime strDate " + strDate);
+        }
+        else{
+            Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
+
+        }
         return view;
     }
 
@@ -268,11 +276,7 @@ public class AuditoriumListFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.d("","requestAuditoriumDateTime VolleyError "+volleyError);
-                Log.d("Response","Rest volleyError" +volleyError);
-                Log.d("","requestAuditoriumDateTime VolleyError auditoriumList.size() "+auditoriumList.size());
-                Log.d("","requestAuditoriumDateTime VolleyError adapter getItemCount "+adapter.getItemCount());
-                Log.d("","requestAuditoriumDateTime VolleyError adapter "+adapter);
+
                 myRecyclerView.setVisibility(View.GONE);
                 String json = null;
                 String str=null;
@@ -284,11 +288,8 @@ public class AuditoriumListFragment extends Fragment {
                     if (response != null && response.length > 0) {
                         str = new String(response, "UTF-8");
                         Log.d("Response", "Rest volleyError str toString  " + str.toString());
-                        textError.setText(str.toString());
-                        textError.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(),
-                                str.toString(), Toast.LENGTH_SHORT).show();
-                        /*try {
+
+                        try {
                             JSONObject object = new JSONObject(str.toString());
                             Log.d("Response", "Rest inside object  " + object);
 
@@ -299,18 +300,25 @@ public class AuditoriumListFragment extends Fragment {
                                 String msg = object.getString("msg");
                                 Toast.makeText(getActivity(),
                                         msg, Toast.LENGTH_SHORT).show();
+                               textError.setText(msg);
+                               textError.setVisibility(View.VISIBLE);
+
                             } else if (statusCode == 406) {
                                 String msg = object.getString("msg");
-                                Toast.makeText(getActivity(),
+                                 Toast.makeText(getActivity(),
                                         msg, Toast.LENGTH_SHORT).show();
+                               textError.setText(msg);
+                               textError.setVisibility(View.VISIBLE);
                             } else if (statusCode == 404) {
                                 String msg = object.getString("msg");
-                              Toast.makeText(getActivity(),
+                               Toast.makeText(getActivity(),
                                         msg, Toast.LENGTH_SHORT).show();
+                               textError.setText(msg);
+                               textError.setVisibility(View.VISIBLE);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                        }*/
+                        }
                     }
                 } catch(UnsupportedEncodingException e){
                     e.printStackTrace();

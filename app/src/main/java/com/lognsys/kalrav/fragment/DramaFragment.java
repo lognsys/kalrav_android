@@ -323,13 +323,19 @@ public class DramaFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     dramaInfo[0] =list.get(position);
-                    if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
+                    if(KalravApplication.getInstance().isConnectedToInternet()) {
+
+                        if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
                             Bundle bundle = new Bundle();
                             bundle.putSerializable("dramaInfoId", dramaInfo[0].getId());
                             Fragment fragment = new AuditoriumListFragment();
                             fragment.setArguments(bundle);
                             getActivity().getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                    }
+                    }
+                    else{
+                        Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
                     }
                 }
             });

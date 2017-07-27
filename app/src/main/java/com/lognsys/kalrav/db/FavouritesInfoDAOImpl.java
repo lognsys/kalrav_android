@@ -39,19 +39,19 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
 
        {
             ContentValues values = new ContentValues();
-            values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
-            values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV), favouritesInfo.isFav());
+            values.put(FavouritesInfo.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
+            values.put(String.valueOf(FavouritesInfo.COLUMN_ISFAV), favouritesInfo.isFav());
 
 
             // Inserting Row
-            db.insert(SQLiteHelper.TABLE_FAVOURITE, null, values);
+            db.insert(FavouritesInfo.TABLE_FAVOURITE, null, values);
             db.close(); // Closing database connection
         }
     }
     @Override
     public boolean isFavExits(FavouritesInfo favouritesInfo) {
         db = sqLiteHelper.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM favourite where "+SQLiteHelper.COLUMN_ID+" = ? ",new String[]{String.valueOf(favouritesInfo.getId())});
+        Cursor cur = db.rawQuery("SELECT * FROM favourite where "+FavouritesInfo.COLUMN_ID+" = ? ",new String[]{String.valueOf(favouritesInfo.getId())});
        if(cur != null )
         Log.d(TAG, "TABLE_FAVOURITE cur "+cur.getCount());
 
@@ -71,10 +71,10 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
 
         db = sqLiteHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(SQLiteHelper.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
-        values.put(String.valueOf(SQLiteHelper.COLUMN_ISFAV),favouritesInfo.isFav());
+        values.put(FavouritesInfo.COLUMN_DRAMA_ID, favouritesInfo.getDrama_id());
+        values.put(String.valueOf(FavouritesInfo.COLUMN_ISFAV),favouritesInfo.isFav());
         // updating row
-        return db.update(SQLiteHelper.TABLE_FAVOURITE, values, SQLiteHelper.COLUMN_ID + " = ?",
+        return db.update(FavouritesInfo.TABLE_FAVOURITE, values, FavouritesInfo.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(favouritesInfo.getId())});
 
     }
@@ -85,8 +85,8 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
         Log.d("","Bookmark Delete favouritesInfo.getDrama_id() "+favouritesInfo.getDrama_id());
 
         db = sqLiteHelper.getWritableDatabase();
-        int countDelete=db.delete(SQLiteHelper.TABLE_FAVOURITE,
-                SQLiteHelper.COLUMN_DRAMA_ID+" = ? ",
+        int countDelete=db.delete(FavouritesInfo.TABLE_FAVOURITE,
+                FavouritesInfo.COLUMN_DRAMA_ID+" = ? ",
                 new String[]{String.valueOf(favouritesInfo.getDrama_id())});
         Log.d("","Bookmark Delete count "+countDelete);
         return countDelete;
@@ -138,12 +138,12 @@ public class FavouritesInfoDAOImpl implements FavouritesInfoDAO {
 
 
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-            Cursor c = db.rawQuery("SELECT * FROM favourite where "+ SQLiteHelper.COLUMN_DRAMA_ID +" = ? ",
+            Cursor c = db.rawQuery("SELECT * FROM favourite where "+ FavouritesInfo.COLUMN_DRAMA_ID +" = ? ",
                     new String[]{String.valueOf(id)});
         if(c != null && c.getCount() > 0)
         {
             c.moveToFirst();
-            isFav = c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_ISFAV));
+            isFav = c.getString(c.getColumnIndex(FavouritesInfo.COLUMN_ISFAV));
         }
         else
         {

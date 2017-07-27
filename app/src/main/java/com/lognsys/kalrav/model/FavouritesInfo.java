@@ -8,6 +8,17 @@ import java.io.Serializable;
 
 public class FavouritesInfo implements Serializable {
 
+
+    //favourite table
+    public static final String TABLE_FAVOURITE = "favourite";
+
+    public static final String COLUMN_ID = "id";
+    //    public static final String COLUMN_GROUP_NAME = "group_name";
+    public static final String COLUMN_FAVOURITE_ID = "_id";
+    public static final String COLUMN_DRAMA_ID = "drama_id";
+    public static final String COLUMN_ISFAV = "isfav";
+
+
     private int id;
 
     public int getDrama_id() {
