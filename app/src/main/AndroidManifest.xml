@@ -101,8 +101,6 @@
             </intent-filter>
         </service>
 
-        <service android:name="com.lognsys.kalrav.service.KalravDramaByGroupService"
-        ></service>
     </application>
 
 </manifest>

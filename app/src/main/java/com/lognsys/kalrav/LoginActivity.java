@@ -33,13 +33,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -109,6 +102,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.lognsys.kalrav.util.PropertyReader;
 
 import static android.R.attr.bitmap;
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.lognsys.kalrav.R.id.imageView;
 
 
@@ -171,24 +165,30 @@ public class LoginActivity extends AppCompatActivity implements
         // globalObj = ((KalravApplication) getApplicationContext());
         UserInfo user=null;
         callAPI = new CallAPI(LoginActivity.this);
-        if( userDaoImpl.lastUserLoggedIn()!=null)
-         user = userDaoImpl.lastUserLoggedIn();
 
-       invokeFCMService();
+        if( userDaoImpl.lastUserLoggedIn()!=null){
+            user = userDaoImpl.lastUserLoggedIn();
+            if ( user !=null && KalravApplication.getInstance().getPrefs().getIsLogin()) {
+                Log.d(TAG, "Rest CASE1: User Exists in database.. ");
+                Log.d(TAG, "Rest CASE1: User Exists in database.. KalravApplication.getInstance().getPrefs().getCustomer_id()  "+KalravApplication.getInstance().getPrefs().getCustomer_id());
 
-        if (null != user && KalravApplication.getInstance().getPrefs().getIsLogin()) {
-            Log.d(TAG, "CASE1: User Exists in database.. Setting global object...");
-            if (KalravApplication.getInstance().getPrefs().getCustomer_id() != null) {
-                //setting global variable
-                KalravApplication.getInstance().setGlobalUserObject(user);
-//                KalravApplication.getInstance().invokeService(getApplicationContext());
-                Log.d(TAG, "OnCreate method - User Exists in DB. " + user.toString());
-                if (user.getEmail() != null && user.getEmail().length() > 0) {
-                    callAPI.alReadyExsistUser(user, fb_id, google_id);
+                if (KalravApplication.getInstance().getPrefs().getCustomer_id() != null) {
+                    //setting global variable
+                    KalravApplication.getInstance().setGlobalUserObject(user);
+                    Log.d(TAG, "Rest OnCreate method - User Exists in DB. " + user.toString());
+                    if (user.getEmail() != null && user.getEmail().length() > 0) {
+
+                        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                        callAPI.alReadyExsistUser(user, fb_id, google_id,alReadyExsistUser);
+                    }
                 }
             }
-        } else {
-            Log.d(TAG, "Case2: OnCreate method - Login through Facebook Auth and saving to database.");
+        }
+        else {
+            Log.d(TAG, "Rest CASE2: OnCreate method - Login through Facebook Auth and saving to database.");
+            if(KalravApplication.getInstance().getPrefs().getDevice_token()==null)
+                invokeFCMService();
+
             //Initialize Facebook sdk
             FacebookSdk.sdkInitialize(getApplicationContext());
             mCallbackManager = CallbackManager.Factory.create();
@@ -300,7 +300,9 @@ public class LoginActivity extends AppCompatActivity implements
                             userInfo.setLoggedIn(Constants.LOG_IN);
 
                             if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
-                                callAPI.alReadyExsistUser(userInfo, fb_id, google_id);
+
+                                String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                                callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..." + e);
@@ -313,14 +315,13 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     private void invokeFCMService() {
+        Log.d(TAG, "Rest invokeFCMService ");
+        Log.d(TAG, "Rest invokeFCMService KalravApplication.getInstance().getPrefs().getDevice_token() "+KalravApplication.getInstance().getPrefs().getDevice_token());
 
         if(KalravApplication.getInstance().getPrefs().getDevice_token()==null){
             Intent i= new Intent(LoginActivity.this, FCMInstanceIdService.class);
             startService(i);
         }
-//            Intent i= new Intent(LoginActivity.this, FCMInstanceIdService.class);
-//            startService(i);
-
     }
 
 
@@ -361,7 +362,8 @@ public class LoginActivity extends AppCompatActivity implements
                         KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
 
                         if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
-                            callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
+                            String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                            callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
                             finish();
                         }
 
@@ -510,7 +512,8 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                                 if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
-                                    callAPI.alReadyExsistUser(userInfo,fb_id,google_id);
+                                    String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                                    callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
                                   }
 
                             } catch (Exception e) {

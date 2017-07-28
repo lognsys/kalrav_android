@@ -19,8 +19,6 @@ import com.android.volley.toolbox.Volley;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.UserInfo;
-import com.lognsys.kalrav.service.KalravDramaByGroupService;
-
 /**
  * Created by pdoshi on 03/01/17.
  */
@@ -106,13 +104,7 @@ public class KalravApplication extends Application {
 
     return isConnected;
     }
-public  void invokeService(Context context){
-    // use this to start and trigger a service
-    Log.d(TAG, "Service OnCreate invokeService context- " +context);
 
-    Intent i= new Intent(context, KalravDramaByGroupService.class);
-    context.startService(i);
-}
 public void showDialog(Context context, String message){
     AlertDialog alertDialog = new AlertDialog.Builder(
             context).create();

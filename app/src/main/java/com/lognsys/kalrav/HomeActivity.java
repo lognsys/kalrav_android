@@ -283,7 +283,8 @@ public class HomeActivity extends AppCompatActivity {
                 MyticketListFragment myticketListFragment = new MyticketListFragment();
                 return myticketListFragment;
             case 4:
-                // notification
+                // MyDramaFragment
+
                 MyDramaFragment myDramaFragment = new MyDramaFragment();
                 return myDramaFragment;
             case 5:

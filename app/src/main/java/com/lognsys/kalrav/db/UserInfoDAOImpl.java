@@ -402,7 +402,7 @@ public class UserInfoDAOImpl implements UserInfoDAO {
                 UserInfo.COLUMN_USER_LOGGEDIN +
                 " FROM user where logged = 1 ORDER BY last_edit DESC ", null);
         if(c!=null)
-        Log.d(TAG,"LOGGEDIN lastUserLoggedIn getCount - "+c.getCount());
+        Log.d(TAG,"Rest LOGGEDIN lastUserLoggedIn getCount - "+c.getCount());
 
         if (c != null && c.getCount()>0 ) {
             //assing values
@@ -424,8 +424,8 @@ public class UserInfoDAOImpl implements UserInfoDAO {
                 String zipcode = c.getString(13);
                 String role = c.getString(14);
                 String group = c.getString(15);
-                int loggedIn = c.getInt(16);
-                String username = c.getString(17);
+                String username = c.getString(16);
+                int loggedIn = c.getInt(17);
 
                 user.setId(id);
                 user.setFb_id(fb_id);
@@ -445,6 +445,10 @@ public class UserInfoDAOImpl implements UserInfoDAO {
                 user.setGroupname(group);
                 user.setLoggedIn(loggedIn);
                 user.setEmail(username);
+                Log.d(TAG,"Rest LOGGEDIN lastUserLoggedIn user.toString() - "+user.toString());
+
+                return user;
+
             }
         }
          return user;

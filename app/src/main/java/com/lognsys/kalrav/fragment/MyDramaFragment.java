@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.db.FavouritesInfoDAOImpl;
@@ -66,11 +68,11 @@ public class MyDramaFragment extends Fragment {
     List<FavouritesInfo> favouritesInfos;
     MyAdapter adapter;
 //    http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2
-//Properties
-private PropertyReader propertyReader;
+
+    //Properties
+    private PropertyReader propertyReader;
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,35 +81,51 @@ private PropertyReader propertyReader;
     }
 
     public void initializeList() {
-        listitems.clear();
-        dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
-        favouritesInfoDAOImpl = new FavouritesInfoDAOImpl(getActivity());
-        dramaInfos = new ArrayList<DramaInfo>() ;
-        favouritesInfo=new FavouritesInfo();
-        favouritesInfos=new ArrayList<FavouritesInfo>();
-        if(KalravApplication.getInstance().isConnectedToInternet()) {
-            int count =dramaInfoDAO.getDramaCount();
-            Log.d("","count "+count);
+        try{
 
-            if(count>0){
+            listitems.clear();
+            dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
+            favouritesInfoDAOImpl = new FavouritesInfoDAOImpl(getActivity());
+            dramaInfos = new ArrayList<DramaInfo>() ;
+            favouritesInfo=new FavouritesInfo();
+            favouritesInfos=new ArrayList<FavouritesInfo>();
+            if(KalravApplication.getInstance().isConnectedToInternet()) {
+                int count =dramaInfoDAO.getDramaCount();
+                Log.d("","Rest initializeList count "+count);
+                Log.d("","Rest initializeList KalravApplication.getInstance().getPrefs().getUser_Group_Name() "+KalravApplication.getInstance().getPrefs().getUser_Group_Name());
 
-                dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
-                Log.d("","count dramaInfos size"+dramaInfos.size());
-                if (dramaInfos.size() > 0 & dramaInfos != null) {
-                    adapter=new MyAdapter(dramaInfos);
-                    myRecyclerView.setAdapter(adapter);
+                if(count>0 && KalravApplication.getInstance().getPrefs().getUser_Group_Name()!=null){
+
+                    dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDramaByUserGroup(KalravApplication.getInstance().getPrefs().getUser_Group_Name());
+                    if (dramaInfos.size() > 0 & dramaInfos != null) {
+                        Log.d("","Rest initializeList dramaInfos size"+dramaInfos.size());
+                        adapter=new MyAdapter(dramaInfos);
+                        myRecyclerView.setAdapter(adapter);
+                    }
+                }
+                else{
+                    Log.d("","Rest initializeList else ---- KalravApplication.getInstance().getPrefs().getUser_Group_Name()  "+KalravApplication.getInstance().getPrefs().getUser_Group_Name() );
+
+                    if( KalravApplication.getInstance().getPrefs().getUser_Group_Name()!=null) {
+                        Log.d("","Rest initializeList else ---- displayramaByGroup ");
+
+                        displayramaByGroup(KalravApplication.getInstance().getPrefs().getUser_Group_Name());
+                    }
+                    else{
+                        Log.d("","Rest initializeList else ---- displaydrama ");
+
+                        displaydrama();
+                    }
                 }
             }
             else{
-
-                Log.d("","count display drama "+count);
-                displaydrama();
+                Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
             }
         }
-        else{
-            Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
+        catch (Exception e){
+            Log.d("","Rest initializeList Exception "+e);
+            Toast.makeText(getContext(),"No drama is assign for "+KalravApplication.getInstance().getPrefs().getUser_Group_Name() +" group ",Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void displaydrama() {
@@ -170,17 +188,10 @@ private PropertyReader propertyReader;
                                     dramaInfo.setIsfav(isFav);
                                     dramaInfoDAO.addDrama(dramaInfo);
 
-                                 if(KalravApplication.getInstance().getPrefs().getUser_Group_Name()!=null && KalravApplication.getInstance().getPrefs().getUser_Group_Name().length()>0)
-                                   {
-                                       dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDramaByUserGroup(KalravApplication.getInstance().getPrefs().getUser_Group_Name());
-                                   }
-                                   else{
-                                        dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
-
-                                    }
+                                    dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
                                     Log.d("","Test onPost dramaInfos.size "+dramaInfos.size());
                                     if (dramaInfos.size() > 0 & dramaInfos != null) {
-                                        adapter=new MyAdapter(dramaInfos);
+                                        adapter= new MyAdapter(dramaInfos);
                                         myRecyclerView.setAdapter(adapter);
                                     }
                                 }
@@ -202,7 +213,7 @@ private PropertyReader propertyReader;
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("","Error: volly Exception " + error);
+                Log.e("","Error: volly Exception " + error);
                 Toast.makeText(getContext(),
                         getString(R.string.unknown_error),
                         Toast.LENGTH_LONG).show();
@@ -218,16 +229,124 @@ private PropertyReader propertyReader;
 
     }
 
+    private void displayramaByGroup(String group_name) {
+        String getAllDramaWithGroupUrl=properties.getProperty(Constants.API_URL_DRAMA.get_alldrama_with_group_url.name()+group_name);
+        Log.d("", "Google docallApi getAllDramaWithGroupUrl..."+getAllDramaWithGroupUrl);
+
+        KalravApplication.getInstance().getPrefs().showDialog(getContext());
+        JsonArrayRequest req = new JsonArrayRequest(getAllDramaWithGroupUrl,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+                            Log.d("Service"," Service displayramaByGroup responsetostring ===== "+response.toString());
+                            Log.d("Service"," Service displayramaByGroup response length ===== "+response.length());
+                            for (int i=0; i<response.length(); i++) {
+                                DramaInfo dramaInfo=new DramaInfo();
+
+                                JSONObject jsonObject= null;
+                                try {
+                                    jsonObject = (response.getJSONObject(i));
+                                } catch (JSONException e) {
+                                    Log.d("Service"," Service displayramaByGroup JSONException ===== "+e);
+                                    e.printStackTrace();
+                                    Toast.makeText(getContext(),
+                                            getResources().getString(R.string.no_data_available),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                                String groups=jsonObject.getString("groups");
+//                                Log.d("","displaydrama groups "+groups);
+
+                                JSONObject jsonGroupsObject=new JSONObject(groups);
+                                int groupId=jsonGroupsObject.getInt("id");
+                                Log.d(""," Service displayramaByGroup jsonGroupsObject groupId "+groupId);
+
+                                String group_name=jsonGroupsObject.getString("group_name");
+                                Log.d(""," Service displayramaByGroup jsonGroupsObject group_name "+group_name);
+                                dramaInfo.setGroup_name(group_name);
+
+
+
+                                String drama=jsonObject.getString("drama");
+                                Log.d(""," Service displayramaByGroup drama "+drama);
+                                JSONObject jsonDramaObject=new JSONObject(drama);
+
+                                int dramaId=jsonDramaObject.getInt("id");
+                                Log.d(""," Service displayramaByGroup jsonDramaObject dramaId "+dramaId);
+                                dramaInfo.setId(dramaId);
+
+                                String title=jsonDramaObject.getString("title");
+                                Log.d(""," Service displayramaByGroup jsonDramaObject title "+title);
+                                dramaInfo.setTitle(title);
+
+                                String imageurl=jsonDramaObject.getString("imageurl");
+                                Log.d(""," Service displayramaByGroup jsonDramaObject imageurl "+imageurl);
+                                dramaInfo.setLink_photo(imageurl);
+
+                                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+                                if(dramaInfo!= null && dramaInfo.getId()!=0){
+                                    String isFav=favouritesInfoDAOImpl.findfavBy(dramaInfo.getId());
+                                    Log.d(""," Service displayramaByGroup  isFav "+isFav);
+                                    dramaInfo.setIsfav(isFav);
+                                    dramaInfoDAO.addDrama(dramaInfo);
+
+                                    dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDramaByUserGroup(group_name);
+                                    Log.d(""," Service displayramaByGroup onPost dramaInfos.size "+dramaInfos.size());
+                                    if (dramaInfos.size() > 0 & dramaInfos != null) {
+                                        adapter=new MyAdapter(dramaInfos);
+                                        myRecyclerView.setAdapter(adapter);
+                                    }
+                                }
+
+                            }
+                            adapter.notifyDataSetChanged();
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d(""," Service displayramaByGroup JSonException Exception "+e);
+
+                            KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                            Toast.makeText(getContext(),
+                                    getString(R.string.no_data_available),
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                Toast.makeText(getContext(),
+                        getString(R.string.unknown_error),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        KalravApplication.getInstance().addToRequestQueue(req);
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("", "my drama" );
 
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
-        myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
-        myRecyclerView.setHasFixedSize(true);
         propertyReader = new PropertyReader(getActivity());
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+        myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+        myRecyclerView.setHasFixedSize(true);
+
 
         mAdView = (AdView)view.findViewById(R.id.listener_av_main);
 
@@ -325,7 +444,26 @@ private PropertyReader propertyReader;
                 holder.bookmarkImageView.setImageResource(R.mipmap.ic_unlike);
 
             }
+            holder.btnbook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dramaInfo[0] =list.get(position);
+                    if(KalravApplication.getInstance().isConnectedToInternet()) {
 
+                        if(dramaInfo[0] !=null && dramaInfo[0].getId()!=0){
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("dramaInfoId", dramaInfo[0].getId());
+                            Fragment fragment = new AuditoriumListFragment();
+                            fragment.setArguments(bundle);
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                        }
+                    }
+                    else{
+                        Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
             // holder.coverImageView.setTag(list.get(position).getImageResourceId());
             holder.bookmarkImageView.setOnClickListener(new View.OnClickListener() {
                 private boolean stateChanged;
@@ -361,17 +499,19 @@ private PropertyReader propertyReader;
                 }
             });
             holder.textGroupname.setText(dramaInfo[0].getGroup_name());
+            holder.textGroupname.setText(dramaInfo[0].getGroup_name());
 
             holder.shareImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                 Uri bmpUri = getLocalBitmapUri(holder.coverImageView,dramaInfo[0]);
+                    Uri bmpUri = getLocalBitmapUri(holder.coverImageView,dramaInfo[0]);
 
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.putExtra(Intent.EXTRA_STREAM, bmpUri);
                     share.putExtra(Intent.EXTRA_TEXT,"Drama Details : \n Drama Name : "+dramaInfo[0].getTitle()
-                                                        +" \n Drama Date : "+dramaInfo[0].getDatetime()+" Drama Time : "+dramaInfo[0].getTime()
-                                                        +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()+" Drama Language : "+dramaInfo[0].getDrama_language());
+                                                       /* +" \n Drama Date : "+dramaInfo[0].getDatetime()+" Drama Time : "+dramaInfo[0].getTime()*/
+                                    +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()
+                                            /*+" Drama Language : "+dramaInfo[0].getDrama_language()*/);
                     share.setType("image/jpeg");
                     share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     getContext().startActivity(Intent.createChooser(share, "Share image File"));
@@ -427,6 +567,7 @@ private PropertyReader propertyReader;
             public ImageView bookmarkImageView;
             public ImageView shareImageView;
             public TextView textGroupname;
+            public Button btnbook;
 
 
             public MyViewHolder(View itemView) {
@@ -436,6 +577,7 @@ private PropertyReader propertyReader;
                 bookmarkImageView = (ImageView) itemView.findViewById(R.id.likeImageView);
                 shareImageView = (ImageView) itemView.findViewById(R.id.shareImageView);
                 textGroupname= (TextView) itemView.findViewById(R.id.textGroupname);
+                btnbook= (Button) itemView.findViewById(R.id.btnbook);
                 Log.d("", "MyAdapter MyViewHolder ");
                 itemView.setOnClickListener(this);
             }

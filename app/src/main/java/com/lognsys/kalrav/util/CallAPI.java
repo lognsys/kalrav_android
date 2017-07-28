@@ -188,12 +188,10 @@ public class CallAPI {
     }
 
     //   alreadyExist user checking
-    public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id) {
-        propertyReader = new PropertyReader(getApplicationContext());
-        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
-
+    public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id,String url) {
         userDaoImpl = new UserInfoDAOImpl(mContext);
-        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name())+userInfo.getEmail();
+        String alReadyExsistUser=url+userInfo.getEmail();
+        Log.d("","Rest alReadyExsistUser " + alReadyExsistUser);
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,alReadyExsistUser,
                 null,new Response.Listener<JSONObject>() {
@@ -266,11 +264,12 @@ public class CallAPI {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("","Google docallApi Error: volly Exception " + error.getMessage());
-                Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
+                error.printStackTrace();
+                Log.d("","Rest Google docallApi Error: volly Exception " + error.toString());
+                Intent i = new Intent(mContext, RegisterActivity.class);
                 mContext.startActivity(i);
 //                finish();
-                KalravApplication.getInstance().getPrefs().hidepDialog(getApplicationContext());
+                KalravApplication.getInstance().getPrefs().hidepDialog(mContext);
             }
         });
         req.setRetryPolicy(new DefaultRetryPolicy(

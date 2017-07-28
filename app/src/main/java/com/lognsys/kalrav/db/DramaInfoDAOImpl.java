@@ -7,6 +7,7 @@ import android.content.pm.FeatureInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.FavouritesInfo;
@@ -37,8 +38,6 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
     @Override
     public void addDrama(DramaInfo dramaInfo) {
         db = sqLiteHelper.getWritableDatabase();
-        Log.d("","Test addDrama isDramaExist(dramaInfo) "+isDramaExist(dramaInfo));
-
         // If user exists update user
         if (isDramaExist(dramaInfo)) {
 
@@ -63,6 +62,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
             values.put(DramaInfo.COLUMN_DRAMA_AVG_RATING, dramaInfo.getAvg_rating());
             values.put(DramaInfo.COLUMN_DRAMA_MUSIC, dramaInfo.getMusic());
             values.put(DramaInfo.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
+            Log.d(TAG,"Rest addDrama  adding data to db  values "+values.valueSet());
 
             // Inserting Row
             db.insert(DramaInfo.TABLE_DRAMA, null, values);
@@ -73,7 +73,8 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
     @Override
     public boolean isDramaExist(DramaInfo dramaInfo) {
             db = sqLiteHelper.getReadableDatabase();
-            Cursor cur = db.rawQuery("SELECT * FROM Drama where "+DramaInfo.COLUMN_ID+" = ? ",new String[]{String.valueOf(dramaInfo.getId())});
+        if(dramaInfo!=null){
+            Cursor cur = db.rawQuery("SELECT * FROM drama where "+DramaInfo.COLUMN_ID+" = ? ",new String[]{String.valueOf(dramaInfo.getId())});
             if (cur != null && cur.getCount()>0) {
                 Log.d(TAG, "DB_isUserExists cur "+cur.getCount());
                 cur.moveToFirst();                       // Always one row returned.
@@ -87,8 +88,9 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
             }
 
 
+        }
+        return false;
 
-            return true;
 
     }
 
@@ -96,6 +98,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
     public List<DramaInfo> getAllDramaByUserGroup(String group_name) {
         SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
         DramaInfo dramaInfo = null;
+        Log.d("","Rest getAllDramaByUserGroup group_name "+ group_name);
 
 
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
@@ -117,7 +120,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 DramaInfo.COLUMN_DRAMA_ISFAV +
                 " FROM drama where "+ DramaInfo.COLUMN_GROUP_NAME +" =? ", new String[]{group_name});
         if(c!=null)
-            Log.d("","Test getAllDrama  c.getCount() "+ c.getCount());
+            Log.d("","Rest getAllDramaByUserGroup  c.getCount() "+ c.getCount());
 
         if (c != null && c.getCount()>0) {
 
@@ -139,7 +142,6 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 String avg_rating= c.getString(13);
                 String music= c.getString(14);
                 String isFav= c.getString(15);
-                Log.d("","Fragment getAllDrama isFav "+isFav);
 
                 dramaInfo.setId(Integer.parseInt(id));
                 dramaInfo.setGroup_name(groupname);
@@ -167,7 +169,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
             c.close();
         }
         else {
-            addDrama(dramaInfo);
+            return null;
         }
         return dramaInfos;
     }
@@ -260,12 +262,11 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
         values.put(DramaInfo.COLUMN_DRAMA_AVG_RATING, dramaInfo.getAvg_rating());
         values.put(DramaInfo.COLUMN_DRAMA_MUSIC, dramaInfo.getMusic());
         values.put(DramaInfo.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
-        Log.d("DramaFragment","Fragment updateCount dramaInfo.getIsfav() "+ dramaInfo.getIsfav());
 
         // updating row
         int updateCount= db.update(DramaInfo.TABLE_DRAMA, values, DramaInfo.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(dramaInfo.getId())});
-        Log.d("DramaFragment","Fragment updateCount "+ updateCount);
+        Log.d(TAG,"Rest updateDrama updateCount "+updateCount);
 
         return updateCount;
 
@@ -278,6 +279,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
     @Override
     public List<DramaInfo> getAllDrama() {
+
         SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
         DramaInfo dramaInfo = null;
 
@@ -301,10 +303,10 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 DramaInfo.COLUMN_DRAMA_MUSIC +"," +
                 DramaInfo.COLUMN_DRAMA_ISFAV +
                 " FROM drama", null);
-        if(c!=null)
-        Log.d("","Test getAllDrama  c.getCount() "+ c.getCount());
 
         if (c != null && c.getCount()>0) {
+
+            Log.d(TAG,"Rest getAllDrama  c.getCount() "+ c.getCount());
 
             while (c.moveToNext()){
                 dramaInfo = new DramaInfo();
@@ -324,7 +326,6 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 String avg_rating= c.getString(13);
                 String music= c.getString(14);
                 String isFav= c.getString(15);
-                Log.d("","Fragment getAllDrama isFav "+isFav);
 
                 dramaInfo.setId(Integer.parseInt(id));
                 dramaInfo.setGroup_name(groupname);
@@ -343,14 +344,17 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 dramaInfo.setMusic(music);
                 dramaInfo.setIsfav(isFav);
 
-                Log.d("","Fragment getAllDrama getIsfav "+dramaInfo.getIsfav());
                 dramaInfos.add(dramaInfo);
             }
-            Log.d("","Fragment getAllDrama dramaInfos.size "+dramaInfos.size());
+            Log.d(TAG,"Rest getAllDrama  dramaInfos.size() "+dramaInfos.size());
 
             c.close();
+            return dramaInfos;
         }
-        return dramaInfos;
+        else {
+            return null;
+        }
+
     }
 
 
@@ -358,64 +362,60 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
     public ArrayList<DramaInfo> getDramaListByFavId(ArrayList<FavouritesInfo> favouritesInfos) {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
         DramaInfo dramaInfo = null;
-        Log.d("","Test getDramaListByFavId drama favouritesInfo "+favouritesInfos.size());
-
+        Log.d(TAG,"Rest getDramaListByFavId  favouritesInfos.size() "+favouritesInfos.size());
 
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-        for(int i=0;i<favouritesInfos.size();i++){
-            FavouritesInfo fav=favouritesInfos.get(i);
-            Cursor c = db.rawQuery("SELECT * FROM drama where "+ DramaInfo.COLUMN_ID +" = ? ",
-                    new String[]{String.valueOf(fav.getDrama_id())});
+        if(favouritesInfos!= null && favouritesInfos.size()>0){
+            for(int i=0;i<favouritesInfos.size();i++){
+                FavouritesInfo fav=favouritesInfos.get(i);
+                Cursor c = db.rawQuery("SELECT * FROM drama where "+ DramaInfo.COLUMN_ID +" = ? ",
+                        new String[]{String.valueOf(fav.getDrama_id())});
 
-            if (c != null && c.getCount()>0) {
-                Log.d("","Test getDramaListByFavId drama c.getCount() "+ c.getCount());
+                if (c != null && c.getCount()>0) {
+                    Log.d(TAG,"Rest getDramaListByFavId  c.getCount() "+ c.getCount());
 
-                while (c.moveToNext()){
-                    dramaInfo = new DramaInfo();
-                    String id = c.getString(0);
-                    String groupname = c.getString(1);
-                    String dramaname = c.getString(2);
-                    String linkphoto = c.getString(3);
-                    String datatime = c.getString(4);
-                    String dramaLength = c.getString(5);
-                    String dramaLanguage = c.getString(6);
-                    String dramaGenre = c.getString(7);
-                    String dramaTime= c.getString(8);
-                    String briefDescription= c.getString(9);
-                    String cast= c.getString(10);
-                    String writer= c.getString(11);
-                    String director= c.getString(12);
-                    String avg_rating= c.getString(13);
-                    String music= c.getString(14);
-                    String isFav= c.getString(15);
-                    Log.d("","Fragment getAllDrama isFav "+isFav);
+                    while (c.moveToNext()){
+                        dramaInfo = new DramaInfo();
+                        String id = c.getString(0);
+                        String groupname = c.getString(1);
+                        String dramaname = c.getString(2);
+                        String linkphoto = c.getString(3);
+                        String datatime = c.getString(4);
+                        String dramaLength = c.getString(5);
+                        String dramaLanguage = c.getString(6);
+                        String dramaGenre = c.getString(7);
+                        String dramaTime= c.getString(8);
+                        String briefDescription= c.getString(9);
+                        String cast= c.getString(10);
+                        String writer= c.getString(11);
+                        String director= c.getString(12);
+                        String avg_rating= c.getString(13);
+                        String music= c.getString(14);
+                        String isFav= c.getString(15);
 
-                    dramaInfo.setId(Integer.parseInt(id));
-                    dramaInfo.setGroup_name(groupname);
-                    dramaInfo.setTitle(dramaname);
-                    dramaInfo.setLink_photo(linkphoto);
-                    dramaInfo.setDatetime(datatime);;
-                    dramaInfo.setDrama_length(dramaLength);;
-                    dramaInfo.setDrama_language(dramaLanguage);;
-                    dramaInfo.setGenre(dramaGenre);;
-                    dramaInfo.setTime(dramaTime);
-                    dramaInfo.setDescription(briefDescription);
-                    dramaInfo.setStar_cast(cast);
-                    dramaInfo.setWriter(writer);
-                    dramaInfo.setDirector(director);
-                    dramaInfo.setAvg_rating(avg_rating);
-                    dramaInfo.setMusic(music);
-                    dramaInfo.setIsfav(isFav);
-                    dramaInfos.add(dramaInfo);
+                        dramaInfo.setId(Integer.parseInt(id));
+                        dramaInfo.setGroup_name(groupname);
+                        dramaInfo.setTitle(dramaname);
+                        dramaInfo.setLink_photo(linkphoto);
+                        dramaInfo.setDatetime(datatime);;
+                        dramaInfo.setDrama_length(dramaLength);;
+                        dramaInfo.setDrama_language(dramaLanguage);;
+                        dramaInfo.setGenre(dramaGenre);;
+                        dramaInfo.setTime(dramaTime);
+                        dramaInfo.setDescription(briefDescription);
+                        dramaInfo.setStar_cast(cast);
+                        dramaInfo.setWriter(writer);
+                        dramaInfo.setDirector(director);
+                        dramaInfo.setAvg_rating(avg_rating);
+                        dramaInfo.setMusic(music);
+                        dramaInfo.setIsfav(isFav);
+                        dramaInfos.add(dramaInfo);
+                    }
                 }
-
-
+                c.close();
             }
-
-            c.close();
         }
-        Log.d("","Test getDramaListByFavId dramaInfos.size "+dramaInfos.size());
+        Log.d(TAG,"Rest getDramaListByFavId  dramaInfos.size() "+dramaInfos.size());
         return dramaInfos;
     }
-
 }
