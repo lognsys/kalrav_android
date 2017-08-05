@@ -38,6 +38,7 @@ import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.PropertyReader;
 import com.lognsys.kalrav.util.Services;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -315,14 +316,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 Log.d("Response","Rest volleyError response " +response);
                 try {
                      str = new String(response, "UTF-8");
-                    Log.d("Response","Rest volleyError str toString  " +str.toString() );
 
                     try {
+                        Log.d("Response","Rest volleyError inside str  " +str);
+
                         JSONObject object=new JSONObject(str.toString());
-                        Log.d("Response","Rest inside object  " +object);
+                        Log.d("Response","Rest volleyError inside object  " +object);
 
                         int  statusCode=object.getInt("statusCode");
-                        Log.d("Response","Rest inside statusCode  " +statusCode);
+                        Log.d("Response","Rest volleyError inside statusCode  " +statusCode);
 
                         if(statusCode==400){
                             String msg=object.getString("msg");
