@@ -1,7 +1,6 @@
 package com.lognsys.kalrav.fragment;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.fragment.MyticketListFragment.OnListFragmentInteractionListener;
 import com.lognsys.kalrav.fragment.dummy.DummyContent.DummyItem;
-import com.lognsys.kalrav.model.TicketsInfo;
+import com.lognsys.kalrav.model.BookingInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,10 +25,10 @@ import java.util.List;
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<TicketsInfo> mValues;
+    private final List<BookingInfo> mValues;
     private final OnListFragmentInteractionListener mListener;
 Context mconContext;
-    public MyItemRecyclerViewAdapter(Context mconContext, ArrayList<TicketsInfo> items, OnListFragmentInteractionListener listener) {
+    public MyItemRecyclerViewAdapter(Context mconContext, ArrayList<BookingInfo> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
         mconContext = mconContext;
@@ -102,7 +101,7 @@ Context mconContext;
         public final TextView textBookingTime;
         public final ImageView imageViewQRCode;
         public final ImageView dramaImage;
-        public TicketsInfo mItem;
+        public BookingInfo mItem;
 
 
         public ViewHolder(View view) {

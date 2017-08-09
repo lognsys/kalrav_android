@@ -8,10 +8,10 @@ import java.io.Serializable;
  * Created by admin on 4/19/2017.
  */
 
-public class TicketsInfo implements Serializable {
+public class BookingInfo implements Serializable {
 
 
-    //TicketsInfo Table
+    //BookingInfo Table
     public static final String TABLE_TICKET = "ticket";
     //    public static final String COLUMN_DRAMA_ID = "drama_id";
     public static final String COLUMN_USER_ID = "user_id";

@@ -187,6 +187,114 @@ public class CallAPI {
 
     }
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void bookedSeats(double rating, DramaInfo dramaInfo, int customer_id, String url){String post_create_rating_url=url;
+        JSONObject params = new JSONObject();
+        try {
+            params.put("Content-Type","application/json");
+            params.put("Accept", "application/json");
+            params.put("rating", rating);
+            // (1) get today's date
+            Date today = Calendar.getInstance().getTime();
+
+            // (2) create a date "formatter" (the date format we want)
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+            // (3) create a new String using the date format we want
+            String rating_date = formatter.format(today);
+            Log.d("Response","Rest rating_date  " +rating_date);
+
+
+            params.put("rating_date", rating_date);
+            params.put("users_id", customer_id);
+            params.put("dramas_id" ,dramaInfo.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST,
+                post_create_rating_url, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response","Rest response " +response);
+                        try{
+                            JSONObject jsonObject = new JSONObject(String.valueOf(response));
+                            Ratings ratings=new Ratings();
+
+                            ratings.setId(jsonObject.getInt("id"));
+
+                            ratings.setRating(jsonObject.getDouble("rating"));
+
+                            ratings.setRating_date(jsonObject.getString("rating_date"));
+
+                            ratings.setUsers_id(jsonObject.getInt("users_id"));
+
+                            ratings.setDramas_id(jsonObject.getInt("dramas_id"));
+
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        //  YOUR RESPONSE
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+//                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
+
+                String json = null;
+                String str=null;
+                byte[] response=null;
+                if(volleyError.networkResponse.data!=null)
+                    response = volleyError.networkResponse.data;
+                Log.d("Response","Rest volleyError response " +response);
+                try {
+                    str = new String(response, "UTF-8");
+                    Log.d("Response","Rest volleyError str toString  " +str.toString() );
+
+                    try {
+                        JSONObject object=new JSONObject(str.toString());
+                        Log.d("Response","Rest inside object  " +object);
+
+                        int  statusCode=object.getInt("statusCode");
+                        Log.d("Response","Rest inside statusCode  " +statusCode);
+
+                        if(statusCode==400){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                        else if(statusCode==406){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        } else if(statusCode==404){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //Somewhere that has access to a context
+            public void displayMessage(String toastString){
+                Log.d("Response","Rest volleyError toastString  " +toastString );
+
+                Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+        KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
+
+    }
+
+
+
     //   alreadyExist user checking
     public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id,String url) {
         userDaoImpl = new UserInfoDAOImpl(mContext);
@@ -352,12 +460,6 @@ public class CallAPI {
                             userInfo.setName(jsonObject.getString("realname"));
 
                             userInfo.setEmail(jsonObject.getString("username"));
-
-//                            if (fb_id != null)
-//                                userInfo.setFb_id(fb_id);
-//
-//                            if (google_id != null)
-//                                userInfo.setGoogle_id(google_id);
 
                             userInfo.setPhoneNo(jsonObject.getString("phone"));
 

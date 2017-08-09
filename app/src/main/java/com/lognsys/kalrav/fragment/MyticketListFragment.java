@@ -14,13 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lognsys.kalrav.R;
-import com.lognsys.kalrav.db.TicketInfoDAOImpl;
-import com.lognsys.kalrav.fragment.dummy.DummyContent;
-import com.lognsys.kalrav.fragment.dummy.DummyContent.DummyItem;
-import com.lognsys.kalrav.model.TicketsInfo;
+import com.lognsys.kalrav.db.BookingInfoDAOImpl;
+import com.lognsys.kalrav.model.BookingInfo;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -45,9 +42,9 @@ public class MyticketListFragment extends Fragment {
     Thread thread;
     public final static int QRcodeWidth = 500;
     Bitmap bitmap;
-    TicketsInfo ticketsInfo;
-    TicketInfoDAOImpl ticketInfoDAO;
-    ArrayList<TicketsInfo> ticketInfos;
+    BookingInfo bookingInfo;
+    BookingInfoDAOImpl ticketInfoDAO;
+    ArrayList<BookingInfo> ticketInfos;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -81,7 +78,7 @@ public class MyticketListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ticketlist_item_list, container, false);
 
-        ticketInfoDAO=new TicketInfoDAOImpl(getContext());
+        ticketInfoDAO=new BookingInfoDAOImpl(getContext());
 //       getting all  tickets booked
         ticketInfos=ticketInfoDAO.getAllTicket();
 
@@ -132,6 +129,6 @@ public class MyticketListFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(TicketsInfo item);
+        void onListFragmentInteraction(BookingInfo item);
     }
 }

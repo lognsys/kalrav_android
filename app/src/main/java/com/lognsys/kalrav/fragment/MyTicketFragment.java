@@ -1,24 +1,18 @@
 package com.lognsys.kalrav.fragment;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
@@ -35,14 +29,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
-import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
-import com.lognsys.kalrav.RegisterActivity;
-import com.lognsys.kalrav.db.TicketInfoDAOImpl;
-import com.lognsys.kalrav.model.TicketsInfo;
-import com.lognsys.kalrav.model.UserInfo;
-import com.lognsys.kalrav.util.Constants;
-import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.db.BookingInfoDAOImpl;
+import com.lognsys.kalrav.model.BookingInfo;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -68,16 +57,16 @@ public class MyTicketFragment extends Fragment {
     Thread thread;
     public final static int QRcodeWidth = 500;
     Bitmap bitmap;
-    TicketsInfo ticketsInfo;
-    TicketInfoDAOImpl ticketInfoDAO;
-    ArrayList<TicketsInfo> ticketInfos;
+    BookingInfo bookingInfo;
+    BookingInfoDAOImpl ticketInfoDAO;
+    ArrayList<BookingInfo> ticketInfos;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_my_ticket, container, false);
-//        ticketsInfo=(TicketsInfo) getArguments().getSerializable("ticketsInfo");
-        ticketInfoDAO=new TicketInfoDAOImpl(getContext());
+//        bookingInfo=(BookingInfo) getArguments().getSerializable("bookingInfo");
+        ticketInfoDAO=new BookingInfoDAOImpl(getContext());
         ticketInfos=ticketInfoDAO.getAllTicket();
 
         dramaImage = (ImageView) view.findViewById(R.id.dramaImage);
@@ -105,28 +94,28 @@ public class MyTicketFragment extends Fragment {
        if(ticketInfos!=null) {
            Log.d("","Text ticketInfos.size() ===== "+ticketInfos.size());
            for (int i = 0; i < ticketInfos.size(); i++) {
-                ticketsInfo = ticketInfos.get(i);
-                if (ticketsInfo != null) {
-                    tvDramaName.setText(ticketsInfo.getDrama_name());
-                    textDramaDate.setText(ticketsInfo.getDrama_date());
-                    textDramaTiming.setText(ticketsInfo.getDrama_time());
-                    textBookingDate.setText(ticketsInfo.getBooked_date());
-                    textBookingTime.setText(ticketsInfo.getBooked_time());
-                    textUserName.setText(ticketsInfo.getUser_name());
-                    tvAuditorium.setText(ticketsInfo.getAuditorium_name());
-                    textGroupName.setText(ticketsInfo.getDrama_name());
-                    textTotalnoofticket.setText(ticketsInfo.getSeats_no_of_seats_booked());
-                    tvTicketNumber.setText(ticketsInfo.getSeart_seat_no());
-                    textTotalprice.setText(ticketsInfo.getSeats_total_price());
-                    if (ticketsInfo.getDrama_photo() != null) {
-                        Picasso.with(getContext()).load(ticketsInfo.getDrama_photo()).into(dramaImage);
+                bookingInfo = ticketInfos.get(i);
+                if (bookingInfo != null) {
+                    tvDramaName.setText(bookingInfo.getDrama_name());
+                    textDramaDate.setText(bookingInfo.getDrama_date());
+                    textDramaTiming.setText(bookingInfo.getDrama_time());
+                    textBookingDate.setText(bookingInfo.getBooked_date());
+                    textBookingTime.setText(bookingInfo.getBooked_time());
+                    textUserName.setText(bookingInfo.getUser_name());
+                    tvAuditorium.setText(bookingInfo.getAuditorium_name());
+                    textGroupName.setText(bookingInfo.getDrama_name());
+                    textTotalnoofticket.setText(bookingInfo.getSeats_no_of_seats_booked());
+                    tvTicketNumber.setText(bookingInfo.getSeart_seat_no());
+                    textTotalprice.setText(bookingInfo.getSeats_total_price());
+                    if (bookingInfo.getDrama_photo() != null) {
+                        Picasso.with(getContext()).load(bookingInfo.getDrama_photo()).into(dramaImage);
                     } else {
                         Picasso.with(getContext()).load(String.valueOf(getResources().getDrawable(R.drawable.stub, null))).into(dramaImage);
                     }
-                    Log.d("", "Text ticketsInfo.getBitmat ===== " + ticketsInfo.getBitmapQRCode());
+                    Log.d("", "Text bookingInfo.getBitmat ===== " + bookingInfo.getBitmapQRCode());
 
-                    if (ticketsInfo.getBitmapQRCode() != null) {
-                        imageView.setImageBitmap(ticketsInfo.getBitmapQRCode());
+                    if (bookingInfo.getBitmapQRCode() != null) {
+                        imageView.setImageBitmap(bookingInfo.getBitmapQRCode());
                     }
                 }
             }

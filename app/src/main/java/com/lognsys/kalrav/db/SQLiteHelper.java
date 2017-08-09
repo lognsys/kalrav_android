@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.lognsys.kalrav.model.BookingInfo;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.FavouritesInfo;
 import com.lognsys.kalrav.model.NotificationInfo;
-import com.lognsys.kalrav.model.TicketsInfo;
 import com.lognsys.kalrav.model.UserInfo;
 
 /**
@@ -113,25 +113,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     //drama table
     private static final String DATABASE_CREATE_TICKET = "create table if not exists "
-            + TicketsInfo.TABLE_TICKET + "("
-            + TicketsInfo.COLUMN_ID + " integer primary key autoincrement, "
-            + TicketsInfo.COLUMN_DRAMA_ID +  " integer, "
-            + TicketsInfo.COLUMN_USER_ID +  " integer, "
-            + TicketsInfo.COLUMN_DRAMA_NAME + " TEXT, "
-            + TicketsInfo.COLUMN_GROUP_NAME + " TEXT, "
-            + TicketsInfo.COLUMN_LINK_PHOTO + " TEXT, "
-            + TicketsInfo.COLUMN_DATETIME + " TEXT, "
-            + TicketsInfo.COLUMN_DRAMA_TIME + " TEXT, "
-            + TicketsInfo.COLUMN_BOOKED_TIME + " TEXT, "
-            + TicketsInfo.COLUMN_BOOKED_DATE + " TEXT, "
-            + TicketsInfo.COLUMN_CONFIRMATION_CODE + " TEXT, "
-            + TicketsInfo.COLUMN_SEAT_TOTAL_PRICE + " TEXT, "
-            + TicketsInfo.COLUMN_NO_OF_SEATS_BOOKED + " TEXT, "
-            + TicketsInfo.COLUMN_SEAT_NO + " TEXT, "
-            + TicketsInfo.COLUMN_AUDITORIUM_NAME + " TEXT, "
-            + TicketsInfo.COLUMN_USER_NAME + " TEXT, "
-            + TicketsInfo.COLUMN_USER_EMAIL_ID + " TEXT, "
-            + TicketsInfo.COLUMN_QRCODE_BITMAP + " TEXT, "
+            + BookingInfo.TABLE_TICKET + "("
+            + BookingInfo.COLUMN_ID + " integer primary key autoincrement, "
+            + BookingInfo.COLUMN_DRAMA_ID +  " integer, "
+            + BookingInfo.COLUMN_USER_ID +  " integer, "
+            + BookingInfo.COLUMN_DRAMA_NAME + " TEXT, "
+            + BookingInfo.COLUMN_GROUP_NAME + " TEXT, "
+            + BookingInfo.COLUMN_LINK_PHOTO + " TEXT, "
+            + BookingInfo.COLUMN_DATETIME + " TEXT, "
+            + BookingInfo.COLUMN_DRAMA_TIME + " TEXT, "
+            + BookingInfo.COLUMN_BOOKED_TIME + " TEXT, "
+            + BookingInfo.COLUMN_BOOKED_DATE + " TEXT, "
+            + BookingInfo.COLUMN_CONFIRMATION_CODE + " TEXT, "
+            + BookingInfo.COLUMN_SEAT_TOTAL_PRICE + " TEXT, "
+            + BookingInfo.COLUMN_NO_OF_SEATS_BOOKED + " TEXT, "
+            + BookingInfo.COLUMN_SEAT_NO + " TEXT, "
+            + BookingInfo.COLUMN_AUDITORIUM_NAME + " TEXT, "
+            + BookingInfo.COLUMN_USER_NAME + " TEXT, "
+            + BookingInfo.COLUMN_USER_EMAIL_ID + " TEXT, "
+            + BookingInfo.COLUMN_QRCODE_BITMAP + " TEXT, "
             + COLUMN_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
 

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.Environment;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
@@ -38,13 +44,20 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.db.DramaInfoDAOImpl;
-import com.lognsys.kalrav.db.SQLiteHelper;
-import com.lognsys.kalrav.db.TicketInfoDAOImpl;
+import com.lognsys.kalrav.db.BookingInfoDAOImpl;
+import com.lognsys.kalrav.model.BookingInfo;
 import com.lognsys.kalrav.model.DramaInfo;
-import com.lognsys.kalrav.model.TicketsInfo;
+import com.lognsys.kalrav.model.Ratings;
 import com.lognsys.kalrav.model.TimeSlot;
+import com.lognsys.kalrav.util.CallAPI;
+import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
+import com.lognsys.kalrav.util.PropertyReader;
 import com.lognsys.kalrav.util.Services;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,12 +65,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
 import java.util.UUID;
 
 import by.anatoldeveloper.hallscheme.hall.Seat;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ConfirmFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -69,6 +86,13 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
 
+
+    //Properties
+    private PropertyReader propertyReader;
+    private Properties properties;
+    public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+
+    CallAPI callAPI;
     private OnFragmentInteractionListener mListener;
 
     private EditText editName;
@@ -93,15 +117,16 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     TimeSlot timeSlot;
     DramaInfo dramaInfo;
     String time,strDate;
-    int dramaInfoId,totalPrice;
+    int dramaInfoId,auditoriums_id;
+    double totalPrice;
     ImageView img;
     ArrayList<Seat> mSeats;
     String DramaName, Auditorium,TotalPrice, GroupName, DateAndTime, TicketNumber,BookingDateTime,UserName,TotalTicketBooked;
     Bitmap bitmapQRCode,bitmap;
     public final static int QRcodeWidth = 500;
-    ArrayList<TicketsInfo> dramaInfos;
-    TicketInfoDAOImpl ticketInfoDAO;
-    TicketsInfo ticketsInfo;
+    ArrayList<BookingInfo> dramaInfos;
+    BookingInfoDAOImpl ticketInfoDAO;
+    BookingInfo bookingInfo;
     DramaInfoDAOImpl dramaInfoDAO;
     public ConfirmFragment() {
         // Required empty public constructor
@@ -141,11 +166,13 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         final View view = inflater.inflate(R.layout.fragment_confirm, container, false);
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         dramaInfoId = getArguments().getInt("dramaInfoId");
-        timeSlot= (TimeSlot) getArguments().getSerializable("timeSlot");
         dramaInfo= dramaInfoDAO.getDramaByDramaId(dramaInfoId);
+        auditoriums_id= Integer.parseInt(getArguments().getString("auditoriums_id"));
+        propertyReader = new PropertyReader(getActivity());
+        properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
-        ticketInfoDAO =new TicketInfoDAOImpl(getContext());
-        ticketsInfo=new TicketsInfo();
+        ticketInfoDAO =new BookingInfoDAOImpl(getContext());
+        bookingInfo =new BookingInfo();
         time=  getArguments().getString("time");
         strDate=  getArguments().getString("strDate");
         mSeats = (ArrayList<Seat>) getArguments().getSerializable("seats");
@@ -154,6 +181,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     }
 
     private void populateView(View view) {
+        callAPI=new CallAPI((AppCompatActivity) getActivity());
         input_layout_name=(TextInputLayout)view.findViewById(R.id.input_layout_name);
         input_layout_groupname=(TextInputLayout)view.findViewById(R.id.input_layout_groupname);
         input_layout_emailid=(TextInputLayout)view.findViewById(R.id.input_layout_emailid);
@@ -280,11 +308,12 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                      @Override
                      public void onClick(DialogInterface dialog, int which) {
                          if(dramaInfo != null /*&& timeSlot!= null*/){
+//                             callAPI=new CallAPI((AppCompatActivity) getActivity());
 
 
-                             ticketsInfo.setDrama_id(dramaInfo.getId());
+                           bookingInfo.setDrama_id(dramaInfo.getId());
 //                     monika added demo userid
-                             ticketsInfo.setUser_id(1);
+                             bookingInfo.setUser_id(1);
 
                              DramaName = "Drama Name : "+dramaInfo.getTitle();
                              Auditorium = "Auditorium Name : " +editAuditoriumName.getText().toString();
@@ -296,13 +325,17 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                              TotalTicketBooked ="Total Ticket numbers :"+editNoOfSeatsBooked.getText().toString();
                              TotalPrice="TotalPrice Rs : "+String.valueOf(totalPrice);
                              dialog.dismiss();
-                             KalravApplication.getInstance().getPrefs().showDialog(getContext());
+        /*                      KalravApplication.getInstance().getPrefs().showDialog(getContext());
 
                              new ConfirmFragment.GenerateQRCodeTask(DramaName,Auditorium,GroupName,DateAndTime,TicketNumber,BookingDateTime,UserName,
                                      TotalTicketBooked,TotalPrice, bitmapQRCode).execute();
+*/
+                            int totalNoTickets=Integer.parseInt(editNoOfSeatsBooked.getText().toString());
+                            String bookedDT=strDate+" " +time;
+                             Log.d("Confirm Fragment","bookedSeats dramaInfo "+dramaInfo +" getCustomer_id  = "+KalravApplication.getInstance().getPrefs().getCustomer_id() );
 
-
-
+                             bookedSeats(dramaInfo,KalravApplication.getInstance().getPrefs().getCustomer_id(),
+                                     bookedDT, editSeatNumber.getText().toString(),totalNoTickets,totalPrice,auditoriums_id);
                          }
                      }
                  });
@@ -320,6 +353,110 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+    private void bookedSeats(DramaInfo dramaInfo, String customer_id, String bookingDateTime, String seatnumber, int totalTicketBooked, double totalPrice,int auditoriums_id) {
+        JSONObject params = new JSONObject();
+        try {
+
+//            params.put("Content-Type","application/json");
+//            params.put("Accept", "application/json");
+            params.put("dramas_id", dramaInfo.getId());
+            params.put("booking_date", bookingDateTime);
+            params.put("users_id", Integer.parseInt(customer_id));
+            params.put("auditoriums_id",auditoriums_id);
+            params.put("price", totalPrice);
+            Log.d("Confirm Fragment","bookedSeats seatnumber "+seatnumber +" seatnumber  = "+seatnumber );
+            JSONArray jsonArray =new JSONArray();
+
+            if(seatnumber!=null){
+                String [] seatsdetails=seatnumber.split(" , ");
+                Log.d("Confirm Fragment","bookedSeats seatsdetails "+seatsdetails +" seatsdetails size = "+seatsdetails.length );
+                for(int i =0;i<seatsdetails.length;i++){
+                    jsonArray.put(seatsdetails[i]) ;
+                }
+            }
+            params.put("seatnumber", jsonArray);
+            params.put("no_of_seats",totalTicketBooked);
+            Log.d("Confirm Fragment","bookedSeats params " +params);
+
+        } catch (Exception e) {
+            Log.d("Confirm Fragment","bookedSeats Exception "+e  );
+
+            e.printStackTrace();
+        }
+
+        final String bookingconfirm=properties.getProperty(Constants.API_URL_BOOKING.bookingconfirm.name());
+
+        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST,
+                bookingconfirm, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try{
+                            JSONObject jsonObject = new JSONObject(String.valueOf(response));
+                            Log.d("Confirm Fragment","bookedSeats response " +response);
+
+                        }
+                        catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        //  YOUR RESPONSE
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+//                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
+
+                String json = null;
+                String str=null;
+                byte[] response=null;
+                if(volleyError.networkResponse.data!=null)
+                    response = volleyError.networkResponse.data;
+                Log.d("Response","bookedSeats volleyError response " +response);
+                try {
+                    str = new String(response, "UTF-8");
+                    Log.d("Response","bookedSeats volleyError str toString  " +str.toString() );
+
+                    try {
+                        JSONObject object=new JSONObject(str.toString());
+                        Log.d("Response","Rest inside object  " +object);
+
+                        int  statusCode=object.getInt("statusCode");
+                        Log.d("Response","Rest inside statusCode  " +statusCode);
+
+                        if(statusCode==400){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                        else if(statusCode==406){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        } else if(statusCode==404){
+                            String msg=object.getString("msg");
+                            displayMessage(msg);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            //Somewhere that has access to a context
+            public void displayMessage(String toastString){
+                Log.d("Response","Rest volleyError toastString  " +toastString );
+
+                Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
+            }
+
+
+        });
+        KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
+
+    }
+
     //Register and inserting  user records
     private class GenerateQRCodeTask extends AsyncTask<Void, Bitmap, Bitmap> {
         String DramaName, Auditorium, GroupName, DateAndTime, TicketNumber,BookingDateTime,UserName,TotalTicketBooked,TotalPrice;
@@ -402,32 +539,32 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
                    this.bitmapQRCode=createBitmapOfQRCode();
                }
-               ticketsInfo.setDrama_id(dramaInfo.getId());
+               bookingInfo.setDrama_id(dramaInfo.getId());
 //                     monika added demo userid
-               ticketsInfo.setUser_id(1);
-               ticketsInfo.setDrama_name(dramaInfo.getTitle());
-               ticketsInfo.setDrama_group_name(dramaInfo.getGroup_name());
-               ticketsInfo.setDrama_photo(dramaInfo.getLink_photo());
-               ticketsInfo.setDrama_date(dramaInfo.getDatetime());
-               ticketsInfo.setDrama_time(dramaInfo.getTime());
-               ticketsInfo.setBooked_time(time);
-               ticketsInfo.setBooked_date(strDate);
+               bookingInfo.setUser_id(1);
+               bookingInfo.setDrama_name(dramaInfo.getTitle());
+               bookingInfo.setDrama_group_name(dramaInfo.getGroup_name());
+               bookingInfo.setDrama_photo(dramaInfo.getLink_photo());
+               bookingInfo.setDrama_date(dramaInfo.getDatetime());
+               bookingInfo.setDrama_time(dramaInfo.getTime());
+               bookingInfo.setBooked_time(time);
+               bookingInfo.setBooked_date(strDate);
                String confirmationCode = UUID.randomUUID().toString();
 
-               ticketsInfo.setConfirmation_code(confirmationCode);
-               ticketsInfo.setSeats_total_price(String.valueOf(totalPrice));
-               ticketsInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
-               ticketsInfo.setSeart_seat_no(editSeatNumber.getText().toString());
-               ticketsInfo.setAuditorium_name(editAuditoriumName.getText().toString());
-               ticketsInfo.setUser_name(editName.getText().toString());
+               bookingInfo.setConfirmation_code(confirmationCode);
+               bookingInfo.setSeats_total_price(String.valueOf(totalPrice));
+               bookingInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
+               bookingInfo.setSeart_seat_no(editSeatNumber.getText().toString());
+               bookingInfo.setAuditorium_name(editAuditoriumName.getText().toString());
+               bookingInfo.setUser_name(editName.getText().toString());
                if(this.bitmapQRCode!=null){
                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute this.bitmapQRCode "+this.bitmapQRCode);
-                   ticketsInfo.setBitmapQRCode(this.bitmapQRCode);
+                   bookingInfo.setBitmapQRCode(this.bitmapQRCode);
                }
-               ticketsInfo.setUser_emailid(editemailid.getText().toString());
-               Log.d("GenerateQRCode"," GenerateQRCode onPostExecute ticketsInfo getBitmapQRCode "+ticketsInfo.getBitmapQRCode());
+               bookingInfo.setUser_emailid(editemailid.getText().toString());
+               Log.d("GenerateQRCode"," GenerateQRCode onPostExecute bookingInfo getBitmapQRCode "+ bookingInfo.getBitmapQRCode());
                Toast.makeText(getContext(),"Your tickets are confirmed",Toast.LENGTH_SHORT).show();
-               ticketInfoDAO.addTicket(ticketsInfo);
+               ticketInfoDAO.addTicket(bookingInfo);
                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
                callFragment();
 

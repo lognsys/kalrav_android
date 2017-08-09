@@ -43,4 +43,7 @@ public class Constants {
     public enum API_URL_AUDITORIUM_LIST {
         getauditoriumlist
     }
+    public enum API_URL_BOOKING {
+        bookingconfirm
+    }
 }
