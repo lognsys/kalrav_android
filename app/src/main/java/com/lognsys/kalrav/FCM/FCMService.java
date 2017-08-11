@@ -110,7 +110,7 @@ public class FCMService extends FirebaseMessagingService {
         notificationManager.notify(0,builder.build());*/
     }
 
-    private void generateNotification(NotificationInfo notificationInfo) {
+    public void generateNotification(NotificationInfo notificationInfo) {
         notificationIntent = new Intent(this, HomeActivity.class);
 
         if(KalravApplication.getInstance().getPrefs().getIsLogin() &&  notificationInfo!=null){

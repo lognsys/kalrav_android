@@ -48,15 +48,13 @@ Context mconContext;
         if(holder.mItem!=null){
             holder.textDramaName.setText(mValues.get(position).getDrama_name());
             holder.textGroupName.setText(mValues.get(position).getDrama_group_name());
-            holder.textDramaDate.setText(mValues.get(position).getDrama_date());
-            holder.textDramaTiming.setText(mValues.get(position).getDrama_time());
-            holder.textBookingDate.setText(mValues.get(position).getBooked_date());
-            holder.textBookingTime.setText(mValues.get(position).getBooked_time());
+            holder.textDramaDate.setText(mValues.get(position).getDrama_datetime());
+            holder.textBookingDate.setText(mValues.get(position).getBooked_datetime());
             holder.textAuditorium.setText(mValues.get(position).getAuditorium_name());
             holder.textUserName.setText(mValues.get(position).getUser_name());
             holder.textticketNumber.setText(mValues.get(position).getSeart_seat_no());
             holder.textTotalnoofticket.setText(mValues.get(position).getSeats_no_of_seats_booked());
-            holder.textTotalprice.setText(mValues.get(position).getSeats_total_price());
+            holder.textTotalprice.setText(String.valueOf(mValues.get(position).getSeats_total_price()));
            if(mValues.get(position).getDrama_photo()!=null){
                 Picasso.with(mconContext).load(mValues.get(position).getDrama_photo()).into(holder.dramaImage);
             }
@@ -91,14 +89,12 @@ Context mconContext;
         public final TextView textDramaName;
         public final TextView textAuditorium;
         public final TextView textGroupName;
-        public final TextView textDramaTiming;
         public final TextView textUserName;
         public final TextView textTotalnoofticket;
         public final TextView textTotalprice;
         public final TextView textticketNumber;
         public final TextView textDramaDate;
         public final TextView textBookingDate;
-        public final TextView textBookingTime;
         public final ImageView imageViewQRCode;
         public final ImageView dramaImage;
         public BookingInfo mItem;
@@ -110,14 +106,12 @@ Context mconContext;
             textDramaName = (TextView) view.findViewById(R.id.textDramaName);
             textAuditorium = (TextView) view.findViewById(R.id.textAuditorium);
             textGroupName = (TextView) view.findViewById(R.id.textGroupName);
-            textDramaTiming = (TextView) view.findViewById(R.id.textDramaTiming);
             textUserName = (TextView) view.findViewById(R.id.textUserName);
             textTotalnoofticket = (TextView) view.findViewById(R.id.textTotalnoofticket);
             textTotalprice = (TextView) view.findViewById(R.id.textTotalprice);
             textticketNumber = (TextView) view.findViewById(R.id.textticketNumber);
             textDramaDate = (TextView) view.findViewById(R.id.textDramaDate);
             textBookingDate = (TextView) view.findViewById(R.id.textBookingDate);
-            textBookingTime = (TextView) view.findViewById(R.id.textBookingTime);
             imageViewQRCode = (ImageView) view.findViewById(R.id.imageViewQRCode);
             dramaImage = (ImageView) view.findViewById(R.id.dramaImage);
         }

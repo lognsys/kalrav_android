@@ -16,7 +16,7 @@
             android:layout_marginTop="10dp"
             android:layout_height="150dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/gujjubhai_ghode_chadhiya"/>
+            android:src="@drawable/stub"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

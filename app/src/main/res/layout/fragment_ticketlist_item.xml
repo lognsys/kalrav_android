@@ -22,7 +22,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="left|center"
-                android:src="@drawable/gujjubhai_ghode_chadhiya" />
+                android:src="@drawable/stub" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dip"
-                    android:text="Drama Date and Time : "
+                    android:text="Drama Date Time : "
                     android:textColor="@color/black"
                     android:layout_marginTop="5dip"
                     android:layout_marginBottom="5dip"
@@ -62,20 +62,7 @@
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
-                    <View
-                        android:id="@+id/view"
-                        android:layout_width="1dip"
-                        android:layout_height="match_parent"
-                        android:layout_margin="2dip"
-                        android:background="#d3d3d3" />
 
-                    <TextView
-                        android:id="@+id/textDramaTiming"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="April 15, 2017"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
 
 
                 </LinearLayout>
@@ -84,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dip"
-                    android:text="Drama Booking Date and Time : "
+                    android:text="Drama Booking Date Time : "
                     android:textColor="@color/black"
                     android:layout_marginTop="5dip"
                     android:layout_marginBottom="5dip"
@@ -102,25 +89,7 @@
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
-                    <View
-                        android:id="@+id/view1"
-                        android:layout_width="1dip"
-                        android:layout_height="match_parent"
-                        android:layout_margin="2dip"
-                        android:background="#d3d3d3" />
-
-                    <TextView
-                        android:id="@+id/textBookingTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="April 15, 2017"
-                        android:textColor="@color/black"
-                        android:textSize="14sp" />
-
-
                 </LinearLayout>
-
-
             </LinearLayout>
 
 

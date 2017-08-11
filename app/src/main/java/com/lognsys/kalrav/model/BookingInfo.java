@@ -15,8 +15,7 @@ public class BookingInfo implements Serializable {
     public static final String TABLE_TICKET = "ticket";
     //    public static final String COLUMN_DRAMA_ID = "drama_id";
     public static final String COLUMN_USER_ID = "user_id";
-    public static final String COLUMN_BOOKED_TIME = "booked_time";
-    public static final String COLUMN_BOOKED_DATE = "booked_date";
+    public static final String COLUMN_BOOKED_DATETIME = "booked_datetime";
     public static final String COLUMN_CONFIRMATION_CODE = "confirmation_code";
     public static final String COLUMN_SEAT_TOTAL_PRICE = "seats_total_price";
     public static final String COLUMN_NO_OF_SEATS_BOOKED = "seats_no_of_seats_booked";
@@ -26,10 +25,9 @@ public class BookingInfo implements Serializable {
     public static final String COLUMN_GROUP_NAME = "group_name";
     public static final String COLUMN_DRAMA_ID= "drama_id";
     public static final String COLUMN_LINK_PHOTO = "photo_link";
-    public static final String COLUMN_DATETIME = "datetime";
     public static final String COLUMN_USER_NAME = "user_name";
     public static final String COLUMN_USER_EMAIL_ID = "user_emailid";
-    public static final String COLUMN_DRAMA_TIME = "time";
+    public static final String COLUMN_DRAMA_DATETIME = "dramadatetime";
     public static final String COLUMN_ID = "id";
 
     public static final String COLUMN_QRCODE_BITMAP ="bitmapQRCode";
@@ -51,16 +49,14 @@ public class BookingInfo implements Serializable {
     int user_id;
     String drama_name;
     String drama_group_name;
-    String drama_time;
-    String drama_date;
+    String drama_datetime;
     String drama_photo;
 
-    String booked_time;
-    String booked_date;
+    String booked_datetime;
 
     String confirmation_code;
 
-    String seats_total_price;
+    double seats_total_price;
     String seats_no_of_seats_booked;
     String seart_seat_no;
 
@@ -120,21 +116,6 @@ public class BookingInfo implements Serializable {
         this.drama_group_name = drama_group_name;
     }
 
-    public String getDrama_time() {
-        return drama_time;
-    }
-
-    public void setDrama_time(String drama_time) {
-        this.drama_time = drama_time;
-    }
-
-    public String getDrama_date() {
-        return drama_date;
-    }
-
-    public void setDrama_date(String drama_date) {
-        this.drama_date = drama_date;
-    }
 
     public String getDrama_photo() {
         return drama_photo;
@@ -142,22 +123,6 @@ public class BookingInfo implements Serializable {
 
     public void setDrama_photo(String drama_photo) {
         this.drama_photo = drama_photo;
-    }
-
-    public String getBooked_time() {
-        return booked_time;
-    }
-
-    public void setBooked_time(String booked_time) {
-        this.booked_time = booked_time;
-    }
-
-    public String getBooked_date() {
-        return booked_date;
-    }
-
-    public void setBooked_date(String booked_date) {
-        this.booked_date = booked_date;
     }
 
     public String getConfirmation_code() {
@@ -168,11 +133,11 @@ public class BookingInfo implements Serializable {
         this.confirmation_code = confirmation_code;
     }
 
-    public String getSeats_total_price() {
+    public double getSeats_total_price() {
         return seats_total_price;
     }
 
-    public void setSeats_total_price(String seats_total_price) {
+    public void setSeats_total_price(double seats_total_price) {
         this.seats_total_price = seats_total_price;
     }
 
@@ -214,5 +179,43 @@ public class BookingInfo implements Serializable {
 
     public void setUser_emailid(String user_emailid) {
         this.user_emailid = user_emailid;
+    }
+
+    public String getDrama_datetime() {
+        return drama_datetime;
+    }
+
+    public void setDrama_datetime(String drama_datetime) {
+        this.drama_datetime = drama_datetime;
+    }
+
+    public String getBooked_datetime() {
+        return booked_datetime;
+    }
+
+    public void setBooked_datetime(String booked_datetime) {
+        this.booked_datetime = booked_datetime;
+    }
+
+    @Override
+    public String toString() {
+        return "BookingInfo{" +
+                "_id=" + _id +
+                ", drama_id=" + drama_id +
+                ", user_id=" + user_id +
+                ", drama_name='" + drama_name + '\'' +
+                ", drama_group_name='" + drama_group_name + '\'' +
+                ", drama_datetime='" + drama_datetime + '\'' +
+                ", drama_photo='" + drama_photo + '\'' +
+                ", booked_datetime='" + booked_datetime + '\'' +
+                ", confirmation_code='" + confirmation_code + '\'' +
+                ", seats_total_price=" + seats_total_price +
+                ", seats_no_of_seats_booked='" + seats_no_of_seats_booked + '\'' +
+                ", seart_seat_no='" + seart_seat_no + '\'' +
+                ", auditorium_name='" + auditorium_name + '\'' +
+                ", user_name='" + user_name + '\'' +
+                ", user_emailid='" + user_emailid + '\'' +
+                ", bitmapQRCode=" + bitmapQRCode +
+                '}';
     }
 }

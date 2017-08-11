@@ -6,14 +6,18 @@ import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.icu.text.SimpleDateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.FavouritesInfo;
 import com.lognsys.kalrav.model.UserInfo;
+import com.lognsys.kalrav.util.KalravApplication;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +43,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
     public void addDrama(DramaInfo dramaInfo) {
         db = sqLiteHelper.getWritableDatabase();
         // If user exists update user
+        Log.d("","Test displaydrama  isDramaExist(dramaInfo) "+isDramaExist(dramaInfo));
         if (isDramaExist(dramaInfo)) {
 
             updateDrama(dramaInfo);
@@ -47,22 +52,53 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
             ContentValues values = new ContentValues();
             values.put(DramaInfo.COLUMN_ID, dramaInfo.getId());
+            Log.d("","Test displaydrama dramaInfo.getId() === "+ dramaInfo.getId());
+
             values.put(DramaInfo.COLUMN_GROUP_NAME, dramaInfo.getGroup_name());
+            Log.d("","Test displaydrama dramaInfo.getGroup_name() === "+ dramaInfo.getGroup_name());
+
             values.put(DramaInfo.COLUMN_DRAMA_NAME, dramaInfo.getTitle());
+            Log.d("","Test displaydrama dramaInfo.getTitle() === "+ dramaInfo.getTitle());
+
             values.put(DramaInfo.COLUMN_LINK_PHOTO, dramaInfo.getLink_photo());
+            Log.d("","Test displaydrama dramaInfo.getLink_photo() === "+ dramaInfo.getLink_photo());
+
             values.put(DramaInfo.COLUMN_DATETIME, dramaInfo.getDatetime());
+            Log.d("","Test displaydrama dramaInfo.getDatetime() === "+ dramaInfo.getDatetime());
+
             values.put(DramaInfo.COLUMN_DRAMA_LENGTH, dramaInfo.getDrama_length());
+            Log.d("","Test displaydrama dramaInfo.getDrama_length() === "+ dramaInfo.getDrama_length());
+
             values.put(DramaInfo.COLUMN_DRAMA_LANGUAGE, dramaInfo.getDrama_language());
+            Log.d("","Test displaydrama dramaInfo.getDrama_language() === "+ dramaInfo.getDrama_language());
+
             values.put(DramaInfo.COLUMN_DRAMA_GENRE, dramaInfo.getGenre());
+            Log.d("","Test displaydrama dramaInfo.getGenre() === "+ dramaInfo.getGenre());
+
             values.put(DramaInfo.COLUMN_DRAMA_TIME, dramaInfo.getTime());
+            Log.d("","Test displaydrama dramaInfo.getTime() === "+ dramaInfo.getTime());
+
             values.put(DramaInfo.COLUMN_DRAMA_DESCRIPTION, dramaInfo.getDescription());
+            Log.d("","Test displaydrama dramaInfo.getDescription() === "+ dramaInfo.getDescription());
+
             values.put(DramaInfo.COLUMN_DRAMA_CAST, dramaInfo.getStar_cast());
+            Log.d("","Test displaydrama dramaInfo.getStar_cast() === "+ dramaInfo.getStar_cast());
+
             values.put(DramaInfo.COLUMN_DRAMA_WRITER, dramaInfo.getWriter());
+            Log.d("","Test displaydrama dramaInfo.getWriter() === "+ dramaInfo.getWriter());
+
             values.put(DramaInfo.COLUMN_DRAMA_DIRECTOR, dramaInfo.getDirector());
+            Log.d("","Test displaydrama dramaInfo.getDirector() === "+ dramaInfo.getDirector());
+
             values.put(DramaInfo.COLUMN_DRAMA_AVG_RATING, dramaInfo.getAvg_rating());
+            Log.d("","Test displaydrama dramaInfo.getAvg_rating() === "+ dramaInfo.getAvg_rating());
+
             values.put(DramaInfo.COLUMN_DRAMA_MUSIC, dramaInfo.getMusic());
+            Log.d("","Test displaydrama dramaInfo.getMusic() === "+ dramaInfo.getMusic());
+
             values.put(DramaInfo.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
-            Log.d(TAG,"Rest addDrama  adding data to db  values "+values.valueSet());
+            Log.d("","Test displaydrama dramaInfo.getIsfav() === "+ dramaInfo.getIsfav());
+
 
             // Inserting Row
             db.insert(DramaInfo.TABLE_DRAMA, null, values);
@@ -282,10 +318,31 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
         SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
         DramaInfo dramaInfo = null;
+        // (3) create a new String using the date format we want
+        String date  = KalravApplication.getInstance().getCurrentDate() ;
+        Log.d(TAG,"Rest getAllDrama date "+date);
 
-
+//        db.query(true, DATABASE_TABLE, ALL_KEYS, KEY_DATE + "=?", new String[] {date}, null, null, null, null);
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-        Cursor c = db.rawQuery("SELECT " +
+        Cursor c = db.query(true, DramaInfo.TABLE_DRAMA, new String[]{DramaInfo.COLUMN_ID + "," +
+                DramaInfo.COLUMN_GROUP_NAME + "," +
+                DramaInfo.COLUMN_DRAMA_NAME + "," +
+                DramaInfo.COLUMN_LINK_PHOTO + "," +
+                DramaInfo.COLUMN_DATETIME + "," +
+                DramaInfo.COLUMN_DRAMA_LENGTH + "," +
+                DramaInfo.COLUMN_DRAMA_LANGUAGE + "," +
+                DramaInfo.COLUMN_DRAMA_GENRE + "," +
+                DramaInfo.COLUMN_DRAMA_TIME + "," +
+                DramaInfo.COLUMN_DRAMA_DESCRIPTION + "," +
+                DramaInfo.COLUMN_DRAMA_CAST + "," +
+                DramaInfo.COLUMN_DRAMA_WRITER + "," +
+                DramaInfo.COLUMN_DRAMA_DIRECTOR + "," +
+                DramaInfo.COLUMN_DRAMA_AVG_RATING + "," +
+                DramaInfo.COLUMN_DRAMA_MUSIC + "," +
+                DramaInfo.COLUMN_DRAMA_ISFAV}, DramaInfo.COLUMN_DATETIME  + ">= '"+date+"'", null, null, null, null, null);
+
+
+        /*  Cursor c = db.rawQuery("SELECT " +
                 DramaInfo.COLUMN_ID + "," +
                 DramaInfo.COLUMN_GROUP_NAME + "," +
                 DramaInfo.COLUMN_DRAMA_NAME + "," +
@@ -302,8 +359,8 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 DramaInfo.COLUMN_DRAMA_AVG_RATING +"," +
                 DramaInfo.COLUMN_DRAMA_MUSIC +"," +
                 DramaInfo.COLUMN_DRAMA_ISFAV +
-                " FROM drama", null);
-
+                " FROM drama where "+ DramaInfo.COLUMN_DATETIME +" > = ", new Date());
+*/
         if (c != null && c.getCount()>0) {
 
             Log.d(TAG,"Rest getAllDrama  c.getCount() "+ c.getCount());

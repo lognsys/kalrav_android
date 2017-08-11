@@ -23,6 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
+        android:visibility="gone"
         ads:adUnitId="ca-app-pub-2091012524875733/3506237007" />
 </RelativeLayout>
 

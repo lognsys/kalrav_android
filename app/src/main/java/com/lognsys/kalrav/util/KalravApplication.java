@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
@@ -19,6 +20,10 @@ import com.android.volley.toolbox.Volley;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.UserInfo;
+
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by pdoshi on 03/01/17.
  */
@@ -124,9 +129,20 @@ public void showDialog(Context context, String message){
             dialog.dismiss();
         }
     });
-
-
     // Showing Alert Message
     alertDialog.show();
-}
+    }
+
+    public String getCurrentDate()
+    {
+        // (1) get today's date
+        Date today = Calendar.getInstance().getTime();
+
+        // (2) create a date "formatter" (the date format we want)
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        // (3) create a new String using the date format we want
+        String date  = formatter.format(today);
+        return date;
+    }
 }

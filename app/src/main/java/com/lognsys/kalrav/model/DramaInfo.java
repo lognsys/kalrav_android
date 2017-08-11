@@ -14,7 +14,7 @@ public class DramaInfo implements Serializable {
     public static final String COLUMN_GROUP_NAME = "group_name";
     public static final String COLUMN_DRAMA_NAME = "drama_name";
     public static final String COLUMN_LINK_PHOTO = "photo_link";
-    public static final String COLUMN_DATETIME = "datetime";
+    public static final String COLUMN_DATETIME = "date";
     public static final String COLUMN_DRAMA_LENGTH = "drama_length";
     public static final String COLUMN_DRAMA_LANGUAGE = "drama_language";
     public static final String COLUMN_DRAMA_GENRE = "drama_genre";

@@ -25,7 +25,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="left|center"
-                android:src="@drawable/gujjubhai_ghode_chadhiya" />
+                android:src="@drawable/stub" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

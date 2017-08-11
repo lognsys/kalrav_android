@@ -97,16 +97,16 @@ public class MyTicketFragment extends Fragment {
                 bookingInfo = ticketInfos.get(i);
                 if (bookingInfo != null) {
                     tvDramaName.setText(bookingInfo.getDrama_name());
-                    textDramaDate.setText(bookingInfo.getDrama_date());
-                    textDramaTiming.setText(bookingInfo.getDrama_time());
-                    textBookingDate.setText(bookingInfo.getBooked_date());
-                    textBookingTime.setText(bookingInfo.getBooked_time());
+                    textDramaDate.setText(bookingInfo.getDrama_datetime());
+//                    textDramaTiming.setText(bookingInfo.getDrama_time());
+                    textBookingDate.setText(bookingInfo.getBooked_datetime());
+//                    textBookingTime.setText(bookingInfo.getBooked_time());
                     textUserName.setText(bookingInfo.getUser_name());
                     tvAuditorium.setText(bookingInfo.getAuditorium_name());
                     textGroupName.setText(bookingInfo.getDrama_name());
                     textTotalnoofticket.setText(bookingInfo.getSeats_no_of_seats_booked());
                     tvTicketNumber.setText(bookingInfo.getSeart_seat_no());
-                    textTotalprice.setText(bookingInfo.getSeats_total_price());
+                    textTotalprice.setText((int) bookingInfo.getSeats_total_price());
                     if (bookingInfo.getDrama_photo() != null) {
                         Picasso.with(getContext()).load(bookingInfo.getDrama_photo()).into(dramaImage);
                     } else {

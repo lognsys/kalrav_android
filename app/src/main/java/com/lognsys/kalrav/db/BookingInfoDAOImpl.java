@@ -35,24 +35,24 @@ public class BookingInfoDAOImpl implements BookingInfoDAO {
     @Override
     public void addTicket(BookingInfo bookingInfo) {
         db = sqLiteHelper.getWritableDatabase();
+        Log.d("GenerateQRCode"," GenerateQRCode addTicket bookingInfo.get_id()"+bookingInfo.get_id());
+        Log.d("GenerateQRCode"," GenerateQRCode addTicket bookingInfo.get_id()"+bookingInfo.toString());
 
         // If user exists update user
-        if (bookingInfo.get_id()!=0) {
+       /* if (bookingInfo.get_id()!=0) {
 
             updateTicket(bookingInfo);
 
-        } else {  //Create user if new
+        } else*/ {  //Create user if new
 
             ContentValues values = new ContentValues();
+            values.put(BookingInfo.COLUMN_ID, bookingInfo.get_id());
             values.put(BookingInfo.COLUMN_DRAMA_ID, bookingInfo.getDrama_id());
             values.put(BookingInfo.COLUMN_USER_ID, bookingInfo.getUser_id());
             values.put(BookingInfo.COLUMN_DRAMA_NAME, bookingInfo.getDrama_name());
             values.put(BookingInfo.COLUMN_GROUP_NAME, bookingInfo.getDrama_group_name());
             values.put(BookingInfo.COLUMN_LINK_PHOTO, bookingInfo.getDrama_photo());
-            values.put(BookingInfo.COLUMN_DATETIME, bookingInfo.getDrama_date());
-            values.put(BookingInfo.COLUMN_DRAMA_TIME, bookingInfo.getDrama_time());
-            values.put(BookingInfo.COLUMN_BOOKED_TIME, bookingInfo.getBooked_time());
-            values.put(BookingInfo.COLUMN_BOOKED_DATE, bookingInfo.getBooked_date());
+            values.put(BookingInfo.COLUMN_BOOKED_DATETIME, bookingInfo.getBooked_datetime());
             values.put(BookingInfo.COLUMN_CONFIRMATION_CODE, bookingInfo.getConfirmation_code());
             values.put(BookingInfo.COLUMN_SEAT_TOTAL_PRICE, bookingInfo.getSeats_total_price());
             values.put(BookingInfo.COLUMN_NO_OF_SEATS_BOOKED, bookingInfo.getSeats_no_of_seats_booked());
@@ -60,8 +60,9 @@ public class BookingInfoDAOImpl implements BookingInfoDAO {
             values.put(BookingInfo.COLUMN_AUDITORIUM_NAME, bookingInfo.getAuditorium_name());
             values.put(BookingInfo.COLUMN_USER_NAME, bookingInfo.getUser_name());
             values.put(BookingInfo.COLUMN_USER_EMAIL_ID, bookingInfo.getUser_emailid());
-            Log.d("","Test insert bookingInfo.getBitmapQRCode() "+ bookingInfo.getBitmapQRCode());
-            Log.d("","Test insert BitMapToString(bookingInfo.getBitmapQRCode()) "+ BitMapToString(bookingInfo.getBitmapQRCode()));
+            values.put(BookingInfo.COLUMN_DRAMA_DATETIME, bookingInfo.getDrama_datetime());
+            Log.d("","GenerateQRCode insert bookingInfo.getBitmapQRCode() "+ bookingInfo.getBitmapQRCode());
+            Log.d("","GenerateQRCode insert BitMapToString(bookingInfo.getBitmapQRCode()) "+ BitMapToString(bookingInfo.getBitmapQRCode()));
 
             values.put(BookingInfo.COLUMN_QRCODE_BITMAP, BitMapToString(bookingInfo.getBitmapQRCode()));
 
@@ -102,10 +103,8 @@ public class BookingInfoDAOImpl implements BookingInfoDAO {
         values.put(BookingInfo.COLUMN_DRAMA_NAME, bookingInfo.getDrama_name());
         values.put(BookingInfo.COLUMN_GROUP_NAME, bookingInfo.getDrama_group_name());
         values.put(BookingInfo.COLUMN_LINK_PHOTO, bookingInfo.getDrama_photo());
-        values.put(BookingInfo.COLUMN_DATETIME, bookingInfo.getDrama_date());
-        values.put(BookingInfo.COLUMN_DRAMA_TIME, bookingInfo.getDrama_time());
-        values.put(BookingInfo.COLUMN_BOOKED_TIME, bookingInfo.getBooked_time());
-        values.put(BookingInfo.COLUMN_BOOKED_DATE, bookingInfo.getBooked_date());
+        values.put(BookingInfo.COLUMN_DRAMA_DATETIME, bookingInfo.getDrama_datetime());
+        values.put(BookingInfo.COLUMN_BOOKED_DATETIME, bookingInfo.getBooked_datetime());
         values.put(BookingInfo.COLUMN_CONFIRMATION_CODE, bookingInfo.getConfirmation_code());
         values.put(BookingInfo.COLUMN_SEAT_TOTAL_PRICE, bookingInfo.getSeats_total_price());
         values.put(BookingInfo.COLUMN_NO_OF_SEATS_BOOKED, bookingInfo.getSeats_no_of_seats_booked());
@@ -139,13 +138,13 @@ public class BookingInfoDAOImpl implements BookingInfoDAO {
     public ArrayList<BookingInfo> getAllTicket() {
         SQLiteDatabase db = sqLiteHelper.getWritableDatabase();
         BookingInfo bookingInfo = null;
-        Log.d("","Test getAllTicket  ");
+        Log.d("","GenerateQRCode getAllTicket  ");
 
 
         ArrayList<BookingInfo> bookingInfos =new ArrayList<BookingInfo>();
         Cursor c = db.rawQuery("SELECT * FROM ticket ", null);
         if(c!=null)
-        Log.d("","Test getAllTicket  c.getCount() "+ c.getCount());
+        Log.d("","GenerateQRCode getAllTicket  c.getCount() "+ c.getCount());
 
         if (c != null && c.getCount()>0) {
 
@@ -169,10 +168,10 @@ public class BookingInfoDAOImpl implements BookingInfoDAO {
 //                bookingInfo.setDrama_date(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DATETIME)));
 //
 //                bookingInfo.setDrama_time(c.getString(c.getColumnIndex(SQLiteHelper.COLUMN_DRAMA_TIME)).toString());
-                bookingInfo.setBooked_time(c.getString(c.getColumnIndex(BookingInfo.COLUMN_BOOKED_TIME)).toString());
-                bookingInfo.setBooked_date(c.getString(c.getColumnIndex(BookingInfo.COLUMN_BOOKED_DATE)).toString());
+                bookingInfo.setDrama_datetime(c.getString(c.getColumnIndex(BookingInfo.COLUMN_DRAMA_DATETIME)).toString());
+                bookingInfo.setBooked_datetime(c.getString(c.getColumnIndex(BookingInfo.COLUMN_BOOKED_DATETIME)).toString());
                 bookingInfo.setConfirmation_code(c.getString(c.getColumnIndex(BookingInfo.COLUMN_CONFIRMATION_CODE)).toString());
-                bookingInfo.setSeats_total_price(c.getString(c.getColumnIndex(BookingInfo.COLUMN_SEAT_TOTAL_PRICE)).toString());
+                bookingInfo.setSeats_total_price(Double.parseDouble(c.getString(c.getColumnIndex(BookingInfo.COLUMN_SEAT_TOTAL_PRICE)).toString()));
                 bookingInfo.setSeats_no_of_seats_booked(c.getString(c.getColumnIndex(BookingInfo.COLUMN_NO_OF_SEATS_BOOKED)).toString());
                 bookingInfo.setSeart_seat_no(c.getString(c.getColumnIndex(BookingInfo.COLUMN_SEAT_NO)).toString());
                 bookingInfo.setAuditorium_name(c.getString(c.getColumnIndex(BookingInfo.COLUMN_AUDITORIUM_NAME)).toString());

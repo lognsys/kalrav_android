@@ -122,7 +122,7 @@ public class SchemeWithAspee extends Fragment {
                 ArrayList<Seat> items=(ArrayList<Seat>)seatList;
                 Fragment fff=new ConfirmFragment();
                 Bundle args = new Bundle();
-                args.putSerializable("auditoriums_id",auditorium.getAudiId());
+                args.putSerializable("auditorium",auditorium);
                 args.putSerializable("dramaInfoId",dramaInfoId);
                 args.putString("time", time);
                 args.putString("strDate", strDate);

@@ -56,7 +56,6 @@ import java.util.Properties;
 
 
 public class DramaFragment extends Fragment {
-    ArrayList<DramaInfo> listitems = new ArrayList<>();
     RecyclerView myRecyclerView;
     static Bitmap bm;
     AdView mAdView;
@@ -80,28 +79,30 @@ public class DramaFragment extends Fragment {
     }
 
     public void initializeList() {
-        listitems.clear();
+
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         favouritesInfoDAOImpl = new FavouritesInfoDAOImpl(getActivity());
         dramaInfos = new ArrayList<DramaInfo>() ;
         favouritesInfo=new FavouritesInfo();
         favouritesInfos=new ArrayList<FavouritesInfo>();
+
         if(KalravApplication.getInstance().isConnectedToInternet()) {
             int count =dramaInfoDAO.getDramaCount();
-            Log.d("","count "+count);
+            Log.d("","initializeList count "+count);
 
             if(count>0){
 
                 dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+               if(dramaInfos!=null)
                 Log.d("","count dramaInfos size"+dramaInfos.size());
-                if (dramaInfos.size() > 0 & dramaInfos != null) {
+                if (dramaInfos.size() > 0 && dramaInfos != null) {
                     adapter=new MyAdapter(dramaInfos);
                     myRecyclerView.setAdapter(adapter);
                 }
             }
             else{
 
-                Log.d("","count display drama "+count);
+                Log.d("","initializeList  drama count next display  drama "+count);
                 displaydrama();
             }
         }
@@ -155,6 +156,9 @@ public class DramaFragment extends Fragment {
                                 int dramaId=jsonDramaObject.getInt("id");
                                 Log.d("","displaydrama jsonDramaObject dramaId "+dramaId);
                                 dramaInfo.setId(dramaId);
+                                String date=jsonDramaObject.getString("date");
+                                Log.d("","displaydrama jsonDramaObject date "+date);
+                                dramaInfo.setDatetime(date);
 
                                 String title=jsonDramaObject.getString("title");
                                 Log.d("","displaydrama jsonDramaObject title "+title);
@@ -163,29 +167,24 @@ public class DramaFragment extends Fragment {
                                 String imageurl=jsonDramaObject.getString("imageurl");
                                 Log.d("","displaydrama jsonDramaObject imageurl "+imageurl);
                                 dramaInfo.setLink_photo(imageurl);
-
+                                String isFav=favouritesInfoDAOImpl.findfavBy(dramaInfo.getId());
+                                dramaInfo.setIsfav(isFav);
+                                dramaInfoDAO.addDrama(dramaInfo);
                                 KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
-
-                                if(dramaInfo!= null && dramaInfo.getId()!=0){
-                                    String isFav=favouritesInfoDAOImpl.findfavBy(dramaInfo.getId());
-                                    dramaInfo.setIsfav(isFav);
-                                    dramaInfoDAO.addDrama(dramaInfo);
-
-                                    dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
-                                    Log.d("","Test onPost dramaInfos.size "+dramaInfos.size());
-                                    if (dramaInfos.size() > 0 & dramaInfos != null) {
-                                        adapter=new MyAdapter(dramaInfos);
-                                        myRecyclerView.setAdapter(adapter);
-                                    }
-                                }
-
                             }
+
+                                dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+
+                                if ( dramaInfos != null && dramaInfos.size()>0) {
+                                    adapter=new MyAdapter(dramaInfos);
+                                    myRecyclerView.setAdapter(adapter);
+                                }
 
                             adapter.notifyDataSetChanged();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Log.d("","JSonException Exception "+e);
+                            Log.d("","displaydrama JSonException Exception "+e);
 
                             Toast.makeText(getContext(),
                                     getString(R.string.no_data_available),
