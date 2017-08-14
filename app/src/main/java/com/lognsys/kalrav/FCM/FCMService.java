@@ -79,7 +79,7 @@ public class FCMService extends FirebaseMessagingService {
 
                     String message=object.getString("message");
                     notificationInfo.setMessage(message);
-
+                    notificationInfo.setLast_edit(KalravApplication.getInstance().getCurrentDate());
                     notificationDAOImpl.addNotificationInfo(notificationInfo);
 
 

@@ -2,6 +2,8 @@ package com.lognsys.kalrav.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,12 +19,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.AuditoriumPriceRange;
+import com.lognsys.kalrav.model.BookingInfo;
 import com.lognsys.kalrav.model.SeatExample;
 import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
 import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
@@ -39,6 +44,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -540,8 +548,12 @@ public class AuditoriumListFragment extends Fragment {
 
         }
         public List<SeatExample> findAllItems() {
-            JSONObject serviceResult = requestWebService(
-                    "http://www.json-generator.com/api/json/get/ckfmtreesy?indent=2");
+            final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
+            Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
+
+            JSONObject serviceResult = requestWebService(bookedseatsurl);
+//            JSONObject serviceResult = requestWebService(
+//                    "http://www.json-generator.com/api/json/get/ckfmtreesy?indent=2");
 
             List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 
@@ -580,10 +592,154 @@ public class AuditoriumListFragment extends Fragment {
                 System.setProperty("http.keepAlive", "false");
             }
         }
-        public JSONObject requestWebService(String serviceUrl) {
-            Log.e("","RequestItemsServiceTask requestWebService serviceUrl  "+serviceUrl);
+        public JSONObject requestWebService(String bookedseatsurl) {
+            Log.e("","RequestItemsServiceTask requestWebService bookedseatsurl  "+bookedseatsurl);
+            JSONObject params = new JSONObject();
+            try {
 
-            disableConnectionReuseIfNecessary();
+                params.put("dramas_id", dramaInfoId);
+                params.put("auditoriums_id",Integer.parseInt(auditorium.getAudiId()));
+                Log.d("Confirm Fragment","bookedSeats params " +params);
+
+            } catch (Exception e) {
+                Log.d("Confirm Fragment","bookedSeats Exception "+e  );
+
+                e.printStackTrace();
+            }
+
+
+            final JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST,
+                    bookedseatsurl, params,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            Log.d("Confirm Fragment","bookedSeats response " +response);
+                            try {
+                                JSONArray jsonArray=response.getJSONArray("seatnumberdetails");
+                                Log.d("Confirm Fragment","bookedSeats jsonArray " +jsonArray);
+                                Log.d("Confirm Fragment","bookedSeats jsonArray length " +jsonArray.length());
+
+                                    for(int i=0;i<jsonArray.length();i++){
+                                        Log.d("Confirm Fragment","bookedSeats jsonArray.get(i) " +jsonArray.get(i));
+                                        JSONObject jsonObject=jsonArray.getJSONObject(i);
+                                        Log.d("Confirm Fragment","bookedSeats jsonObject " +jsonObject);
+
+                                        int ith=jsonObject.getInt("i");
+                                        Log.d("Confirm Fragment","bookedSeats ith " +ith);
+
+                                        int jth=jsonObject.getInt("j");
+                                        Log.d("Confirm Fragment","bookedSeats jth " +jth);
+
+                                    }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                               /* JSONObject jsonObject = new JSONObject(String.valueOf(response));
+                                Log.d("Confirm Fragment","bookedSeats response " +response);
+//                            {"uniqueCode":"MTU4MTIwMTctMDgtMTAgMTE6MjU6MDA=","bookingId":36}
+
+                                BookingInfo bookingInfo=new BookingInfo();
+*/
+/*
+{"dramas_id":2,"booking_date":"2017-08-11 01:25:00","users_id":58,"auditoriums_id":1,"price":400,"seatnumber":["Z1","Z2"],"no_of_seats":2}
+*/
+                            try {
+                              /*
+                                bookingInfo.set_id(jsonObject.getInt("bookingId"));
+                                bookingInfo.setConfirmation_code(jsonObject.getString("uniqueCode"));
+                                bookingInfo.setDrama_name(dramaInfo.getTitle());
+                                bookingInfo.setDrama_id(dramaInfo.getId());
+                                bookingInfo.setAuditorium_name(auditorium.getAudiName());
+                                if (bitmapQRCode == null){
+                                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
+                                    bitmapQRCode=createBitmapOfQRCode();
+                                }
+                                bookingInfo.setDrama_id(dramaInfo.getId());
+                                bookingInfo.setUser_id(Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()));
+//                                bookingInfo.setDrama_name(dramaInfo.getTitle());
+                                bookingInfo.setDrama_group_name(dramaInfo.getGroup_name());
+                                bookingInfo.setDrama_photo(dramaInfo.getLink_photo());
+                                bookingInfo.setDrama_datetime(bookingDateTime);
+                                String dateString=new Date().toString();
+                                bookingInfo.setBooked_datetime(dateString);
+                                bookingInfo.setSeats_total_price((totalPrice));
+                                bookingInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
+                                bookingInfo.setSeart_seat_no(editSeatNumber.getText().toString());
+                                bookingInfo.setAuditorium_name(editAuditoriumName.getText().toString());
+                                bookingInfo.setUser_name(editName.getText().toString());
+                                if(bitmapQRCode!=null){
+                                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute this.bitmapQRCode "+bitmapQRCode);
+                                    bookingInfo.setBitmapQRCode(bitmapQRCode);
+                                }
+                                bookingInfo.setUser_emailid(editemailid.getText().toString());
+                                Log.d("GenerateQRCode"," GenerateQRCode onPostExecute bookingInfo getBitmapQRCode "+ bookingInfo.getBitmapQRCode());
+                                Toast.makeText(getContext(),"Your tickets are confirmed",Toast.LENGTH_SHORT).show();
+                                bookingInfoDAO.addTicket(bookingInfo);
+                                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                                callFragment();*/
+                            } catch (Exception e) {
+                                Log.d("GenerateQRCode"," GenerateQRCode doInBackground Exception "+e);
+
+                            }
+
+                            //  YOUR RESPONSE
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    volleyError.printStackTrace();
+//                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
+
+                    String json = null;
+                    String str=null;
+                    byte[] response=null;
+                    if(volleyError.networkResponse.data!=null)
+                        response = volleyError.networkResponse.data;
+                    Log.d("Response","bookedSeats volleyError response " +response);
+                    try {
+                        str = new String(response, "UTF-8");
+                        Log.d("Response","bookedSeats volleyError str toString  " +str.toString() );
+
+                        try {
+                            JSONObject object=new JSONObject(str.toString());
+                            Log.d("Response","exception inside object  " +object);
+
+                            int  statusCode=object.getInt("statusCode");
+                            Log.d("Response","Rest inside statusCode  " +statusCode);
+
+                            if(statusCode==400){
+                                String msg=object.getString("msg");
+                                displayMessage(msg);
+                            }
+                            else if(statusCode==406){
+                                String msg=object.getString("msg");
+                                displayMessage(msg);
+                            } else if(statusCode==404){
+                                String msg=object.getString("msg");
+                                displayMessage(msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //Somewhere that has access to a context
+                public void displayMessage(String toastString){
+                    Log.d("Response","Rest volleyError toastString  " +toastString );
+
+                    Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
+                }
+
+
+            });
+            KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
+
+           /* disableConnectionReuseIfNecessary();
 
             HttpURLConnection urlConnection = null;
             try {
@@ -640,6 +796,7 @@ public class AuditoriumListFragment extends Fragment {
                 }
             }
 
+            return null;*/
             return null;
         }
 

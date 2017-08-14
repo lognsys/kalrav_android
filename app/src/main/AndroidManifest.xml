@@ -89,7 +89,7 @@
             android:theme="@style/AppTheme.NoActionBar" >
 
         </activity>
-        <service android:name="com.lognsys.kalrav.FCM.FCMInstanceIdService" android:enabled="true">
+        <service android:name="com.lognsys.kalrav.FCM.FCMInstanceIdService" >
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"></action>
             </intent-filter>
@@ -97,7 +97,7 @@
        <!-- RECEIVING THE MESSAGE FROM  FIREBASE CONSOLE-->
         <service android:name="com.lognsys.kalrav.FCM.FCMService" >
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" android:enabled="true"></action>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" ></action>
             </intent-filter>
         </service>
 

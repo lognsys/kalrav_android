@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.lognsys.kalrav.model.NotificationInfo;
 import com.lognsys.kalrav.model.UserInfo;
+import com.lognsys.kalrav.util.KalravApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class NotificationDAOImpl implements NotificationDAO {
             values.put(NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME, notificationInfo.getRealname());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE, notificationInfo.getDramaTitle());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_MESSAGE, notificationInfo.getMessage());
+            values.put(NotificationInfo.COLUMN_TIMESTAMP, KalravApplication.getInstance().getCurrentDate());
             // Inserting Row
             db.insert(NotificationInfo.TABLE_NOTIFICATION, null, values);
 //            db.close(); // Closing database connection
@@ -57,7 +59,8 @@ public class NotificationDAOImpl implements NotificationDAO {
                 NotificationInfo.COLUMN_NOTIFICATION_USER_ID + "," +
                 NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME + "," +
                 NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE +"," +
-                NotificationInfo.COLUMN_NOTIFICATION_MESSAGE +
+                NotificationInfo.COLUMN_NOTIFICATION_MESSAGE +"," +
+                NotificationInfo.COLUMN_TIMESTAMP +
                 " FROM notification", null);
         if(c!=null)
             Log.d(TAG,"Rest getAllNotificationInfo getCount - "+c.getCount());
@@ -83,6 +86,9 @@ public class NotificationDAOImpl implements NotificationDAO {
 
                 String message = c.getString(5);
                 notificationInfo.setMessage(message);
+
+                String last_edit = c.getString(6);
+                notificationInfo.setLast_edit(last_edit);
                 infos.add(notificationInfo);
 
             }
@@ -92,7 +98,7 @@ public class NotificationDAOImpl implements NotificationDAO {
     }
 
     @Override
-    public int deleteNotificationInfo(int num_of_days) {
+    public int deleteNotificationInfo() {
 //        DELETE
 //        FROM LoginTime
 //        WHERE user_id = 1
@@ -101,8 +107,10 @@ public class NotificationDAOImpl implements NotificationDAO {
         int count;
         SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
         NotificationInfo notificationInfo = null;
+//        DELETE FROM notification WHERE dateEntered < DATE_SUB(NOW(), INTERVAL 3 MONTH);
+//        Cursor c = db.rawQuery("DELETE FROM notification LIMIT 15", null);
 
-        Cursor c = db.rawQuery("DELETE FROM notification LIMIT 15", null);
+        Cursor c = db.rawQuery("DELETE FROM notification LIMIT 10", null);
         if(c!=null)
             Log.d(TAG,"Rest getAllNotificationInfo getCount - "+c.getCount());
 
@@ -112,5 +120,39 @@ public class NotificationDAOImpl implements NotificationDAO {
         return c.getCount();
         }
         return count;
+    }
+
+    @Override
+    public int deleteNotificationInfoById(int id) {
+        int count;
+        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+        NotificationInfo notificationInfo = null;
+
+        Cursor c = db.rawQuery("DELETE FROM notification where id = "+id, null);
+        if(c!=null)
+            Log.d(TAG,"Rest deleteNotificationInfoById getCount - "+c.getCount());
+
+        count=+c.getCount();
+        if (c != null && c.getCount()>0 ) {
+
+            return c.getCount();
+        }
+        return count;
+    }
+
+    @Override
+    public int countNotificationAfterDelete() {
+        SQLiteDatabase db = sqLiteHelper.getReadableDatabase();
+        List<NotificationInfo>  infos=new ArrayList<NotificationInfo>();
+        NotificationInfo notificationInfo = null;
+
+        Cursor c = db.rawQuery("SELECT * FROM notification", null);
+        if(c!=null)
+            Log.d(TAG,"Rest getAllNotificationInfo getCount - "+c.getCount());
+
+        if (c != null && c.getCount()>0 ) {
+            return c.getCount();
+        }
+        return 0;
     }
 }

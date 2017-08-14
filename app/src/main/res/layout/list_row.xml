@@ -23,15 +23,23 @@
         android:layout_toRightOf="@+id/thumbnail"
         android:textSize="@dimen/title"
         android:textStyle="bold" />
-
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="wrap_content"
+        android:layout_height="100dip"
+        android:layout_gravity="center"
+        android:layout_weight="0.2"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="0dip" >
     <!-- Message -->
     <TextView
         android:id="@+id/message"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
         android:textSize="@dimen/rating" />
 
     <!-- Genre -->
@@ -54,11 +62,13 @@
         android:layout_alignParentRight="true"
         android:textColor="@color/year"
         android:textSize="@dimen/year" />
+</LinearLayout>
 
     <!-- Rightend Arrow -->
     <ImageView android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/delete"
+        android:id="@+id/imgdelete"
+        android:src="@mipmap/delete"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"/>
 

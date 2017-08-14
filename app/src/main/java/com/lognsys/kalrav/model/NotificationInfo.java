@@ -14,13 +14,14 @@ public class NotificationInfo {
     public static final String COLUMN_NOTIFICATION_USER_REALNAME = "realname";
     public static final String COLUMN_NOTIFICATION_DRAMA_TITLE = "dramaTitle";
     public static final String COLUMN_NOTIFICATION_MESSAGE = "message";
-
+    public static final String COLUMN_TIMESTAMP = "last_edit";
     private int _id ;
     private int dramaId ;
     private int userId;
     private String realname;
     private String dramaTitle;
     private String message;
+    private String last_edit;
 
 
     public NotificationInfo(int _id, int dramaId, int userId, String realname, String dramaTitle, String message) {
@@ -34,6 +35,14 @@ public class NotificationInfo {
 
     public NotificationInfo() {
 
+    }
+
+    public String getLast_edit() {
+        return last_edit;
+    }
+
+    public void setLast_edit(String last_edit) {
+        this.last_edit = last_edit;
     }
 
     public int get_id() {

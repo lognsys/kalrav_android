@@ -21,5 +21,8 @@ public interface NotificationDAO {
     ArrayList<NotificationInfo> getAllNotificationInfo();
 
 
-    int deleteNotificationInfo(int num_of_days);
+    int deleteNotificationInfo();
+
+    int deleteNotificationInfoById(int id);
+    int countNotificationAfterDelete();
 }
