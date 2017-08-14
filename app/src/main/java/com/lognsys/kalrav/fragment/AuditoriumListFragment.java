@@ -81,7 +81,7 @@ public class AuditoriumListFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "AuditoriumListFragment";
-
+    List<SeatExample> seatesItems;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -203,7 +203,7 @@ public class AuditoriumListFragment extends Fragment {
                         try {
                             if(response!=null)
                             {
-                            Log.d("", "requestAuditoriumDateTime response " + response.toString());
+                            Log.d(TAG, "requestAuditoriumDateTime response " + response.toString());
                                 auditoriumList = new ArrayList<Auditorium>();
                                 myRecyclerView.setVisibility(View.VISIBLE);
                                 for (int i = 0; i < response.length(); i++) {
@@ -241,18 +241,18 @@ public class AuditoriumListFragment extends Fragment {
                                     int istart = jsonObjectpricerange.getInt("istart");
                                     auditoriumPriceRange.setIstart(istart);
 
-                                    Log.d("", "requestAuditoriumDateTime jsonObjectpricerange ======= istart " + istart);
+                                    Log.d(TAG, "requestAuditoriumDateTime jsonObjectpricerange ======= istart " + istart);
 
                                     int iend = jsonObjectpricerange.getInt("iend");
                                     auditoriumPriceRange.setIend(iend);
 
-                                    Log.d("", "requestAuditoriumDateTime jsonObjectpricerange ======= iend " + iend);
+                                    Log.d(TAG, "requestAuditoriumDateTime jsonObjectpricerange ======= iend " + iend);
 
                                     int price = jsonObjectpricerange.getInt("price");
                                     auditoriumPriceRange.setPrice(price);
 
                                     auditoriumPriceRange.setAudiId(auditorium.getAudiId());
-                                    Log.d("", "requestAuditoriumDateTime jsonObjectpricerange ======= price " + price);
+                                    Log.d(TAG, "requestAuditoriumDateTime jsonObjectpricerange ======= price " + price);
                                     auditoriumPriceRangeList.add(auditoriumPriceRange);
                                 }
                                 auditorium.setAuditoriumPriceRanges((ArrayList<AuditoriumPriceRange>) auditoriumPriceRangeList);
@@ -270,7 +270,7 @@ public class AuditoriumListFragment extends Fragment {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.d("","requestAuditoriumDateTime JSONException "+e);
+                    Log.d(TAG,"requestAuditoriumDateTime JSONException "+e);
 
                     Toast.makeText(getActivity(),
                             "Error: " + e.getMessage(),
@@ -291,18 +291,18 @@ public class AuditoriumListFragment extends Fragment {
                 byte[] response=null;
                 if(volleyError.networkResponse.data!=null)
                     response = volleyError.networkResponse.data;
-                Log.d("Response","Rest volleyError response " +response);
+                Log.d(TAG,"Rest volleyError response " +response);
                 try {
                     if (response != null && response.length > 0) {
                         str = new String(response, "UTF-8");
-                        Log.d("Response", "Rest volleyError str toString  " + str.toString());
+                        Log.d(TAG, "Rest volleyError str toString  " + str.toString());
 
                         try {
                             JSONObject object = new JSONObject(str.toString());
-                            Log.d("Response", "Rest inside object  " + object);
+                            Log.d(TAG, "Rest inside object  " + object);
 
                             int statusCode = object.getInt("statusCode");
-                            Log.d("Response", "Rest inside statusCode  " + statusCode);
+                            Log.d(TAG, "Rest inside statusCode  " + statusCode);
 
                             if (statusCode == 400) {
                                 String msg = object.getString("msg");
@@ -371,6 +371,12 @@ public class AuditoriumListFragment extends Fragment {
         mListener = null;
     }
 
+    public void setSeatesItems(List<SeatExample> seatesItems) {
+        this.seatesItems = seatesItems;
+    }
+    public List<SeatExample> getSeatesItems() {
+       return this.seatesItems;
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -443,8 +449,11 @@ public class AuditoriumListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getActivity(),"Time"+split[finalI]+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
-
-                        new RequestItemsServiceTask(auditorium,split[finalI],strDate).execute();
+                        final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
+                        Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
+                        KalravApplication.getInstance().getPrefs().showDialog(getActivity());
+                        requestWebService(bookedseatsurl,split[finalI],strDate);
+//                        new RequestItemsServiceTask(auditorium,split[finalI],strDate).execute();
 
                     }
                 });
@@ -456,143 +465,8 @@ public class AuditoriumListFragment extends Fragment {
 
             Log.d("", "MyAdapter onBindViewHolder textTime "+holder.textTime.getText().toString());
         }
-        private class RequestItemsServiceTask
-                extends AsyncTask<Void, Void, Void> {
-            private ProgressDialog dialog =
-                    new ProgressDialog(getActivity());
-            Auditorium auditorium;
-            String time,strDate;
-            public RequestItemsServiceTask(Auditorium auditorium, String time, String strDate) {
-            this.auditorium=auditorium;
-            this.time=time;
-            this.strDate=strDate;
-            }
 
-            @Override
-            protected void onPreExecute() {
-                // TODO i18n
-                dialog.setMessage("Please wait..");
-                dialog.show();
-            }
-
-            @Override
-            protected Void doInBackground(Void... unused) {
-                // The ItemService would contain the method showed
-                // in the previous paragraph
-//            ItemService itemService = ItemService.getCurrentInstance();
-                try {
-                    Log.e("","RequestItemsServiceTask ");
-
-                    itemsList = findAllItems();
-
-                } catch (Throwable e) {
-                    Log.e("","RequestItemsServiceTask Throwable "+e);
-
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("itemsList", (Serializable) itemsList);
-                bundle.putInt("dramaInfoId", dramaInfoId);
-                bundle.putString("time", this.time);
-                bundle.putString("strDate", this.strDate);
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-               if(this.auditorium.getAudiName().equalsIgnoreCase("Aspee")){
-
-                   Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
-                   if( this.auditorium.getAuditoriumPriceRanges()!= null){
-
-                       bundle.putSerializable("auditorium",this.auditorium);
-
-                   }
-                   Fragment fragment = new SchemeWithAspee();
-                   fragment.setArguments(bundle);
-                   getActivity().getSupportFragmentManager().beginTransaction()
-                           .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-               }
-               else if(this.auditorium.getAudiName().equalsIgnoreCase("Bhaidas")){
-                   Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
-                   if( this.auditorium.getAuditoriumPriceRanges()!= null){
-
-                       bundle.putSerializable("auditorium",this.auditorium);
-
-                   }
-                   Fragment fragment = new SchemeBhaidasFragment();
-                   fragment.setArguments(bundle);
-                   getActivity().getSupportFragmentManager().beginTransaction()
-                           .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-               }
-                else{
-                   Toast.makeText(getActivity(),"auditorium.getAuditoriumPriceRanges() "+this.auditorium.getAuditoriumPriceRanges(),Toast.LENGTH_LONG).show();
-                   if( this.auditorium.getAuditoriumPriceRanges()!= null){
-
-                       bundle.putSerializable("auditorium",this.auditorium);
-
-                   }
-                   Fragment fragment = new SchemePrabhodhanFragment();
-                   fragment.setArguments(bundle);
-                   getActivity().getSupportFragmentManager().beginTransaction()
-                           .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-               }
-
-            }
-
-        }
-        public List<SeatExample> findAllItems() {
-            final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
-            Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
-
-            JSONObject serviceResult = requestWebService(bookedseatsurl);
-//            JSONObject serviceResult = requestWebService(
-//                    "http://www.json-generator.com/api/json/get/ckfmtreesy?indent=2");
-
-            List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
-
-            try {
-
-                JSONArray items = serviceResult.getJSONArray("seatsdetails");
-
-//                Log.e("","RequestItemsServiceTask findAllItems items  "+items);
-                Log.e("","RequestItemsServiceTask findAllItems items.length()  "+items.length());
-
-                for (int i = 0; i < items.length(); i++) {
-                    JSONObject obj = items.getJSONObject(i);
-                    SeatExample seatExample=new SeatExample();
-                    seatExample.setIrow(obj.getInt("i"));
-                    seatExample.setJrow(obj.getInt("j"));
-
-                    foundItems.add(seatExample);
-                }
-
-            } catch (JSONException e) {
-                Log.e("","RequestItemsServiceTask findAllItems JSONException  "+e);
-            }
-
-            return foundItems;
-        }
-
-        private  String getResponseText(InputStream inStream) {
-            // very nice trick from
-            // http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
-            return new Scanner(inStream).useDelimiter("\\A").next();
-        }
-        private  void disableConnectionReuseIfNecessary() {
-            // see HttpURLConnection API doc
-            if (Integer.parseInt(Build.VERSION.SDK)
-                    < Build.VERSION_CODES.FROYO) {
-                System.setProperty("http.keepAlive", "false");
-            }
-        }
-        public JSONObject requestWebService(String bookedseatsurl) {
+        public  void requestWebService(String bookedseatsurl, final String time, final String strDate) {
             Log.e("","RequestItemsServiceTask requestWebService bookedseatsurl  "+bookedseatsurl);
             JSONObject params = new JSONObject();
             try {
@@ -602,7 +476,7 @@ public class AuditoriumListFragment extends Fragment {
                 Log.d("Confirm Fragment","bookedSeats params " +params);
 
             } catch (Exception e) {
-                Log.d("Confirm Fragment","bookedSeats Exception "+e  );
+                Log.d(TAG,"bookedSeats Exception "+e  );
 
                 e.printStackTrace();
             }
@@ -613,79 +487,87 @@ public class AuditoriumListFragment extends Fragment {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 
-                            Log.d("Confirm Fragment","bookedSeats response " +response);
+                            Log.d(TAG,"bookedSeats response " +response);
                             try {
-                                JSONArray jsonArray=response.getJSONArray("seatnumberdetails");
-                                Log.d("Confirm Fragment","bookedSeats jsonArray " +jsonArray);
-                                Log.d("Confirm Fragment","bookedSeats jsonArray length " +jsonArray.length());
+                                JSONArray jsonseatnumberdetails=response.getJSONArray("seatnumberdetails");
+                                Log.d(TAG,"bookedSeats jsonseatnumberdetails " +jsonseatnumberdetails);
+                                Log.d(TAG,"bookedSeats jsonseatnumberdetails length " +jsonseatnumberdetails.length());
+//                                    [{"i":1,"j":8},{"i":1,"j":7},{"i":1,"j":6},{"i":1,"j":5}]
 
-                                    for(int i=0;i<jsonArray.length();i++){
-                                        Log.d("Confirm Fragment","bookedSeats jsonArray.get(i) " +jsonArray.get(i));
-                                        JSONObject jsonObject=jsonArray.getJSONObject(i);
+                                for(int i=0;i<jsonseatnumberdetails.length();i++){
+                                        SeatExample seatExample=new SeatExample();
+                                        Log.d("Confirm Fragment","bookedSeats jsonseatnumberdetails.get(i) " +jsonseatnumberdetails.get(i));
+                                        JSONObject jsonObject=(JSONObject)jsonseatnumberdetails.getJSONObject(i);
                                         Log.d("Confirm Fragment","bookedSeats jsonObject " +jsonObject);
 
                                         int ith=jsonObject.getInt("i");
                                         Log.d("Confirm Fragment","bookedSeats ith " +ith);
+                                        seatExample.setIrow(ith);
 
                                         int jth=jsonObject.getInt("j");
                                         Log.d("Confirm Fragment","bookedSeats jth " +jth);
+                                        seatExample.setJrow(jth);
+
+                                        foundItems.add(seatExample);
+                                    }
+                                Log.e("","RequestItemsServiceTask bookedseatsurl foundItems  "+foundItems);
+                                Log.e("","RequestItemsServiceTask bookedseatsurl foundItems.length()  "+foundItems.size());
+
+
+                                if(foundItems!=null && foundItems.size()>0){
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("itemsList", (Serializable) foundItems);
+                                    bundle.putInt("dramaInfoId", dramaInfoId);
+                                    bundle.putString("time", time);
+                                    bundle.putString("strDate", strDate);
+
+                                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
+                                    if(auditorium.getAudiName().equalsIgnoreCase("Aspee")){
+
+                                        if( auditorium.getAuditoriumPriceRanges()!= null){
+
+                                            bundle.putSerializable("auditorium",auditorium);
+
+                                        }
+                                        Fragment fragment = new SchemeWithAspee();
+                                        fragment.setArguments(bundle);
+                                        getActivity().getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                                     }
+                                    else if(auditorium.getAudiName().equalsIgnoreCase("Bhaidas")){
+                                        if(auditorium.getAuditoriumPriceRanges()!= null){
+
+                                            bundle.putSerializable("auditorium",auditorium);
+
+                                        }
+                                        Fragment fragment = new SchemeBhaidasFragment();
+                                        fragment.setArguments(bundle);
+                                        getActivity().getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+                                    }
+                                    else{
+                                        if(auditorium.getAuditoriumPriceRanges()!= null){
+
+                                            bundle.putSerializable("auditorium",auditorium);
+
+                                        }
+                                        Fragment fragment = new SchemePrabhodhanFragment();
+                                        fragment.setArguments(bundle);
+                                        getActivity().getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+                                    }
+                                }
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-                               /* JSONObject jsonObject = new JSONObject(String.valueOf(response));
-                                Log.d("Confirm Fragment","bookedSeats response " +response);
-//                            {"uniqueCode":"MTU4MTIwMTctMDgtMTAgMTE6MjU6MDA=","bookingId":36}
-
-                                BookingInfo bookingInfo=new BookingInfo();
-*/
-/*
-{"dramas_id":2,"booking_date":"2017-08-11 01:25:00","users_id":58,"auditoriums_id":1,"price":400,"seatnumber":["Z1","Z2"],"no_of_seats":2}
-*/
-                            try {
-                              /*
-                                bookingInfo.set_id(jsonObject.getInt("bookingId"));
-                                bookingInfo.setConfirmation_code(jsonObject.getString("uniqueCode"));
-                                bookingInfo.setDrama_name(dramaInfo.getTitle());
-                                bookingInfo.setDrama_id(dramaInfo.getId());
-                                bookingInfo.setAuditorium_name(auditorium.getAudiName());
-                                if (bitmapQRCode == null){
-                                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
-                                    bitmapQRCode=createBitmapOfQRCode();
-                                }
-                                bookingInfo.setDrama_id(dramaInfo.getId());
-                                bookingInfo.setUser_id(Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()));
-//                                bookingInfo.setDrama_name(dramaInfo.getTitle());
-                                bookingInfo.setDrama_group_name(dramaInfo.getGroup_name());
-                                bookingInfo.setDrama_photo(dramaInfo.getLink_photo());
-                                bookingInfo.setDrama_datetime(bookingDateTime);
-                                String dateString=new Date().toString();
-                                bookingInfo.setBooked_datetime(dateString);
-                                bookingInfo.setSeats_total_price((totalPrice));
-                                bookingInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
-                                bookingInfo.setSeart_seat_no(editSeatNumber.getText().toString());
-                                bookingInfo.setAuditorium_name(editAuditoriumName.getText().toString());
-                                bookingInfo.setUser_name(editName.getText().toString());
-                                if(bitmapQRCode!=null){
-                                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute this.bitmapQRCode "+bitmapQRCode);
-                                    bookingInfo.setBitmapQRCode(bitmapQRCode);
-                                }
-                                bookingInfo.setUser_emailid(editemailid.getText().toString());
-                                Log.d("GenerateQRCode"," GenerateQRCode onPostExecute bookingInfo getBitmapQRCode "+ bookingInfo.getBitmapQRCode());
-                                Toast.makeText(getContext(),"Your tickets are confirmed",Toast.LENGTH_SHORT).show();
-                                bookingInfoDAO.addTicket(bookingInfo);
-                                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
-                                callFragment();*/
-                            } catch (Exception e) {
-                                Log.d("GenerateQRCode"," GenerateQRCode doInBackground Exception "+e);
-
-                            }
-
-                            //  YOUR RESPONSE
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -693,6 +575,7 @@ public class AuditoriumListFragment extends Fragment {
                     volleyError.printStackTrace();
 //                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
 
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
                     String json = null;
                     String str=null;
                     byte[] response=null;
@@ -734,70 +617,9 @@ public class AuditoriumListFragment extends Fragment {
 
                     Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG).show();
                 }
-
-
             });
             KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
 
-           /* disableConnectionReuseIfNecessary();
-
-            HttpURLConnection urlConnection = null;
-            try {
-                // create connection
-                URL urlToRequest = null;
-                try {
-                    urlToRequest = new URL(serviceUrl);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    Log.e("","RequestItemsServiceTask requestWebService MalformedURLException  "+e);
-
-                }
-                urlConnection = (HttpURLConnection)
-                        urlToRequest.openConnection();
-                urlConnection.setConnectTimeout(5000);
-                urlConnection.setReadTimeout(5000);
-
-                // handle issues
-                int statusCode = urlConnection.getResponseCode();
-                Log.e("","RequestItemsServiceTask requestWebService statusCode  "+statusCode);
-
-
-                if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    // handle unauthorized (if service requires user login)
-                } else if (statusCode != HttpURLConnection.HTTP_OK) {
-                    // handle any other errors, like 404, 500,..
-                }
-
-                // create JSON object from content
-                InputStream in = new BufferedInputStream(
-                        urlConnection.getInputStream());
-                return new JSONObject(getResponseText(in));
-
-            } catch (MalformedURLException e) {
-                // URL is invalid
-                Log.e("","RequestItemsServiceTask requestWebService MalformedURLException  "+e);
-
-            } catch (SocketTimeoutException e) {
-                // data retrieval or connection timed out
-                Log.e("","RequestItemsServiceTask requestWebService SocketTimeoutException  "+e);
-
-            } catch (IOException e) {
-                // could not read response body
-                // (could not create input stream)
-                Log.e("","RequestItemsServiceTask requestWebService IOException  "+e);
-
-            } catch (JSONException e) {
-                // response body is no valid JSON string
-                Log.e("","RequestItemsServiceTask requestWebService JSONException  "+e);
-
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-            return null;*/
-            return null;
         }
 
 

@@ -31,7 +31,7 @@ public class Constants {
 
     public enum API_URL_USER {
         post_create_user_url,
-        get_userdetails_already_exist_url,
+        post_userdetails_already_exist_url,
         sendDeviceToken,
         put_update_user_url
     }

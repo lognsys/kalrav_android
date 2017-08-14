@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements
                     Log.d(TAG, "Rest OnCreate method - User Exists in DB. " + user.toString());
                     if (user.getEmail() != null && user.getEmail().length() > 0) {
 
-                        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                         callAPI.alReadyExsistUser(user, fb_id, google_id,alReadyExsistUser);
                     }
                 }
@@ -188,6 +188,7 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d(TAG, "Rest CASE2: OnCreate method - Login through Facebook Auth and saving to database.");
             if(KalravApplication.getInstance().getPrefs().getDevice_token()==null)
                 invokeFCMService();
+            Log.d(TAG, "Rest CASE2: OnCreate method - token "+KalravApplication.getInstance().getPrefs().getDevice_token());
 
             //Initialize Facebook sdk
             FacebookSdk.sdkInitialize(getApplicationContext());
@@ -301,7 +302,7 @@ public class LoginActivity extends AppCompatActivity implements
 
                             if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
 
-                                String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                                String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                                 callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
                             }
                         } catch (Exception e) {
@@ -316,12 +317,13 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void invokeFCMService() {
         Log.d(TAG, "Rest invokeFCMService ");
-        Log.d(TAG, "Rest invokeFCMService KalravApplication.getInstance().getPrefs().getDevice_token() "+KalravApplication.getInstance().getPrefs().getDevice_token());
 
         if(KalravApplication.getInstance().getPrefs().getDevice_token()==null){
             Intent i= new Intent(LoginActivity.this, FCMInstanceIdService.class);
             startService(i);
         }
+        Log.d(TAG, "Rest invokeFCMService KalravApplication.getInstance().getPrefs().getDevice_token() "+KalravApplication.getInstance().getPrefs().getDevice_token());
+
     }
 
 
@@ -362,7 +364,7 @@ public class LoginActivity extends AppCompatActivity implements
                         KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
 
                         if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
-                            String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                            String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                             callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
                             finish();
                         }
@@ -512,7 +514,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                                 if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
-                                    String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.get_userdetails_already_exist_url.name());
+                                    String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                                     callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
                                   }
 
