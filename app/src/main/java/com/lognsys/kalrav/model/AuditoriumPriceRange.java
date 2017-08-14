@@ -1,12 +1,13 @@
 package com.lognsys.kalrav.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by admin on 4/17/2017.
  */
 
-public class AuditoriumPriceRange {
+public class AuditoriumPriceRange  implements Serializable{
     private int istart;
     private int iend;
     private int price;

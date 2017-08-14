@@ -16,7 +16,7 @@ public interface NotificationDAO {
 
 
 //    add notificationInfo
-    void addNotificationInfo(NotificationInfo notificationInfo);
+int addNotificationInfo(NotificationInfo notificationInfo);
 
     ArrayList<NotificationInfo> getAllNotificationInfo();
 

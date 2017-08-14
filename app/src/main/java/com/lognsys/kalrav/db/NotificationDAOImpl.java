@@ -28,7 +28,7 @@ public class NotificationDAOImpl implements NotificationDAO {
         db = sqLiteHelper.getWritableDatabase();
     }
     @Override
-    public void addNotificationInfo(NotificationInfo notificationInfo) {
+    public int addNotificationInfo(NotificationInfo notificationInfo) {
         db = sqLiteHelper.getWritableDatabase();
         Log.d(TAG, "REST addNotificationInfo method called... " + notificationInfo.toString());
 
@@ -43,7 +43,8 @@ public class NotificationDAOImpl implements NotificationDAO {
             values.put(NotificationInfo.COLUMN_NOTIFICATION_MESSAGE, notificationInfo.getMessage());
             values.put(NotificationInfo.COLUMN_TIMESTAMP, KalravApplication.getInstance().getCurrentDate());
             // Inserting Row
-            db.insert(NotificationInfo.TABLE_NOTIFICATION, null, values);
+          int id= (int) db.insert(NotificationInfo.TABLE_NOTIFICATION, null, values);
+        return id;
 //            db.close(); // Closing database connection
 
     }

@@ -110,69 +110,80 @@ public class FCMService extends FirebaseMessagingService {
         notificationManager.notify(0,builder.build());*/
     }
 
-    public void generateNotification(NotificationInfo notificationInfo) {
-        notificationIntent = new Intent(this, HomeActivity.class);
+    public  void generateNotification(NotificationInfo notificationInfo) {
+        Intent notificationIntent=null;
+
+        Log.d("FCM","FCM generateNotification notificationInfo "+notificationInfo);
+        Log.d("FCM","FCM generateNotification KalravApplication.getInstance().getPrefs().getIsLogin() "+KalravApplication.getInstance().getPrefs().getIsLogin());
+
 
         if(KalravApplication.getInstance().getPrefs().getIsLogin() &&  notificationInfo!=null){
+            Log.d("FCM","FCM generateNotification notificationInfo  inside");
+            notificationIntent = new Intent(FCMService.this, HomeActivity.class);
+
+
 
             when = System.currentTimeMillis();
 
+            if(notificationInfo.getMessage()!=null){
 
-            if(notificationInfo.getMessage()!=null && notificationInfo.getDramaTitle()!=null ){
+                if( notificationInfo.getDramaTitle()!=null ){
 
-                message=notificationInfo.getMessage() +" "+ notificationInfo.getDramaTitle();
-                Log.d("FCM","FCM generateNotification message "+message);
+                    message=notificationInfo.getMessage() +" "+ notificationInfo.getDramaTitle();
+                    Log.d("FCM","FCM generateNotification message "+message);
 
-                dramaId = notificationInfo.getDramaId();
-                Log.d("FCM","FCM generateNotification dramaId "+dramaId);
-                boolean isNotification=true;
-                int navItemIndex=5;
+                    dramaId = notificationInfo.getDramaId();
+                    Log.d("FCM","FCM generateNotification dramaId "+dramaId);
+                    boolean isNotification=true;
+                    int navItemIndex=5;
 
-                notificationIntent.putExtra("id", dramaId);
-                notificationIntent.putExtra("navItemIndex", navItemIndex);
-                notificationIntent.putExtra("isNotification", isNotification);
-                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    notificationIntent.putExtra("id", dramaId);
+                    notificationIntent.putExtra("navItemIndex", navItemIndex);
+                    notificationIntent.putExtra("isNotification", isNotification);
+                    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            }
-            else if(notificationInfo.getMessage()!=null && notificationInfo.getDramaTitle()!=null  && notificationInfo.getRealname().length()<1){
-
-                message=notificationInfo.getMessage() +" "+ notificationInfo.getDramaTitle();
-                Log.d("FCM","FCM generateNotification message "+message);
-
-                dramaId = notificationInfo.getDramaId();
-                Log.d("FCM","FCM generateNotification dramaId "+dramaId);
-                boolean isNotification=true;
-                int navItemIndex=5;
-
-                notificationIntent.putExtra("id", dramaId);
-                notificationIntent.putExtra("navItemIndex", navItemIndex);
-                notificationIntent.putExtra("isNotification", isNotification);
-                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            }
-            else{
-
+                }
+                else if(notificationInfo.getDramaTitle()!=null  && notificationInfo.getRealname()!=null){
+                    message=notificationInfo.getMessage() +" "+ notificationInfo.getDramaTitle() +" "+notificationInfo.getRealname();
+                    Log.d("FCM","FCM generateNotification message "+message);
+                    dramaId = notificationInfo.getDramaId();
+                    Log.d("FCM","FCM generateNotification dramaId "+dramaId);
+                    boolean isNotification=true;
+                    int navItemIndex=5;
+                    notificationIntent.putExtra("navItemIndex", navItemIndex);
+                    notificationIntent.putExtra("isNotification", isNotification);
+                    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                }
+                else{
 //                default notification
-                message=notificationInfo.getMessage() ;
-                Log.d("FCM","FCM generateNotification message "+message);
-                  Log.d("FCM","FCM generateNotification dramaId "+dramaId);
-                boolean isNotification=true;
-                int navItemIndex=5;
+                    message=notificationInfo.getMessage() ;
+                    Log.d("FCM","FCM generateNotification message "+message);
+                    Log.d("FCM","FCM generateNotification notificationInfo.toString() "+notificationInfo.toString());
+                    boolean isNotification=true;
 
-                notificationIntent.putExtra("isNotification", isNotification);
-                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            }
-
+                    notificationIntent.putExtra("isNotification", isNotification);
+                    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                }
                 // Use NotificationCompat.Builder to set up our notification.
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-            String title = getApplicationContext().getString(R.string.app_name);
+                String title = getApplicationContext().getString(R.string.app_name);
 
-            notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                resultPendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_ONE_SHOT);
+                Log.d("FCM","FCM generateNotification message ========================================== "+message);
 
-            resultPendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_ONE_SHOT);
-            Log.d("FCM","FCM generateNotification message ========================================== "+message);
+                NotificationCompat.Builder builder=new NotificationCompat.Builder(this);
+                builder.setContentTitle(title);
+                builder.setContentText(message);
+                builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+                builder.setAutoCancel(true);
+                builder.setSmallIcon(R.drawable.kalrav_logo); // mipmap  is small  icon type
+                builder.setContentIntent(resultPendingIntent);
+                builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+                builder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.kalrav_logo));
+                NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(0,builder.build());
+            }
 
         /*    Notification notification = mBuilder
                     .setSmallIcon(R.drawable.kalrav_logo).setTicker(title).setWhen(0)
@@ -188,17 +199,6 @@ public class FCMService extends FirebaseMessagingService {
             notificationManager.notify((int)when, notification .build());
 */
 
-            NotificationCompat.Builder builder=new NotificationCompat.Builder(this);
-            builder.setContentTitle(title);
-            builder.setContentText(message);
-            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
-            builder.setAutoCancel(true);
-            builder.setSmallIcon(R.drawable.kalrav_logo); // mipmap  is small  icon type
-            builder.setContentIntent(resultPendingIntent);
-            builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-            builder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.kalrav_logo));
-            NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(0,builder.build());
         }
     }
 }

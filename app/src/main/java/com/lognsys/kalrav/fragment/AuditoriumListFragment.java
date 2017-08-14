@@ -512,58 +512,62 @@ public class AuditoriumListFragment extends Fragment {
 
                                         foundItems.add(seatExample);
                                     }
-                                Log.e("","RequestItemsServiceTask bookedseatsurl foundItems  "+foundItems);
-                                Log.e("","RequestItemsServiceTask bookedseatsurl foundItems.length()  "+foundItems.size());
 
-
+                                Bundle bundle = new Bundle();
                                 if(foundItems!=null && foundItems.size()>0){
-                                    Bundle bundle = new Bundle();
+                                    Log.e("","RequestItemsServiceTask bookedseatsurl foundItems  "+foundItems);
+                                    Log.e("","RequestItemsServiceTask bookedseatsurl foundItems.length()  "+foundItems.size());
+
                                     bundle.putSerializable("itemsList", (Serializable) foundItems);
-                                    bundle.putInt("dramaInfoId", dramaInfoId);
-                                    bundle.putString("time", time);
-                                    bundle.putString("strDate", strDate);
 
-                                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
-                                    if(auditorium.getAudiName().equalsIgnoreCase("Aspee")){
-
-                                        if( auditorium.getAuditoriumPriceRanges()!= null){
-
-                                            bundle.putSerializable("auditorium",auditorium);
-
-                                        }
-                                        Fragment fragment = new SchemeWithAspee();
-                                        fragment.setArguments(bundle);
-                                        getActivity().getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-                                    }
-                                    else if(auditorium.getAudiName().equalsIgnoreCase("Bhaidas")){
-                                        if(auditorium.getAuditoriumPriceRanges()!= null){
-
-                                            bundle.putSerializable("auditorium",auditorium);
-
-                                        }
-                                        Fragment fragment = new SchemeBhaidasFragment();
-                                        fragment.setArguments(bundle);
-                                        getActivity().getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-                                    }
-                                    else{
-                                        if(auditorium.getAuditoriumPriceRanges()!= null){
-
-                                            bundle.putSerializable("auditorium",auditorium);
-
-                                        }
-                                        Fragment fragment = new SchemePrabhodhanFragment();
-                                        fragment.setArguments(bundle);
-                                        getActivity().getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-                                    }
                                 }
+                                KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
+                                if(auditorium.getAudiName().equalsIgnoreCase("Aspee")){
 
+                                    if( auditorium.getAuditoriumPriceRanges()!= null){
 
+                                        bundle.putSerializable("auditorium",auditorium);
+
+                                        bundle.putInt("dramaInfoId", dramaInfoId);
+                                        bundle.putString("time", time);
+                                        bundle.putString("strDate", strDate);
+                                    }
+                                    Fragment fragment = new SchemeWithAspee();
+                                    fragment.setArguments(bundle);
+                                    getActivity().getSupportFragmentManager().beginTransaction()
+                                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+                                }
+                                else if(auditorium.getAudiName().equalsIgnoreCase("Bhaidas")){
+                                    if(auditorium.getAuditoriumPriceRanges()!= null){
+
+                                        bundle.putSerializable("auditorium",auditorium);
+
+                                        bundle.putInt("dramaInfoId", dramaInfoId);
+                                        bundle.putString("time", time);
+                                        bundle.putString("strDate", strDate);
+                                    }
+                                    Fragment fragment = new SchemeBhaidasFragment();
+                                    fragment.setArguments(bundle);
+                                    getActivity().getSupportFragmentManager().beginTransaction()
+                                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+                                }
+                                else{
+                                    if(auditorium.getAuditoriumPriceRanges()!= null){
+
+                                        bundle.putSerializable("auditorium",auditorium);
+
+                                        bundle.putInt("dramaInfoId", dramaInfoId);
+                                        bundle.putString("time", time);
+                                        bundle.putString("strDate", strDate);
+                                    }
+                                    Fragment fragment = new SchemePrabhodhanFragment();
+                                    fragment.setArguments(bundle);
+                                    getActivity().getSupportFragmentManager().beginTransaction()
+                                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

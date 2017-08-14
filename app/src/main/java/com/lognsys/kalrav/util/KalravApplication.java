@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,10 +20,13 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.R;
+import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.model.UserInfo;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import static android.app.PendingIntent.getActivity;
 
 /**
  * Created by pdoshi on 03/01/17.
@@ -127,6 +131,7 @@ public void showDialog(Context context, String message){
         @Override
         public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
+
         }
     });
     // Showing Alert Message
@@ -145,4 +150,5 @@ public void showDialog(Context context, String message){
         String date  = formatter.format(today);
         return date;
     }
+
 }

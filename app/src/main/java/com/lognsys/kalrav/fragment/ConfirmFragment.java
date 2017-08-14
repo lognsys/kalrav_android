@@ -1,8 +1,12 @@
 package com.lognsys.kalrav.fragment;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -14,6 +18,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,9 +47,11 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.lognsys.kalrav.FCM.FCMService;
+import com.lognsys.kalrav.HomeActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.db.BookingInfoDAOImpl;
+import com.lognsys.kalrav.db.NotificationDAOImpl;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.BookingInfo;
 import com.lognsys.kalrav.model.DramaInfo;
@@ -82,12 +89,14 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    String notificationTitle=null;
+    String notificationMessage=null;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-
+    private NotificationManager notificationManager;
+    private NotificationCompat.Builder notificationBuilder;
     //Properties
     private PropertyReader propertyReader;
     private Properties properties;
@@ -168,6 +177,8 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         dramaInfoId = getArguments().getInt("dramaInfoId");
         dramaInfo= dramaInfoDAO.getDramaByDramaId(dramaInfoId);
+
+       Log.d("","dramaInfo ==== "+dramaInfo.toString());
         auditorium= (Auditorium) (getArguments().getSerializable("auditorium"));
         propertyReader = new PropertyReader(getActivity());
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
@@ -308,6 +319,8 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                  builderSingle.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                      @Override
                      public void onClick(DialogInterface dialog, int which) {
+
+
                          if(dramaInfo != null /*&& timeSlot!= null*/){
 //                             callAPI=new CallAPI((AppCompatActivity) getActivity());
 
@@ -411,55 +424,82 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
 //
                                 if (file.exists()) {
                                     //Do action
-                                    File dataFile = new File(getDataFolder(getActivity()), "QRCode.jpg");
+//                                    File dataFile = new File(getDataFolder(getActivity()), "QRCode.jpg");
                                     try {
-                                        InputStream fileInputStream = new FileInputStream(dataFile);
+//                                        Log.d("GenerateQRCode","bookedSeats GenerateQRCode doInBackground file "+file);
+
+                                        InputStream fileInputStream = new FileInputStream(file);
+
+//                                        Log.d("GenerateQRCode","bookedSeats GenerateQRCode doInBackground fileInputStream "+fileInputStream);
+
                                         BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
                                         bitmapOptions.inJustDecodeBounds = false;
                                         bitmapQRCode= BitmapFactory.decodeStream(fileInputStream);
-                                        Log.d("GenerateQRCode"," GenerateQRCode doInBackground this.bitmapQRCode "+bitmapQRCode);
+//                                        Log.d("GenerateQRCode","bookedSeats GenerateQRCode doInBackground bitmapQRCode "+bitmapQRCode);
 
 
                                     } catch (FileNotFoundException fnf) {
-                                        Log.d("GenerateQRCode"," GenerateQRCode doInBackground FileNotFoundException "+fnf);
+                                        Log.d("GenerateQRCode","bookedSeats GenerateQRCode doInBackground FileNotFoundException "+fnf);
 
                                     }
 
                                 }
                                 bookingInfo.set_id(jsonObject.getInt("bookingId"));
                                 bookingInfo.setConfirmation_code(jsonObject.getString("uniqueCode"));
+
                                 bookingInfo.setDrama_name(dramaInfo.getTitle());
                                 bookingInfo.setDrama_id(dramaInfo.getId());
-                                bookingInfo.setAuditorium_name(auditorium.getAudiName());
-                                if (bitmapQRCode == null){
-                                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
-                                    bitmapQRCode=createBitmapOfQRCode();
-                                }
-                                bookingInfo.setDrama_id(dramaInfo.getId());
-                                bookingInfo.setUser_id(Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()));
-//                                bookingInfo.setDrama_name(dramaInfo.getTitle());
                                 bookingInfo.setDrama_group_name(dramaInfo.getGroup_name());
                                 bookingInfo.setDrama_photo(dramaInfo.getLink_photo());
                                 bookingInfo.setDrama_datetime(bookingDateTime);
-                                String dateString=new Date().toString();
-                                bookingInfo.setBooked_datetime(dateString);
-                                bookingInfo.setSeats_total_price((totalPrice));
-                                bookingInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
-                                bookingInfo.setSeart_seat_no(editSeatNumber.getText().toString());
-                                bookingInfo.setAuditorium_name(editAuditoriumName.getText().toString());
-                                bookingInfo.setUser_name(editName.getText().toString());
-                                if(bitmapQRCode!=null){
-                                    Log.d("GenerateQRCode"," GenerateQRCode onPostExecute this.bitmapQRCode "+bitmapQRCode);
+
+                                bookingInfo.setAuditorium_name(auditorium.getAudiName());
+
+                                if (bitmapQRCode == null){
+                                    Log.d("GenerateQRCode","bookedSeats GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
+                                    bitmapQRCode=createBitmapOfQRCode();
+                                }
+                                else {
+                                    Log.d("GenerateQRCode"," bookedSeats  bitmapQRCode "+bitmapQRCode);
                                     bookingInfo.setBitmapQRCode(bitmapQRCode);
                                 }
+                                bookingInfo.setUser_id(Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()));
+
+                                String dateString=new Date().toString();
+                                Log.d("GenerateQRCode","bookedSeats GenerateQRCode dateString"+ dateString);
+
+                                bookingInfo.setBooked_datetime(dateString);
+
+                                bookingInfo.setSeats_total_price((totalPrice));
+                                bookingInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
+
+                                bookingInfo.setSeart_seat_no(editSeatNumber.getText().toString());
+                                bookingInfo.setUser_name(editName.getText().toString());
+
                                 bookingInfo.setUser_emailid(editemailid.getText().toString());
-                                Log.d("GenerateQRCode"," GenerateQRCode onPostExecute bookingInfo getBitmapQRCode "+ bookingInfo.getBitmapQRCode());
-                                Toast.makeText(getContext(),"Your tickets are confirmed",Toast.LENGTH_SHORT).show();
+
                                 bookingInfoDAO.addTicket(bookingInfo);
-                                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
-                                callFragment();
-                            } catch (Exception e) {
-                                Log.d("GenerateQRCode"," GenerateQRCode doInBackground Exception "+e);
+                                Log.d("GenerateQRCode","bookedSeats GenerateQRCode bookingInfo tostring "+ bookingInfo.toString());
+                                Toast.makeText(getContext(),"Your tickets are confirmed",Toast.LENGTH_SHORT).show();
+
+                                NotificationInfo notificationInfo =new NotificationInfo();
+                                notificationInfo.setMessage("Your tickets are confirm and your booking Id :"+bookingInfo.get_id() +" and Confirmation Code : " +bookingInfo.getConfirmation_code());
+
+                                notificationInfo.setUserId(Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()));
+
+                                NotificationDAOImpl notificationDAO=new NotificationDAOImpl(getActivity());
+
+                                int id=  notificationDAO.addNotificationInfo(notificationInfo);
+                                notificationInfo.set_id(id);
+                                Log.d("GenerateQRCode","bookedSeats GenerateQRCode doInBackground id "+id);
+                                setNotificationData(notificationInfo);
+                                setDataForSimpleNotification(notificationInfo.get_id());
+                                Log.d("GenerateQRCode","bookedSeats GenerateQRCode notificationInfo tostring "+ notificationInfo.toString());
+
+                                KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
+//                                send notification
+                            } catch (NumberFormatException e) {
+                                Log.d("GenerateQRCode","bookedSeats GenerateQRCode doInBackground Exception "+e);
 
                             }
 
@@ -522,139 +562,6 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
 
         });
         KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
-
-    }
-
-    //Register and inserting  user records
-    private class GenerateQRCodeTask extends AsyncTask<Void, Bitmap, Bitmap> {
-        String DramaName, Auditorium, GroupName, DateAndTime, TicketNumber,BookingDateTime,UserName,TotalTicketBooked,TotalPrice;
-        ImageView imageView;
-        String qrText;
-        Bitmap bitmapQRCode;
-       public GenerateQRCodeTask(String DramaName, String Auditorium, String GroupName, String DateAndTime,
-                              String TicketNumber,String BookingDateTime,String UserName,
-                              String TotalTicketBooked,String TotalPrice,Bitmap bitmapQRCode) {
-            this.DramaName = DramaName;
-            this.Auditorium = Auditorium;
-            this.GroupName = GroupName;
-            this.DateAndTime = DateAndTime;
-            this.TicketNumber = TicketNumber;
-            this.BookingDateTime = BookingDateTime;
-            this.UserName = UserName;
-            this.imageView=imageView;
-            this.TotalTicketBooked=TotalTicketBooked;
-            this.TotalPrice=TotalPrice;
-            this.bitmapQRCode=bitmapQRCode;
-
-        }
-
-        @Override
-        protected Bitmap doInBackground(Void... params) {
-            qrText = this.DramaName + "\n\r" + this.Auditorium + "\n\r" + this.GroupName +
-                    "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber+ "\n\r" + this.BookingDateTime +
-                    "\n\r" + this.UserName+ "\n\r" + this.TotalTicketBooked+ "\n\r" + this.TotalPrice;
-            try {
-                File file = new File(getDataFolder(getActivity()), "QRCode.jpg");
-                if (file.exists()) {
-                    //Do action
-                    File dataFile = new File(getDataFolder(getActivity()), "QRCode.jpg");
-                    try {
-                        InputStream fileInputStream = new FileInputStream(dataFile);
-                        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-                        bitmapOptions.inJustDecodeBounds = false;
-                        this.bitmapQRCode= BitmapFactory.decodeStream(fileInputStream);
-                        Log.d("GenerateQRCode"," GenerateQRCode doInBackground this.bitmapQRCode "+this.bitmapQRCode);
-                        return this.bitmapQRCode;
-
-
-                    } catch (FileNotFoundException fnf) {
-                        Log.d("GenerateQRCode"," GenerateQRCode doInBackground FileNotFoundException "+fnf);
-
-                    }
-
-                }
-
-            } catch (Exception e) {
-                Log.d("GenerateQRCode"," GenerateQRCode doInBackground Exception "+e);
-
-            }
-            return this.bitmapQRCode;
-        }
-
-
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-           try {
-               qrText = this.DramaName + "\n\r" + this.Auditorium + "\n\r" + this.GroupName +
-                       "\n\r" + this.DateAndTime + "\n\r" + this.TicketNumber + "\n\r" + this.BookingDateTime +
-                       "\n\r" + this.UserName + "\n\r" + this.TotalTicketBooked + "\n\r" + this.TotalPrice;
-               Log.d("GenerateQRCode"," GenerateQRCode onPostExecute this.bitmapQRCode "+this.bitmapQRCode);
-
-               if (this.bitmapQRCode != null) {
-                   if (detectBarCode(this.bitmapQRCode) != null && detectBarCode(this.bitmapQRCode).equals(qrText)) {
-                       Log.d("GenerateQRCode"," GenerateQRCode onPostExecute inside if this.bitmapQRCode "+this.bitmapQRCode);
-
-//                       this.imageView.setImageBitmap(bitmap);
-                   } else {
-                       //bitmap= TextToImageEncode(DramaName + "\n\r" + Auditorium + "\n\r" + GroupName + "\n\r" + DateAndTime + "\n\r" + TicketNumber + "\n\r" + DramaLanguage);
-//                       this.imageView.setImageBitmap(createBitmapOfQRCode());
-                       Log.d("GenerateQRCode"," GenerateQRCode onPostExecute inside else createBitmapOfQRCode()"+createBitmapOfQRCode());
-
-                   }
-               } else {
-                   Log.d("GenerateQRCode"," GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
-                   this.bitmapQRCode=createBitmapOfQRCode();
-               }
-               bookingInfo.setDrama_id(dramaInfo.getId());
-//                     monika added demo userid
-               bookingInfo.setUser_id(1);
-               bookingInfo.setDrama_name(dramaInfo.getTitle());
-               bookingInfo.setDrama_group_name(dramaInfo.getGroup_name());
-               bookingInfo.setDrama_photo(dramaInfo.getLink_photo());
-//               bookingInfo.setDrama_date(dramaInfo.getDatetime());
-//               bookingInfo.setDrama_time(dramaInfo.getTime());
-//               bookingInfo.setBooked_time(time);
-//               bookingInfo.setBooked_date(strDate);
-               String confirmationCode = UUID.randomUUID().toString();
-
-               bookingInfo.setConfirmation_code(confirmationCode);
-               bookingInfo.setSeats_total_price((totalPrice));
-               bookingInfo.setSeats_no_of_seats_booked(editNoOfSeatsBooked.getText().toString());
-               bookingInfo.setSeart_seat_no(editSeatNumber.getText().toString());
-               bookingInfo.setAuditorium_name(editAuditoriumName.getText().toString());
-               bookingInfo.setUser_name(editName.getText().toString());
-               if(this.bitmapQRCode!=null){
-                   Log.d("GenerateQRCode"," GenerateQRCode onPostExecute this.bitmapQRCode "+this.bitmapQRCode);
-                   bookingInfo.setBitmapQRCode(this.bitmapQRCode);
-               }
-               bookingInfo.setUser_emailid(editemailid.getText().toString());
-               Log.d("GenerateQRCode"," GenerateQRCode onPostExecute bookingInfo getBitmapQRCode "+ bookingInfo.getBitmapQRCode());
-               Toast.makeText(getContext(),"Your tickets are confirmed",Toast.LENGTH_SHORT).show();
-               bookingInfoDAO.addTicket(bookingInfo);
-               FCMService fcmService=new FCMService();
-               NotificationInfo notificationInfo=new NotificationInfo();
-               notificationInfo.setMessage("Your booking is confirm by Booking id : "+bookingInfo.get_id() +"and Your Confirmation code :"+bookingInfo.getConfirmation_code());
-               fcmService.generateNotification(notificationInfo);
-               KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
-               callFragment();
-
-
-           }catch (Exception e){
-               Log.d("GenerateQRCode"," GenerateQRCode onPostExecute Exception "+e);
-
-
-           }
-        }
-
-        public void callFragment() {
-            Fragment fragment = new DramaFragment();
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-        }
-
 
     }
 
@@ -785,5 +692,39 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+        private void setNotificationData(NotificationInfo notificationInfo) {
+            notificationTitle = dramaInfo.getTitle();
+            notificationMessage =notificationInfo.getMessage();
+
+        }
+        private void setDataForSimpleNotification(int notificationId) {
+            Bitmap  icon = BitmapFactory.decodeResource(this.getResources(),
+                    R.mipmap.ic_launcher);
+            notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(getActivity())
+                    .setSmallIcon(R.drawable.kalrav_logo)
+                    .setLargeIcon(icon)
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationMessage);
+            sendNotification(notificationId);
+        }
+    private void sendNotification(int currentNotificationID) {
+        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent notificationIntent = new Intent(getActivity(), HomeActivity.class);
+        boolean isNotification=true;
+        int navItemIndex=5;
+        notificationIntent.putExtra("navItemIndex", navItemIndex);
+        notificationIntent.putExtra("isNotification", isNotification);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(getActivity(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(contentIntent);
+        Notification notification = notificationBuilder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.defaults |= Notification.DEFAULT_SOUND;
+//        currentNotificationID++;
+        int notificationId = currentNotificationID;
+        if (notificationId == Integer.MAX_VALUE - 1)
+            notificationId = 0;
+        notificationManager.notify(notificationId, notification);
     }
 }

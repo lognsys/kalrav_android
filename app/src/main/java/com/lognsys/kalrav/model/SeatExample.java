@@ -2,6 +2,8 @@ package com.lognsys.kalrav.model;
 
 import android.graphics.Color;
 
+import java.io.Serializable;
+
 import by.anatoldeveloper.hallscheme.hall.HallScheme;
 import by.anatoldeveloper.hallscheme.hall.Seat;
 
@@ -9,7 +11,7 @@ import by.anatoldeveloper.hallscheme.hall.Seat;
  * Created by Nublo on 05.12.2015.
  * Copyright Nublo
  */
-public class SeatExample implements Seat {
+public class SeatExample implements Seat,Serializable {
 
     public int id;
     public int color = Color.RED;
