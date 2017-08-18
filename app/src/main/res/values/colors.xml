@@ -17,7 +17,7 @@
     <color name="colorAccent">#c8e8ff</color>
     <color name="startcolorAccent">#c8e8ff</color>
     <color name="endcolorAccent">#c8e8ff</color>
-    <color name="dark_grey">#666666</color>
+    <color name="dark_grey">#808080</color>
     <color name="rect_row_hover_end_color">#666666</color>
 </resources>
 

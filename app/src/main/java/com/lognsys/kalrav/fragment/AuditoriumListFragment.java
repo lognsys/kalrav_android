@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,6 +57,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -191,7 +195,7 @@ public class AuditoriumListFragment extends Fragment {
         return view;
     }
 
-    private void requestAuditoriumDateTime(int dramaInfoId, String strDate) {
+    private void requestAuditoriumDateTime(int dramaInfoId, final String strDate) {
 
         final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name())+dramaInfoId+"/"+strDate;
         Log.d(TAG, "requestAuditoriumDateTime auditoriumlist..."+auditoriumlist);
@@ -220,13 +224,6 @@ public class AuditoriumListFragment extends Fragment {
 
                                 String time = jsonObject.getString("time");
 
-//                        JSONArray jsontimeArray=new JSONArray(time);
-//                        StringBuilder sb=new StringBuilder();
-//                            for(int j=0;j<jsontimeArray.length();j++)
-//                            {
-//                                String timevalue= jsontimeArray.getString(j);
-//                                sb.append(timevalue+" ");
-//                            }
                                 auditorium.setDatetime(time);
 
 //                        String auditoriumpricerange = ;
@@ -261,7 +258,9 @@ public class AuditoriumListFragment extends Fragment {
 
                             }
                             if (auditoriumList.size() > 0 & auditoriumList != null) {
-                                adapter = new MyAdapter(auditoriumList);
+
+                                Log.d(TAG,"strDate istrue MyAdapter "+strDate);
+                                adapter = new MyAdapter(auditoriumList,strDate);
                                 myRecyclerView.setAdapter(adapter);
                             }
 
@@ -398,9 +397,11 @@ public class AuditoriumListFragment extends Fragment {
 
     public class MyAdapter extends RecyclerView.Adapter<AuditoriumListFragment.MyAdapter.MyViewHolder> {
         private List<Auditorium> list;
+        private String strDate;
 
-        public MyAdapter(List<Auditorium> Data) {
+        public MyAdapter(List<Auditorium> Data,String strDate) {
             list = Data;
+            this.strDate = strDate;
 //            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
 
         }
@@ -427,45 +428,94 @@ public class AuditoriumListFragment extends Fragment {
 
              final Auditorium auditorium = list.get(position);
             holder.textAuditoriumName.setText(auditorium.getAudiName());
-            String  timeArray = auditorium.getDatetime();
+            final String  timeArray = auditorium.getDatetime();
             Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
-            final String[] split= timeArray.split(" ");
-                      Log.d("", "MyAdapter onBindViewHolder auditorium.getAuditoriumPriceRanges() "+auditorium.getAuditoriumPriceRanges());
+//            final String[] split= timeArray.split(" ");
+//                      Log.d("", "MyAdapter onBindViewHolder auditorium.getAuditoriumPriceRanges() "+auditorium.getAuditoriumPriceRanges());
 
             List<TextView> textList = new ArrayList<TextView>();
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
             layoutParams.setMargins(30, 0, 30, 0);
-            for(int i = 0; i < split.length; i++)
-            {
+//            for(int i = 0; i < split.length; i++)
                 TextView newTV = new TextView(getContext());
-                newTV.setText(split[i]);
+                newTV.setText(timeArray);
                 newTV.setBackground(getResources().getDrawable(R.drawable.textviewbackgroundwithborder));
 
                 newTV.setLayoutParams(layoutParams);
-                final int finalI = i;
-                newTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(getActivity(),"Time"+split[finalI]+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
-                        final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
-                        Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
-                        KalravApplication.getInstance().getPrefs().showDialog(getActivity());
-                        requestWebService(bookedseatsurl,split[finalI],strDate);
+                DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                System.out.println("Comparing two Date in Java using CompareTo method");
+            boolean isTrue=false;
+            try {
+                Log.d("","df isTrue ==================== " + df);
+                Log.d("","df isTrue strDate ==================== " + this.strDate);
+                Log.d("","df isTrue df.parse(strDate) ==================== " + df.parse(strDate));
+                Log.d("","df isTrue ==================== " + df);
+
+                Log.d("", "df === "+df+"  df.parse(strDate) == "+ df.parse(strDate)+" df.parse(KalravApplication.getInstance().getCurrentDate()  ===" +df.parse(KalravApplication.getInstance().getCurrentDate()));
+
+                isTrue= compareDatesByCompareTo(df, df.parse(strDate), df.parse(KalravApplication.getInstance().getCurrentDate()));
+                Log.d("","df isTrue ==================== " + isTrue);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+                if(isTrue){
+                    newTV.setOnClickListener(null);
+                    newTV.setTextColor(Color.WHITE);
+                    newTV.setBackground(getResources().getDrawable(R.drawable.textviewgreyout));
+
+                }
+            else{
+
+//                   final int finalI = i;
+                    newTV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getActivity(),"Time"+timeArray+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
+                            final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
+                            Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
+                            KalravApplication.getInstance().getPrefs().showDialog(getActivity());
+                            requestWebService(bookedseatsurl,timeArray,strDate);
 //                        new RequestItemsServiceTask(auditorium,split[finalI],strDate).execute();
 
-                    }
-                });
+                        }
+                    });
+                }
+
+
                 /**** Any other text view setup code ****/
 
                 holder.linearTime.addView(newTV);
                 textList.add(newTV);
-            }
+
 
             Log.d("", "MyAdapter onBindViewHolder textTime "+holder.textTime.getText().toString());
         }
+        public boolean compareDatesByCompareTo(DateFormat df, Date oldDate, Date newDate) {
+            //how to check if date1 is equal to date2
+            if (oldDate.compareTo(newDate) == 0) {
+                System.out.println(df.format(oldDate) + " and " + df.format(newDate) + " are equal to each other");
+                if (oldDate.getTime()<newDate.getTime())
+            return  true;
+            }
 
+            //checking if date1 is less than date 2
+            if (oldDate.compareTo(newDate) < 0) {
+                System.out.println(df.format(oldDate) + " is less than " + df.format(newDate));
+                return  true;
+            }
+
+            //how to check if date1 is greater than date2 in java
+            if (oldDate.compareTo(newDate) > 0) {
+                System.out.println(df.format(oldDate) + " is greater than " + df.format(newDate));
+                return false;
+
+            }
+            return false;
+        }
         public  void requestWebService(String bookedseatsurl, final String time, final String strDate) {
             Log.e("","RequestItemsServiceTask requestWebService bookedseatsurl  "+bookedseatsurl);
             JSONObject params = new JSONObject();

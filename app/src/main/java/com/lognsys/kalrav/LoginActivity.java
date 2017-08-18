@@ -150,11 +150,13 @@ public class LoginActivity extends AppCompatActivity implements
     private PropertyReader propertyReader;
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
-
+    String seatAuth=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        seatAuth = intent.getStringExtra("seatAuth");
 
         //creating database sqlite and storing user pojo
         SQLiteHelper database = new SQLiteHelper(this);
@@ -405,7 +407,7 @@ public class LoginActivity extends AppCompatActivity implements
                 signIn();
                 break;
             case R.id.textSkipLogin:
-                KalravApplication.getInstance().getPrefs().setIsLogin(true);
+//                KalravApplication.getInstance().getPrefs().setIsLogin(true);
                 Intent intent =new Intent(LoginActivity.this,HomeActivity.class);
                 startActivity(intent);
                 break;
@@ -569,10 +571,15 @@ public class LoginActivity extends AppCompatActivity implements
                                 Log.e(TAG, "#handleFacebookAccessToken#FacebookAuthUserCollision - " + fe.getMessage());
 
                                 sharedPrefEditor.putBoolean("Constants.Shared.IS_SIMILAR_EMAILID.name()", true);
+                                if(seatAuth!=null && seatAuth.equalsIgnoreCase("seatsDetailsPrabhodhan")){
 
-                                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                                startActivity(i);
-                                finish();
+                                }
+                                else{
+                                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                                    startActivity(i);
+                                    finish();
+
+                                }
 
                             } catch (Exception e) {
                                 Log.e(TAG, "handleFacebookAccessToken#Facebook Login Exception - " + e.getMessage());

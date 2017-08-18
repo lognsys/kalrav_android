@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.fragment.DramaFragment;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
 
 import java.util.Calendar;
@@ -38,6 +39,7 @@ public class KalravApplication extends Application {
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private UserInfo userInfo;
+    SeatsDetailInfo seatsDetailInfo;
     Preference prefs;
     private static KalravApplication mInstance;
     // Progress dialog
@@ -104,7 +106,15 @@ public class KalravApplication extends Application {
         this.userInfo = userInfo;
 
     }
+    public SeatsDetailInfo getGlobalSeatsDetailInfo() {
+        return this.seatsDetailInfo;
+    }
 
+    public void setGlobalSeatsDetailInfo(SeatsDetailInfo seatsDetailInfo) {
+
+        this.seatsDetailInfo = seatsDetailInfo;
+
+    }
     public boolean isConnectedToInternet() {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();

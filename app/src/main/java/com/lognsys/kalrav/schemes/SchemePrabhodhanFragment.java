@@ -1,5 +1,6 @@
 package com.lognsys.kalrav.schemes;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lognsys.kalrav.HomeActivity;
+import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.AuditoriumPriceRange;
 import com.lognsys.kalrav.model.SeatExample;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
+import com.lognsys.kalrav.util.KalravApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,34 +125,55 @@ public class SchemePrabhodhanFragment extends Fragment {
         btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Seat> seatList=scheme.getListOfSelectedSeats();
-                if (seatList != null && seatList.size() > 0) {
-                    for (int i=0;i<seatList.size();i++){
-                        SeatExample seat= (SeatExample) seatList.get(i);
-                        Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id()+"Your seat total price : "+seat.getTotal(), Toast.LENGTH_SHORT).show();
 
-                    }
+                Log.d("", "btnProceed getIsLogin " +KalravApplication.getInstance().getPrefs().getIsLogin());
+                String seatAuth="seatsDetailsPrabhodhan";
+                if(KalravApplication.getInstance().getPrefs().getIsLogin()==false){
+                    SeatsDetailInfo seatsDetailInfo=new SeatsDetailInfo();
+                    seatsDetailInfo.setAuditorium(auditorium);
+                    seatsDetailInfo.setDramaInfoId(dramaInfoId);
+                    seatsDetailInfo.setItemsList(itemsList);
+                    seatsDetailInfo.setStrDate(strDate);
+                    seatsDetailInfo.setTime(time);
+
+                    KalravApplication.getInstance().setGlobalSeatsDetailInfo(seatsDetailInfo);
+                    Intent intent=new Intent(getActivity(), LoginActivity.class);
+                    intent.putExtra("seatAuth",seatAuth);
+                    startActivity(intent);
                 }
                 else{
-                    Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
+                    List<Seat> seatList=scheme.getListOfSelectedSeats();
+                    if (seatList != null && seatList.size() > 0) {
+                        for (int i=0;i<seatList.size();i++){
+                            SeatExample seat= (SeatExample) seatList.get(i);
+                            Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id()+"Your seat total price : "+seat.getTotal(), Toast.LENGTH_SHORT).show();
 
-                } ArrayList<Seat> items=(ArrayList<Seat>)seatList;
-                Fragment fff=new ConfirmFragment();
-                Bundle args = new Bundle();
-                args.putSerializable("dramaInfoId",dramaInfoId);
-                args.putString("time", time);
-                args.putString("strDate", strDate);
-                args.putSerializable("seats", (ArrayList<Seat>) items);
-                fff.setArguments(args);
-                if (fff != null){
-                    switchFragment(fff);
+                        }
+                    }
+                    else{
+                        Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
+
+                    } ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                    Fragment fff=new ConfirmFragment();
+                    Bundle args = new Bundle();
+                    args.putSerializable("auditorium",auditorium);
+                    args.putSerializable("dramaInfoId",dramaInfoId);
+                    args.putString("time", time);
+                    args.putString("strDate", strDate);
+                    args.putSerializable("seats", (ArrayList<Seat>) items);
+                    fff.setArguments(args);
+                    if (fff != null){
+                        switchFragment(fff);
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else {
-                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
     }
+
 
     public Seat[][] basicScheme() {//[40][52]
         Seat seats[][] = new Seat[37][37];
