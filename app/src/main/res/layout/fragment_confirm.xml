@@ -1,5 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/greybackground"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text1"
+            android:layout_margin="5dip"
+            android:paddingLeft="5dip"
+            android:text="Confirmation Details "
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="40dip"
+            android:layout_marginBottom="15dip"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/colorPrimary" />
+
+            <EditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp"
+                android:layout_marginBottom="10dip"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_name" />
+
+            <EditText
+                android:id="@+id/editemailid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_email"
+                android:layout_marginBottom="10dip"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp" />
+
+            <EditText
+                android:id="@+id/editSeatNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_seat_no"
+                android:layout_marginBottom="10dip"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp"  />
+            <EditText
+                android:id="@+id/editNoOfSeatsBooked"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_no_of_booked_seats"
+                android:background="#f3f3f3"
+                android:layout_marginBottom="10dip"
+                android:paddingLeft="5dp"  />
+            <EditText
+                android:id="@+id/editGroupname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Group Name"
+                android:layout_marginBottom="10dip"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp"  />
+
+            <EditText
+                android:id="@+id/editTimeSlot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_time_slot"
+                android:layout_marginBottom="10dip"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp"  />
+            <EditText
+                android:id="@+id/editAuditoriumName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:hint="@string/hint_audi_name"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp" />
+            <EditText
+                android:id="@+id/editTotalPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:hint="@string/hint_total_price"
+                android:background="#f3f3f3"
+                android:paddingLeft="5dp"  />
+        <Button android:id="@+id/btnTicket"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm Booking"
+
+            android:layout_marginBottom="10dip"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/round_btn"
+            android:textColor="#fff"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+<!--
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -35,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_email" />
         </android.support.design.widget.TextInputLayout>
-        <!--<android.support.design.widget.TextInputLayout
+        &lt;!&ndash;<android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_confirmationcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -45,7 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_confirm_code" />
-        </android.support.design.widget.TextInputLayout>-->
+        </android.support.design.widget.TextInputLayout>&ndash;&gt;
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_seat_numbers"
             android:layout_width="match_parent"
@@ -120,4 +239,4 @@
             android:text="Confirm Booking"
             android:layout_marginTop="40dp"/>
     </LinearLayout>
-</ScrollView>
+</ScrollView>-->

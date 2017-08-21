@@ -137,24 +137,23 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
         Log.d("","Rest getAllDramaByUserGroup group_name "+ group_name);
 
 
-        ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-        Cursor c = db.rawQuery("SELECT " + DramaInfo.COLUMN_ID + "," +
-                DramaInfo.COLUMN_GROUP_NAME + "," +
-                DramaInfo.COLUMN_DRAMA_NAME + "," +
-                DramaInfo.COLUMN_LINK_PHOTO + "," +
-                DramaInfo.COLUMN_DATETIME +"," +
-                DramaInfo.COLUMN_DRAMA_LENGTH +"," +
-                DramaInfo.COLUMN_DRAMA_LANGUAGE +"," +
-                DramaInfo.COLUMN_DRAMA_GENRE +"," +
-                DramaInfo.COLUMN_DRAMA_TIME +"," +
-                DramaInfo.COLUMN_DRAMA_DESCRIPTION +"," +
-                DramaInfo.COLUMN_DRAMA_CAST +"," +
-                DramaInfo.COLUMN_DRAMA_WRITER +"," +
-                DramaInfo.COLUMN_DRAMA_DIRECTOR +"," +
-                DramaInfo.COLUMN_DRAMA_AVG_RATING +"," +
-                DramaInfo.COLUMN_DRAMA_MUSIC +"," +
-                DramaInfo.COLUMN_DRAMA_ISFAV +
-                " FROM drama where "+ DramaInfo.COLUMN_GROUP_NAME +" =? ", new String[]{group_name});
+       ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
+                Cursor c = db.query(DramaInfo.TABLE_DRAMA,new String[]{ DramaInfo.COLUMN_ID + "," +
+                        DramaInfo.COLUMN_GROUP_NAME + "," +
+                        DramaInfo.COLUMN_DRAMA_NAME + "," +
+                        DramaInfo.COLUMN_LINK_PHOTO + "," +
+                        DramaInfo.COLUMN_DATETIME +"," +
+                        DramaInfo.COLUMN_DRAMA_LENGTH +"," +
+                        DramaInfo.COLUMN_DRAMA_LANGUAGE +"," +
+                        DramaInfo.COLUMN_DRAMA_GENRE +"," +
+                        DramaInfo.COLUMN_DRAMA_TIME +"," +
+                        DramaInfo.COLUMN_DRAMA_DESCRIPTION +"," +
+                        DramaInfo.COLUMN_DRAMA_CAST +"," +
+                        DramaInfo.COLUMN_DRAMA_WRITER +"," +
+                        DramaInfo.COLUMN_DRAMA_DIRECTOR +"," +
+                        DramaInfo.COLUMN_DRAMA_AVG_RATING +"," +
+                        DramaInfo.COLUMN_DRAMA_MUSIC +"," +
+                        DramaInfo.COLUMN_DRAMA_ISFAV },DramaInfo.COLUMN_GROUP_NAME +" =? ",new String[]{group_name},null,null,DramaInfo.COLUMN_DATETIME+" desc");
         if(c!=null)
             Log.d("","Rest getAllDramaByUserGroup  c.getCount() "+ c.getCount());
 
@@ -324,7 +323,7 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
 //        db.query(true, DATABASE_TABLE, ALL_KEYS, KEY_DATE + "=?", new String[] {date}, null, null, null, null);
         ArrayList<DramaInfo> dramaInfos=new ArrayList<DramaInfo>();
-        Cursor c = db.query(true, DramaInfo.TABLE_DRAMA, new String[]{DramaInfo.COLUMN_ID + "," +
+ /*       Cursor c = db.query(true, DramaInfo.TABLE_DRAMA, new String[]{DramaInfo.COLUMN_ID + "," +
                 DramaInfo.COLUMN_GROUP_NAME + "," +
                 DramaInfo.COLUMN_DRAMA_NAME + "," +
                 DramaInfo.COLUMN_LINK_PHOTO + "," +
@@ -340,9 +339,9 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 DramaInfo.COLUMN_DRAMA_AVG_RATING + "," +
                 DramaInfo.COLUMN_DRAMA_MUSIC + "," +
                 DramaInfo.COLUMN_DRAMA_ISFAV}, DramaInfo.COLUMN_DATETIME  + ">= '"+date+"'", null, null, null, null, null);
+*/
 
-
-        /*  Cursor c = db.rawQuery("SELECT " +
+         Cursor c = db.rawQuery("SELECT " +
                 DramaInfo.COLUMN_ID + "," +
                 DramaInfo.COLUMN_GROUP_NAME + "," +
                 DramaInfo.COLUMN_DRAMA_NAME + "," +
@@ -359,8 +358,8 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 DramaInfo.COLUMN_DRAMA_AVG_RATING +"," +
                 DramaInfo.COLUMN_DRAMA_MUSIC +"," +
                 DramaInfo.COLUMN_DRAMA_ISFAV +
-                " FROM drama where "+ DramaInfo.COLUMN_DATETIME +" > = ", new Date());
-*/
+                " FROM drama order by "+ DramaInfo.COLUMN_DATETIME +" desc ",null);
+
         if (c != null && c.getCount()>0) {
 
             Log.d(TAG,"Rest getAllDrama  c.getCount() "+ c.getCount());

@@ -5,10 +5,23 @@
     android:layout_height="match_parent"
     tools:context="com.lognsys.kalrav.fragment.AuditoriumListFragment">
 
+    <TextView
+        android:id="@+id/text1"
+        android:layout_margin="5dip"
+        android:paddingLeft="5dip"
+        android:text="Auditorium List with DateTime : "
+        android:textColor="@color/white"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@color/colorPrimary" />
     <noman.weekcalendar.WeekCalendar
         android:id="@+id/weekCalendar"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="@color/colorPrimary"
         app:numOfPages="150"
         app:dayNameLength="threeLetters"
@@ -16,7 +29,7 @@
         app:todaysDateTextColor="#000000"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cardView"
-        android:layout_below="@+id/weekCalendar"
+        android:layout_below="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -48,6 +48,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.lognsys.kalrav.FCM.FCMService;
 import com.lognsys.kalrav.HomeActivity;
+import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.db.DramaInfoDAOImpl;
 import com.lognsys.kalrav.db.BookingInfoDAOImpl;
@@ -57,6 +58,7 @@ import com.lognsys.kalrav.model.BookingInfo;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.NotificationInfo;
 import com.lognsys.kalrav.model.Ratings;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.TimeSlot;
 import com.lognsys.kalrav.util.CallAPI;
 import com.lognsys.kalrav.util.Constants;
@@ -113,17 +115,10 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     private EditText editTimeSlot;
     private EditText editAuditoriumName;
     private EditText editTotalPrice;
+    SeatsDetailInfo seatsDetailInfo;
 
     private Button btnTicket;
 
-    private TextInputLayout input_layout_name;
-    private TextInputLayout input_layout_groupname;
-    private TextInputLayout input_layout_emailid;
-    private TextInputLayout input_layout_seat_numbers;
-    private TextInputLayout input_layout_no_of_seats;
-    private TextInputLayout input_layout_time_slot;
-    private TextInputLayout input_layout_audi_name;
-    private TextInputLayout input_layout_total_price;
     TimeSlot timeSlot;
     DramaInfo dramaInfo;
     String time,strDate;
@@ -177,7 +172,6 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         dramaInfoId = getArguments().getInt("dramaInfoId");
         dramaInfo= dramaInfoDAO.getDramaByDramaId(dramaInfoId);
-
        Log.d("","dramaInfo ==== "+dramaInfo.toString());
         auditorium= (Auditorium) (getArguments().getSerializable("auditorium"));
         propertyReader = new PropertyReader(getActivity());
@@ -194,15 +188,6 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
 
     private void populateView(View view) {
         callAPI=new CallAPI((AppCompatActivity) getActivity());
-        input_layout_name=(TextInputLayout)view.findViewById(R.id.input_layout_name);
-        input_layout_groupname=(TextInputLayout)view.findViewById(R.id.input_layout_groupname);
-        input_layout_emailid=(TextInputLayout)view.findViewById(R.id.input_layout_emailid);
-        input_layout_seat_numbers=(TextInputLayout)view.findViewById(R.id.input_layout_seat_numbers);
-        input_layout_no_of_seats=(TextInputLayout)view.findViewById(R.id.input_layout_no_of_seats);
-        input_layout_time_slot=(TextInputLayout)view.findViewById(R.id.input_layout_time_slot);
-        input_layout_audi_name=(TextInputLayout)view.findViewById(R.id.input_layout_audi_name);
-        input_layout_total_price=(TextInputLayout)view.findViewById(R.id.input_layout_total_price);
-
         editName=(EditText)view.findViewById(R.id.editName);
         editGroupname=(EditText)view.findViewById(R.id.editGroupname);
         editemailid=(EditText)view.findViewById(R.id.editemailid);
@@ -273,39 +258,38 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (editName.getText().toString().length() == 0) {
-            input_layout_name.setError(getString(R.string.hint_name));
+            editName.setError(getString(R.string.hint_name));
             editName.requestFocus();
         } else {
 
              if (editemailid.getText().toString().length() == 0) {
-                input_layout_emailid.setError(getString(R.string.hint_email));
+                 editemailid.setError(getString(R.string.hint_email));
                 editemailid.requestFocus();
             } else if (!Services.isEmailValid(editemailid.getText().toString())) {
-                input_layout_emailid.setError(getString(R.string.error_emailid));
+                 editemailid.setError(getString(R.string.error_emailid));
                 editemailid.requestFocus();
              }
             else if (Services.isEmpty(editSeatNumber.getText().toString())) {
-                input_layout_seat_numbers.setError(getString(R.string.error_seats));
+                 editSeatNumber.setError(getString(R.string.error_seats));
                 editSeatNumber.requestFocus();
 //                input_layout_confirmationcode.setErrorEnabled(false);
             }   else if (Services.isEmpty(editNoOfSeatsBooked.getText().toString())) {
-                input_layout_no_of_seats.setError(getString(R.string.error_seats));
-                input_layout_seat_numbers.setErrorEnabled(false);
+                 editNoOfSeatsBooked.setError(getString(R.string.error_seats));
                 editNoOfSeatsBooked.requestFocus();
             }   else if (Services.isEmpty(editTimeSlot.getText().toString())) {
-                input_layout_time_slot.setError(getString(R.string.error_timeslot));
+                 editTimeSlot.setError(getString(R.string.error_timeslot));
                 editTimeSlot.requestFocus();
-                input_layout_no_of_seats.setErrorEnabled(false);
             }   else if (Services.isEmpty(editAuditoriumName.getText().toString())) {
-                input_layout_audi_name.setError(getString(R.string.error_auditorium));
+                 editAuditoriumName.setError(getString(R.string.error_auditorium));
                 editAuditoriumName.requestFocus();
-                input_layout_time_slot.setErrorEnabled(false);
             }   else if (Services.isEmpty(editTotalPrice.getText().toString())) {
-                input_layout_total_price.setError(getString(R.string.error_total_price));
+                 editTotalPrice.setError(getString(R.string.error_total_price));
                 editTotalPrice.requestFocus();
-                input_layout_audi_name.setErrorEnabled(false);
             }
             else {
+
+
+
                  AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
                  builderSingle.setIcon(R.mipmap.ic_launcher);
                  builderSingle.setTitle("Booking Confirmation");
@@ -321,7 +305,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                      public void onClick(DialogInterface dialog, int which) {
 
 
-                         if(dramaInfo != null /*&& timeSlot!= null*/){
+                         if(dramaInfo != null && KalravApplication.getInstance().getPrefs().getIsLogin()){
 //                             callAPI=new CallAPI((AppCompatActivity) getActivity());
 
 
@@ -350,6 +334,20 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                              KalravApplication.getInstance().getPrefs().showDialog(getContext());
                              bookedSeats(dramaInfo,KalravApplication.getInstance().getPrefs().getCustomer_id(),
                                      bookedDT, editSeatNumber.getText().toString(),totalNoTickets,totalPrice,auditorium);
+                         }
+                         else{
+                             String seatAuth="ConfirmationSeats";
+                             seatsDetailInfo=new SeatsDetailInfo();
+                             seatsDetailInfo.setItemsList(mSeats);
+                             seatsDetailInfo.setAuditorium(auditorium);
+                             seatsDetailInfo.setDramaInfoId(dramaInfoId);
+                             seatsDetailInfo.setStrDate(strDate);
+                             seatsDetailInfo.setTime(time);
+
+                             KalravApplication.getInstance().setGlobalSeatsDetailInfo(seatsDetailInfo);
+                             Intent intent=new Intent(getActivity(), LoginActivity.class);
+                             intent.putExtra("seatAuth",seatAuth);
+                             startActivity(intent);
                          }
                      }
                  });
@@ -458,6 +456,7 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                                 if (bitmapQRCode == null){
                                     Log.d("GenerateQRCode","bookedSeats GenerateQRCode onPostExecute createBitmapOfQRCode() "+createBitmapOfQRCode());
                                     bitmapQRCode=createBitmapOfQRCode();
+                                    bookingInfo.setBitmapQRCode(bitmapQRCode);
                                 }
                                 else {
                                     Log.d("GenerateQRCode"," bookedSeats  bitmapQRCode "+bitmapQRCode);

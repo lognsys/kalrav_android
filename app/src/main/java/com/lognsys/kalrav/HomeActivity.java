@@ -31,19 +31,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
+import com.lognsys.kalrav.fragment.AuditoriumListFragment;
 import com.lognsys.kalrav.fragment.BookmarkFragment;
+import com.lognsys.kalrav.fragment.ConfirmFragment;
 import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.fragment.FragmentDramaDetail;
 import com.lognsys.kalrav.fragment.MyDramaFragment;
 import com.lognsys.kalrav.fragment.MyTicketFragment;
 import com.lognsys.kalrav.fragment.MyticketListFragment;
 import com.lognsys.kalrav.fragment.NotificationFragment;
+import com.lognsys.kalrav.model.Auditorium;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.CircleTransform;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import by.anatoldeveloper.hallscheme.hall.Seat;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -237,6 +246,24 @@ public class HomeActivity extends AppCompatActivity {
 
               }
               else{
+                    if(dramaId>0){
+                        SeatsDetailInfo seatsDetailInfo=KalravApplication.getInstance().getGlobalSeatsDetailInfo();
+                        dramaId=seatsDetailInfo.getDramaInfoId();
+                        String time=seatsDetailInfo.getTime();
+                        String strDate=seatsDetailInfo.getStrDate();
+                        Auditorium auditorium=seatsDetailInfo.getAuditorium();
+                        List<Seat> items=seatsDetailInfo.getItemsList();
+
+
+                        Bundle args = new Bundle();
+                        args.putInt("dramaInfoId", dramaId);
+                        args.putSerializable("auditorium",auditorium);
+                        args.putString("time", time);
+                        args.putString("strDate", strDate);
+                        args.putSerializable("seats", (ArrayList<Seat>) items);
+                         fragment = new ConfirmFragment();
+                                    fragment.setArguments(args);
+                    }
                   FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                   fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                           android.R.anim.fade_out);

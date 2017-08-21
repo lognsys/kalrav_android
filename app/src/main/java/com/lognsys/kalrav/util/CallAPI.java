@@ -1,5 +1,6 @@
 package com.lognsys.kalrav.util;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,9 +32,12 @@ import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.RegisterActivity;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
+import com.lognsys.kalrav.fragment.AuditoriumListFragment;
+import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.Ratings;
 import com.lognsys.kalrav.model.SeatExample;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
 import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
@@ -305,7 +310,7 @@ public class CallAPI {
 
 
     //   alreadyExist user checking
-    public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id,String url) {
+    public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id, String url, final String seatAuth, final Activity activity) {
 
         userDaoImpl = new UserInfoDAOImpl(mContext);
         JSONObject params = new JSONObject();
@@ -373,10 +378,25 @@ public class CallAPI {
 
                                 userDaoImpl.addUser(userInfo);
                                 KalravApplication.getInstance().getPrefs().setIsLogin(true);
+                                Log.d("", "Rest alReadyExsistUser seatAuth " + seatAuth);
 
-                                Intent i = new Intent(mContext, HomeActivity.class);
-                                mContext.startActivity(i);
-//                        finish();
+                                if(seatAuth!=null && seatAuth.equalsIgnoreCase("ConfirmationSeats")){
+                                    SeatsDetailInfo seatsDetailInfo=  KalravApplication.getInstance().getGlobalSeatsDetailInfo();
+
+                                    int dramaInfoId=seatsDetailInfo.getDramaInfoId();
+
+                                    Intent i = new Intent(mContext, HomeActivity.class);
+                                    i.putExtra("id",dramaInfoId);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    mContext.startActivity(i);
+
+                                }
+                                else{
+                                    Intent i = new Intent(mContext, HomeActivity.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    mContext.startActivity(i);
+//
+                                }
 
                             }
 
@@ -425,6 +445,18 @@ public class CallAPI {
                         } else if(statusCode==404){
                             String msg=object.getString("msg");
                             displayMessage(msg);
+                            Intent i = new Intent(mContext, RegisterActivity.class);
+
+                            if(seatAuth!=null && seatAuth.equalsIgnoreCase("ConfirmationSeats")){
+                                i.putExtra("seatAuth",seatAuth);
+                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                            }
+                            else{
+                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            }
+
+                            mContext.startActivity(i);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -448,94 +480,6 @@ public class CallAPI {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         KalravApplication.getInstance().addToRequestQueue(jsonObjectRequest);
 
-       /*  String alReadyExsistUser=url+userInfo.getEmail();
-        Log.d("","Rest alReadyExsistUser " + alReadyExsistUser);
-
-      JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,alReadyExsistUser,
-                null,new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-
-                try {
-
-                    if (jsonObject != null) {
-                        Log.d(TAG, "Rest   alReadyExsistUser jsonObject..."+jsonObject);
-
-                        UserInfo  userInfo = new UserInfo();
-                        userInfo.setId(jsonObject.getInt("id"));
-                        userInfo.setName(jsonObject.getString("realname"));
-                        userInfo.setEmail(jsonObject.getString("username"));
-                        if (fb_id != null){
-                            userInfo.setFb_id(fb_id);
-                            KalravApplication.getInstance().getPrefs().setUser_id(fb_id);
-                        }
-                        if (google_id != null) {
-                            userInfo.setGoogle_id(google_id);
-                            KalravApplication.getInstance().getPrefs().setUser_id(google_id);
-                        }
-                        userInfo.setPhoneNo(jsonObject.getString("phone"));
-                        userInfo.setAddress(jsonObject.getString("address"));
-                        userInfo.setCity(jsonObject.getString("city"));
-                        userInfo.setState(jsonObject.getString("state"));
-                        userInfo.setZipcode(jsonObject.getString("zipcode"));
-                        userInfo.setGroupname(jsonObject.getString("group"));
-                        userInfo.setNotification(jsonObject.getBoolean("notification"));
-
-                        userInfo.setRole(jsonObject.getString("role"));
-                        userInfo.setEnabled(jsonObject.getBoolean("enabled"));
-                        userInfo.setLoggedIn(Constants.LOG_IN);
-                        userInfo.setDevice(jsonObject.getString("device"));
-                        KalravApplication.getInstance().setGlobalUserObject(userInfo);
-
-//                      save to the database
-                        KalravApplication.getInstance().getPrefs().setUser_Group_Name(userInfo.getGroupname());
-                        KalravApplication.getInstance().getPrefs().setEmail(userInfo.getEmail());
-
-                        KalravApplication.getInstance().getPrefs().setCustomer_id(String.valueOf(userInfo.getId()));
-                        Log.d("", "Rest alReadyExsistUser Global object  " + KalravApplication.getInstance().getGlobalUserObject());
-
-
-
-                        KalravApplication.getInstance().getPrefs().setDevice_token(userInfo.getDevice());
-                        Log.d("", "Rest alReadyExsistUser userInfo getDevice " + userInfo.getDevice());
-
-                        userDaoImpl.addUser(userInfo);
-                        KalravApplication.getInstance().getPrefs().setIsLogin(true);
-
-                        Intent i = new Intent(mContext, HomeActivity.class);
-                        mContext.startActivity(i);
-//                        finish();
-
-                    }
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("","JSonException docallApi Exception "+e);
-
-                    Toast.makeText(getApplicationContext(),
-                            getApplicationContext().getString(R.string.no_data_available),
-                            Toast.LENGTH_LONG).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Log.d("","Rest Google docallApi Error: volly Exception " + error.toString());
-                Intent i = new Intent(mContext, RegisterActivity.class);
-                mContext.startActivity(i);
-//                finish();
-                KalravApplication.getInstance().getPrefs().hidepDialog(mContext);
-            }
-        });
-        req.setRetryPolicy(new DefaultRetryPolicy(
-                50000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        KalravApplication.getInstance().addToRequestQueue(req);
-*/
     }
 
     // update user

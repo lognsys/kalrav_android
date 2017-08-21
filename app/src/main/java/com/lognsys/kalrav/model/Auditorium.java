@@ -16,7 +16,16 @@ public class Auditorium implements Serializable {
     private List<String> seats;
     private ArrayList<AuditoriumPriceRange> auditoriumPriceRanges;
     private String price;
-    private String datetime;
+    private String time;
+    private String date;
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public ArrayList<AuditoriumPriceRange> getAuditoriumPriceRanges() {
         return auditoriumPriceRanges;
@@ -30,12 +39,12 @@ public class Auditorium implements Serializable {
         return dramaId;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getDate() {
+        return date;
     }
 
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public void setDramaId(int dramaId) {

@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.lognsys.kalrav.db.UserInfoDAO;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.KalravApplication;
@@ -67,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private PropertyReader propertyReader;
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
+    String seatAuth=null;
 
     ArrayList<UserInfo> userInfos;
     UserInfoDAOImpl userDaoImpl;
@@ -79,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
 
         userDaoImpl = new UserInfoDAOImpl(this);
+        seatAuth = getIntent().getStringExtra("seatAuth");
 
         populateData();
 
@@ -157,8 +160,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 String auth_id = null;
                 if(KalravApplication.getInstance().getPrefs().getUser_id()!=null)
                 auth_id =  KalravApplication.getInstance().getPrefs().getUser_id();
-               /* RegisteredTask task = new RegisteredTask(realname, username, auth_id, phone,address, city, state, zipcode);
-                task.execute();*/
+
                 postReq(realname, username, auth_id, phone,address, city, state, zipcode);
             }
         }
@@ -276,10 +278,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                            Log.d("", "Global object Reg " + KalravApplication.getInstance().getGlobalUserObject());
                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
+                            Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
 
-                           Intent i = new Intent(RegisterActivity.this, HomeActivity.class);
-                           startActivity(i);
-                           finish();
+                           if(seatAuth!=null && seatAuth.equalsIgnoreCase("ConfirmationSeats")) {
+                               SeatsDetailInfo seatsDetailInfo=  KalravApplication.getInstance().getGlobalSeatsDetailInfo();
+
+                               int dramaInfoId=seatsDetailInfo.getDramaInfoId();
+
+                               i.putExtra("id",dramaInfoId);
+                               startActivity(i);
+                               finish();
+                           }else{
+                              startActivity(i);
+                               finish();
+                           }
+
                        }
                        catch (JSONException e){
                            e.printStackTrace();

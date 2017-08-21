@@ -1,10 +1,12 @@
 package com.lognsys.kalrav.schemes;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -52,6 +54,8 @@ public class SchemePrabhodhanFragment extends Fragment {
     MyAdapter adapter;
     int dramaInfoId;
     String time,strDate;
+
+    FragmentActivity mActivity;
     String[] rowname = {"",
             "KK", "JJ", "HH", "GG",
             "FF", "EE", "DD", "CC",
@@ -77,10 +81,20 @@ public class SchemePrabhodhanFragment extends Fragment {
         return rootView;
     }
 
-    private void switchFragment(Fragment fff) {
-        if (getActivity() == null)
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (FragmentActivity) activity;
+    }
+    public void switchFragment(Fragment fff) {
+        Log.d("", "Rest alReadyExsistUser seatAuth switchFragment fff " + fff);
+        Log.d("", "Rest alReadyExsistUser seatAuth switchFragment mActivity " + mActivity);
+
+        if (mActivity == null)
             return;
-        if (getActivity() instanceof HomeActivity) {
+        Log.d("", "Rest alReadyExsistUser seatAuth switchFragment (mActivity instanceof HomeActivity) " + (mActivity instanceof HomeActivity));
+
+        if (mActivity instanceof HomeActivity) {
             HomeActivity feeds = (HomeActivity) getActivity();
             feeds.switchContent(fff);
         }
@@ -127,12 +141,11 @@ public class SchemePrabhodhanFragment extends Fragment {
             public void onClick(View v) {
 
                 Log.d("", "btnProceed getIsLogin " +KalravApplication.getInstance().getPrefs().getIsLogin());
-                String seatAuth="seatsDetailsPrabhodhan";
+               /* String seatAuth="seatsDetailsPrabhodhan";
                 if(KalravApplication.getInstance().getPrefs().getIsLogin()==false){
                     SeatsDetailInfo seatsDetailInfo=new SeatsDetailInfo();
                     seatsDetailInfo.setAuditorium(auditorium);
                     seatsDetailInfo.setDramaInfoId(dramaInfoId);
-                    seatsDetailInfo.setItemsList(itemsList);
                     seatsDetailInfo.setStrDate(strDate);
                     seatsDetailInfo.setTime(time);
 
@@ -141,7 +154,7 @@ public class SchemePrabhodhanFragment extends Fragment {
                     intent.putExtra("seatAuth",seatAuth);
                     startActivity(intent);
                 }
-                else{
+                else*/{
                     List<Seat> seatList=scheme.getListOfSelectedSeats();
                     if (seatList != null && seatList.size() > 0) {
                         for (int i=0;i<seatList.size();i++){
@@ -173,6 +186,7 @@ public class SchemePrabhodhanFragment extends Fragment {
             }
         });
     }
+
 
 
     public Seat[][] basicScheme() {//[40][52]

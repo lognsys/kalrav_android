@@ -115,6 +115,7 @@ public class SchemeBhaidasFragment extends Fragment {
                 Fragment fff=new ConfirmFragment();
                 Bundle args = new Bundle();
                 args.putSerializable("dramaInfoId",dramaInfoId);
+                args.putSerializable("auditorium",auditorium);
                 args.putString("time", time);
                 args.putString("strDate", strDate);
                 args.putSerializable("seats", (ArrayList<Seat>) items);

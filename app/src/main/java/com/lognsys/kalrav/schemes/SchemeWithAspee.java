@@ -82,7 +82,7 @@ public class SchemeWithAspee extends Fragment {
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         listViewPrices.setLayoutManager(MyLayoutManager);
-
+        if(auditoriumPriceRangeList!=null && auditoriumPriceRangeList.size()>0)
         adapter =new MyAdapter(auditoriumPriceRangeList);
 
         listViewPrices.setAdapter( adapter);

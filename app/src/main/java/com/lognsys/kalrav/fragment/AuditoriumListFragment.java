@@ -186,7 +186,6 @@ public class AuditoriumListFragment extends Fragment {
 
             KalravApplication.getInstance().getPrefs().showDialog(getActivity());
             requestAuditoriumDateTime(dramaInfoId, strDate);
-            Log.d(TAG, "requestAuditoriumDateTime strDate " + strDate);
         }
         else{
             Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
@@ -197,7 +196,7 @@ public class AuditoriumListFragment extends Fragment {
 
     private void requestAuditoriumDateTime(int dramaInfoId, final String strDate) {
 
-        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name())+dramaInfoId+"/"+strDate;
+        final String auditoriumlist=properties.getProperty(Constants.API_URL_AUDITORIUM_LIST.getauditoriumlist.name())+dramaInfoId/*+"/"+strDate*/;
         Log.d(TAG, "requestAuditoriumDateTime auditoriumlist..."+auditoriumlist);
 
         JsonArrayRequest req = new JsonArrayRequest(auditoriumlist,
@@ -222,9 +221,11 @@ public class AuditoriumListFragment extends Fragment {
                                 String auditoriumname = jsonObject.getString("auditorium_name");
                                 auditorium.setAudiName(auditoriumname);
 
+                                String date = jsonObject.getString("date");
                                 String time = jsonObject.getString("time");
-
-                                auditorium.setDatetime(time);
+//                                auditorium.
+                                auditorium.setTime(time);
+                                auditorium.setDate(date);
 
 //                        String auditoriumpricerange = ;
                                 JSONArray jsonArrayprice = new JSONArray(jsonObject.getString("auditoriumpricelist"));
@@ -427,8 +428,8 @@ public class AuditoriumListFragment extends Fragment {
 //            Log.d("", "MyAdapter onBindViewHolder ");
 
              final Auditorium auditorium = list.get(position);
-            holder.textAuditoriumName.setText(auditorium.getAudiName());
-            final String  timeArray = auditorium.getDatetime();
+            holder.textAuditoriumName.setText(auditorium.getAudiName() +" " +auditorium.getDate());
+            final String  timeArray = auditorium.getTime();
             Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
 //            final String[] split= timeArray.split(" ");
 //                      Log.d("", "MyAdapter onBindViewHolder auditorium.getAuditoriumPriceRanges() "+auditorium.getAuditoriumPriceRanges());
@@ -478,7 +479,7 @@ public class AuditoriumListFragment extends Fragment {
                             final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
                             Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
                             KalravApplication.getInstance().getPrefs().showDialog(getActivity());
-                            requestWebService(bookedseatsurl,timeArray,strDate);
+                            requestWebService(bookedseatsurl,timeArray,strDate,auditorium);
 //                        new RequestItemsServiceTask(auditorium,split[finalI],strDate).execute();
 
                         }
@@ -516,7 +517,7 @@ public class AuditoriumListFragment extends Fragment {
             }
             return false;
         }
-        public  void requestWebService(String bookedseatsurl, final String time, final String strDate) {
+        public  void requestWebService(String bookedseatsurl, final String time, final String strDate,final Auditorium auditorium) {
             Log.e("","RequestItemsServiceTask requestWebService bookedseatsurl  "+bookedseatsurl);
             JSONObject params = new JSONObject();
             try {
@@ -572,6 +573,8 @@ public class AuditoriumListFragment extends Fragment {
 
                                 }
                                 KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
+                                Log.d(TAG,"bookedSeats auditorium.getAudiName()========" +auditorium.getAudiName());
+//
                                 if(auditorium.getAudiName().equalsIgnoreCase("Aspee")){
 
                                     if( auditorium.getAuditoriumPriceRanges()!= null){

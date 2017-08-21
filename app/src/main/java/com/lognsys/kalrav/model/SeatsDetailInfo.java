@@ -2,23 +2,25 @@ package com.lognsys.kalrav.model;
 
 import java.util.List;
 
+import by.anatoldeveloper.hallscheme.hall.Seat;
+
 /**
  * Created by admin on 8/18/2017.
  */
 
 public class SeatsDetailInfo {
-    List<SeatExample> itemsList;
+    List<Seat> itemsList;
 
     int dramaInfoId;
     String time,strDate;
 
     Auditorium auditorium;
 
-    public List<SeatExample> getItemsList() {
+    public List<Seat> getItemsList() {
         return itemsList;
     }
 
-    public void setItemsList(List<SeatExample> itemsList) {
+    public void setItemsList(List<Seat> itemsList) {
         this.itemsList = itemsList;
     }
 

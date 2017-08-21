@@ -1,39 +1,22 @@
 package com.lognsys.kalrav;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.content.pm.Signature;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.os.Parcelable;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -48,8 +31,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -59,51 +40,33 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.hanks.htextview.HTextView;
 import com.hanks.htextview.HTextViewType;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.db.SQLiteHelper;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.dialog.NetworkStatusDialog;
-import com.lognsys.kalrav.fragment.DramaFragment;
-import com.lognsys.kalrav.model.DramaInfo;
+import com.lognsys.kalrav.model.Auditorium;
+import com.lognsys.kalrav.model.SeatExample;
+import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
+import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
 import com.lognsys.kalrav.util.CallAPI;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.FontManager;
 import com.lognsys.kalrav.util.KalravApplication;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.lognsys.kalrav.R;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.lognsys.kalrav.util.PropertyReader;
-
-import static android.R.attr.bitmap;
-import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.lognsys.kalrav.R.id.imageView;
 
 
 public class LoginActivity extends AppCompatActivity implements
@@ -181,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements
                     if (user.getEmail() != null && user.getEmail().length() > 0) {
 
                         String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
-                        callAPI.alReadyExsistUser(user, fb_id, google_id,alReadyExsistUser);
+                        callAPI.alReadyExsistUser(user, fb_id, google_id,alReadyExsistUser,seatAuth,LoginActivity.this);
                     }
                 }
             }
@@ -305,7 +268,7 @@ public class LoginActivity extends AppCompatActivity implements
                             if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
 
                                 String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
-                                callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
+                                callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth, LoginActivity.this);
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..." + e);
@@ -367,7 +330,7 @@ public class LoginActivity extends AppCompatActivity implements
 
                         if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
                             String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
-                            callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
+                            callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth, LoginActivity.this);
                             finish();
                         }
 
@@ -517,7 +480,7 @@ public class LoginActivity extends AppCompatActivity implements
 
                                 if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
                                     String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
-                                    callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser);
+                                    callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth,LoginActivity.this);
                                   }
 
                             } catch (Exception e) {
@@ -571,7 +534,26 @@ public class LoginActivity extends AppCompatActivity implements
                                 Log.e(TAG, "#handleFacebookAccessToken#FacebookAuthUserCollision - " + fe.getMessage());
 
                                 sharedPrefEditor.putBoolean("Constants.Shared.IS_SIMILAR_EMAILID.name()", true);
+
                                 if(seatAuth!=null && seatAuth.equalsIgnoreCase("seatsDetailsPrabhodhan")){
+                                    SeatsDetailInfo seatsDetailInfo=  KalravApplication.getInstance().getGlobalSeatsDetailInfo();
+
+                                    Auditorium auditorium=seatsDetailInfo.getAuditorium();
+                                    int dramaInfoId=seatsDetailInfo.getDramaInfoId();
+                                    String time=seatsDetailInfo.getTime();
+                                    String strDate=seatsDetailInfo.getStrDate();
+                                    Bundle bundle = new Bundle();
+                                    if(auditorium.getAuditoriumPriceRanges()!= null){
+
+                                        bundle.putSerializable("auditorium",auditorium);
+                                        bundle.putInt("dramaInfoId", dramaInfoId);
+                                        bundle.putString("time", time);
+                                        bundle.putString("strDate", strDate);
+                                    }
+                                    Fragment fragment = new SchemePrabhodhanFragment();
+                                    fragment.setArguments(bundle);
+                                   LoginActivity.this.getSupportFragmentManager().beginTransaction()
+                                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                                 }
                                 else{
@@ -596,7 +578,6 @@ public class LoginActivity extends AppCompatActivity implements
                     }
                 });
     }
-
     /**
      * @param token
      */
