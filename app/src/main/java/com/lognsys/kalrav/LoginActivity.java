@@ -202,8 +202,6 @@ public class LoginActivity extends AppCompatActivity implements
                 }
             });
 
-            /******************************************************************************/
-
             /*********************************GOOGLE AUTH*************************************/
 
             //GOOG:1 Google authentication code

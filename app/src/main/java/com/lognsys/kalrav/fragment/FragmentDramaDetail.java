@@ -144,7 +144,10 @@ public class FragmentDramaDetail extends Fragment  {
         tvRateDrama.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
+                if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null) {
+
+
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
                 View convertView = (View) inflater.inflate(R.layout.dialog_rate_now, null);
                 final ImageView ivDramaImage = (ImageView) convertView.findViewById(R.id.ivDramaImage);
                 final Button btnsubmit = (Button) convertView.findViewById(R.id.btnsubmit);
@@ -198,7 +201,11 @@ public class FragmentDramaDetail extends Fragment  {
 
                     }
                 });
-
+                }
+                else{
+                    Intent intent =new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -241,7 +248,7 @@ public class FragmentDramaDetail extends Fragment  {
 
         Log.d("","Rest displayDramaDetail dramaDetailURLByID "+dramaDetailURLByID);
 
-        KalravApplication.getInstance().getPrefs().showDialog(getContext());
+        KalravApplication.getInstance().getPrefs().showDialog(getActivity());
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 dramaDetailURLByID, null, new Response.Listener<JSONObject>() {
 
@@ -341,7 +348,7 @@ public class FragmentDramaDetail extends Fragment  {
                         tvDramaLanguage.setText("Language : "+dramaInfo.getDrama_language());
                     }
                     dramaInfoDAO.updateDrama(dramaInfo);
-                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -350,7 +357,7 @@ public class FragmentDramaDetail extends Fragment  {
                     Toast.makeText(getActivity(),
                             "Error: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
-                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                    KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
 
                 }
 
