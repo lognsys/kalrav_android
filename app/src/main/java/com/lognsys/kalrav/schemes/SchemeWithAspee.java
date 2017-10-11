@@ -50,7 +50,7 @@ public class SchemeWithAspee extends Fragment {
     MyAdapter adapter;
     int dramaInfoId;
     String time,strDate;
-    String rowNumber[]={"","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","H","G","F","E","D","C","B","A"};
+    String rowNumber[]={"","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","H","G","F","E","D","C","B","A",""};
 
     int n =91;
     @Nullable
@@ -82,9 +82,9 @@ public class SchemeWithAspee extends Fragment {
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         listViewPrices.setLayoutManager(MyLayoutManager);
-        if(auditoriumPriceRangeList!=null && auditoriumPriceRangeList.size()>0)
-        adapter =new MyAdapter(auditoriumPriceRangeList);
-
+        if(auditoriumPriceRangeList!=null && auditoriumPriceRangeList.size()>0) {
+            adapter = new MyAdapter(auditoriumPriceRangeList);
+        }
         listViewPrices.setAdapter( adapter);
 
         scheme = new HallScheme(imageView, schemeWithScene(), getActivity());

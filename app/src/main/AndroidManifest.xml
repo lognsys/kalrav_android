@@ -9,12 +9,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.lognsys.kalrav.util.KalravApplication"
+        android:name=".util.KalravApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-
         android:theme="@style/AppTheme">
 
         <!-- This meta-data tag is required to use Google Play services. -->
@@ -27,8 +26,8 @@
 
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name"
             android:hardwareAccelerated="true"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,28 +35,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
-       <!-- &lt;!&ndash; Adding facebook athentication through browser if app not installed &ndash;&gt;
         <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>-->
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".HomeActivity"
-            android:label="@string/title_activity_home"
             android:hardwareAccelerated="true"
+            android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AboutUsActivity"
@@ -69,7 +55,7 @@
             android:label="@string/activity_title_privacy_policy" />
         <activity
             android:name=".AdmobActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <!-- Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
@@ -77,30 +63,31 @@
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/title_activity_register"
             android:hardwareAccelerated="true"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-        </activity>
+            android:label="@string/title_activity_register"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".SettingActivity"
-            android:label="@string/title_activity_Setting"
             android:hardwareAccelerated="true"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:label="@string/title_activity_Setting"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        </activity>
-        <service android:name="com.lognsys.kalrav.FCM.FCMInstanceIdService" >
+        <service android:name=".FCM.FCMInstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"></action>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-       <!-- RECEIVING THE MESSAGE FROM  FIREBASE CONSOLE-->
-        <service android:name="com.lognsys.kalrav.FCM.FCMService" >
+        <!-- RECEIVING THE MESSAGE FROM  FIREBASE CONSOLE -->
+        <service android:name=".FCM.FCMService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" ></action>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

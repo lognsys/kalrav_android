@@ -706,6 +706,10 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationMessage);
             sendNotification(notificationId);
+            Fragment fragment = new DramaFragment();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+
         }
     private void sendNotification(int currentNotificationID) {
         notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);

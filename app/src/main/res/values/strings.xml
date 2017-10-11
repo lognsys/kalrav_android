@@ -87,4 +87,7 @@
     <string name="login_cancel">Login Cancelled...</string>
     <string name="login_error">Login Error: Check network connection...</string>
     <string name="authentication_failed">Authentication failed...</string>
+
+    <string name="about_us">Kalrav mobile application is a ticketing system built for event organisers. Organisers can host events like Drama, Musical, Opera etc… for their set of registered users. It notifies date and time of the events and allow users to book the tickets online.</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

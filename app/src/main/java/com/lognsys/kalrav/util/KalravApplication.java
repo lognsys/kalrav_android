@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
@@ -150,15 +149,26 @@ public void showDialog(Context context, String message){
 
     public String getCurrentDate()
     {
-        // (1) get today's date
-        Date today = Calendar.getInstance().getTime();
+        try{
 
-        // (2) create a date "formatter" (the date format we want)
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            // (1) get today's date
+            Date today =new Date();
+            Log.d("","TODAY"+today);
+           // (2) create a date "formatter" (the date format we want)
+            java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            Log.d("","TODAY formatter"+formatter);
 
-        // (3) create a new String using the date format we want
-        String date  = formatter.format(today);
-        return date;
-    }
+            // (3) create a new String using the date format we want
+            String date  = formatter.format(today);
+            Log.d("","TODAY date"+date);
+
+            return date;
+        }catch (Exception e){
+            Log.d("","TODAY       e "+ e);
+
+            return  e.toString();
+
+        }
+      }
 
 }

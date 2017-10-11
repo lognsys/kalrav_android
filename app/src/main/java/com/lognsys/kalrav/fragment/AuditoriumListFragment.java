@@ -449,10 +449,6 @@ public class AuditoriumListFragment extends Fragment {
                 System.out.println("Comparing two Date in Java using CompareTo method");
             boolean isTrue=false;
             try {
-                Log.d("","df isTrue ==================== " + df);
-                Log.d("","df isTrue strDate ==================== " + this.strDate);
-                Log.d("","df isTrue df.parse(strDate) ==================== " + df.parse(strDate));
-                Log.d("","df isTrue ==================== " + df);
 
                 Log.d("", "df === "+df+"  df.parse(strDate) == "+ df.parse(strDate)+" df.parse(KalravApplication.getInstance().getCurrentDate()  ===" +df.parse(KalravApplication.getInstance().getCurrentDate()));
 
@@ -540,14 +536,15 @@ public class AuditoriumListFragment extends Fragment {
                         public void onResponse(JSONObject response) {
                             List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
 
-                            Log.d(TAG,"bookedSeats response " +response);
+
                             try {
-                                JSONArray jsonseatnumberdetails=response.getJSONArray("seatnumberdetails");
-                                Log.d(TAG,"bookedSeats jsonseatnumberdetails " +jsonseatnumberdetails);
-                                Log.d(TAG,"bookedSeats jsonseatnumberdetails length " +jsonseatnumberdetails.length());
+                                if(response!=null && response.length()>0){
+                                    JSONArray jsonseatnumberdetails=response.getJSONArray("seatnumberdetails");
+                                    Log.d(TAG,"bookedSeats jsonseatnumberdetails " +jsonseatnumberdetails);
+                                    Log.d(TAG,"bookedSeats jsonseatnumberdetails length " +jsonseatnumberdetails.length());
 //                                    [{"i":1,"j":8},{"i":1,"j":7},{"i":1,"j":6},{"i":1,"j":5}]
 
-                                for(int i=0;i<jsonseatnumberdetails.length();i++){
+                                    for(int i=0;i<jsonseatnumberdetails.length();i++){
                                         SeatExample seatExample=new SeatExample();
                                         Log.d("Confirm Fragment","bookedSeats jsonseatnumberdetails.get(i) " +jsonseatnumberdetails.get(i));
                                         JSONObject jsonObject=(JSONObject)jsonseatnumberdetails.getJSONObject(i);
@@ -563,6 +560,8 @@ public class AuditoriumListFragment extends Fragment {
 
                                         foundItems.add(seatExample);
                                     }
+                                }
+
 
                                 Bundle bundle = new Bundle();
                                 if(foundItems!=null && foundItems.size()>0){
@@ -575,7 +574,7 @@ public class AuditoriumListFragment extends Fragment {
                                 KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
                                 Log.d(TAG,"bookedSeats auditorium.getAudiName()========" +auditorium.getAudiName());
 //
-                                if(auditorium.getAudiName().equalsIgnoreCase("Aspee")){
+                                if(auditorium.getAudiName().equalsIgnoreCase("ASPEE Auditorium")){
 
                                     if( auditorium.getAuditoriumPriceRanges()!= null){
 
@@ -591,7 +590,7 @@ public class AuditoriumListFragment extends Fragment {
                                             .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
                                 }
-                                else if(auditorium.getAudiName().equalsIgnoreCase("Bhaidas")){
+                                else if(auditorium.getAudiName().equalsIgnoreCase("Bhaidas Auditorium")){
                                     if(auditorium.getAuditoriumPriceRanges()!= null){
 
                                         bundle.putSerializable("auditorium",auditorium);

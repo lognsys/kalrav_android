@@ -2,6 +2,8 @@ package com.lognsys.kalrav;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,9 +25,11 @@ import com.lognsys.kalrav.db.UserInfoDAOImpl;
 import com.lognsys.kalrav.model.UserInfo;
 import com.lognsys.kalrav.util.CircleTransform;
 import com.lognsys.kalrav.util.Constants;
+import com.lognsys.kalrav.util.ImageConverter;
 import com.lognsys.kalrav.util.KalravApplication;
 import com.lognsys.kalrav.util.PropertyReader;
 import com.lognsys.kalrav.util.Services;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +66,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     private Properties properties;
     public static final String PROPERTIES_FILENAME = "kalrav_android.properties";
     public static final String TAG = "SettingFragment";
-
+    Bitmap bitmap;
+    Bitmap circularBitmap;
     ArrayList<UserInfo> userInfos;
     UserInfoDAOImpl userDaoImpl;
 
@@ -127,27 +132,33 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         if(KalravApplication.getInstance().getPrefs().getIsFacebookLogin()==true){
             if(KalravApplication.getInstance().getPrefs().getImage()!=null){
                 String imgUrl = "https://graph.facebook.com/" + KalravApplication.getInstance().getPrefs().getImage() + "/picture?type=large";
-//                Picasso.with(getApplicationContext()).load(imgUrl).into(imgNavHeaderBg);
-                Glide.with(this).load(imgUrl)
-                        .crossFade()
-                        .thumbnail(0.5f)
+                 Glide.with(this).load(imgUrl)
                         .bitmapTransform(new CircleTransform(this))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profile_image);
+            }
+            else{
+                bitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.profile);
+                circularBitmap = ImageConverter.getRoundedCornerBitmap(bitmap, 100);
+                profile_image.setImageBitmap(circularBitmap);
             }
         }
         else{
             if(KalravApplication.getInstance().getPrefs().getImage()!=null){
-//                Picasso.with(getApplicationContext()).load(KalravApplication.getInstance().getPrefs().getImage()).into(imgNavHeaderBg);
-                Glide.with(this).load(KalravApplication.getInstance().getPrefs().getImage())
-                        .crossFade()
-                        .thumbnail(0.5f)
+                 Glide.with(this).load(KalravApplication.getInstance().getPrefs().getImage())
                         .bitmapTransform(new CircleTransform(this))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profile_image);
+
+            }
+            else{
+
+                bitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.profile);
+                circularBitmap = ImageConverter.getRoundedCornerBitmap(bitmap, 100);
+                profile_image.setImageBitmap(circularBitmap);
             }
 
         }
+
     }
 
     /**
