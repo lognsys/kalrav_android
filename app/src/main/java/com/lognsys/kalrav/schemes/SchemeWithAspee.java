@@ -429,7 +429,7 @@ public class SchemeWithAspee extends Fragment {
                                 if (i > 13 && i < 17) {
                                     seat.id = midSeatsYtoMrow - (1 * j);
 
-                                } else if (i > 17 && i < 21) {//&& i < 22
+                                } else if (i > 16 && i < 21) {//&& i < 22
                                     seat.id = midSeatsLtoGrow - (1 * j);
                                 }
                                 seat.status = HallScheme.SeatStatus.FREE;
@@ -518,9 +518,11 @@ public class SchemeWithAspee extends Fragment {
                 if(i>0){
                     for(int p=0;p<auditoriumPriceRangeList.size();p++){
                         if(j>0 && j<33){
-                            if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
-                                seat.price=auditoriumPriceRangeList.get(p).getPrice();
-                            }
+                            Log.d("","auditoriumPriceRangeList.get(p).getIstart() " +auditoriumPriceRangeList.get(p).getIstart());
+                            Log.d("","auditoriumPriceRangeList.get(p).getIend()" + auditoriumPriceRangeList.get(p).getIend());
+
+                               seat.price=auditoriumPriceRangeList.get(p).getPrice();
+
                         }
 
                     }

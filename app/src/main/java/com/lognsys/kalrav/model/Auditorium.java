@@ -90,4 +90,19 @@ public class Auditorium implements Serializable {
     public void setPrice(String price) {
         this.price = price;
     }
+
+    @Override
+    public String toString() {
+        return "Auditorium{" +
+                "dramaId=" + dramaId +
+                ", audiId='" + audiId + '\'' +
+                ", audiName='" + audiName + '\'' +
+                ", audiRowName='" + audiRowName + '\'' +
+                ", seats=" + seats +
+                ", auditoriumPriceRanges=" + auditoriumPriceRanges +
+                ", price='" + price + '\'' +
+                ", time='" + time + '\'' +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

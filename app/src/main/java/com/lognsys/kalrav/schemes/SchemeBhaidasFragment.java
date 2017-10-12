@@ -167,15 +167,46 @@ public class SchemeBhaidasFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(SchemeBhaidasFragment.MyAdapter.MyViewHolder holder, int position) {
-
+            String strIvalue=null,strIEndvalue=null;
             AuditoriumPriceRange auditorium = list.get(position);
             int iValue=auditorium.getIstart();
-            String strIvalue =rowname[iValue];
+            if(iValue==1){
+                iValue=iValue-1;
+                strIvalue =rowname[iValue];
+                Log.d("", "MyAdapter  strIvalue inside ==========   ==="+strIvalue);
+            }
+            else if(iValue>9 && iValue<17){
+                iValue=iValue+1;
+                strIvalue =rowname[iValue];
+            }else if(iValue>16){
+                iValue=iValue+2;
+                strIvalue =rowname[iValue];
+            }
+            else{
+                 strIvalue =rowname[iValue];
+            }
             Log.d("", "MyAdapter  strIvalue==="+strIvalue);
-
+            Log.d("", "MyAdapter strIvalue iValue==="+iValue);
+            Log.d("", "MyAdapter strIvalue rowname[iValue]==="+rowname[iValue]);
             int iEndValue=auditorium.getIend();
-            String strIEndvalue =rowname[iEndValue];
-            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+
+            if(iEndValue==1){
+                iEndValue=iEndValue-1;
+                strIEndvalue =rowname[iEndValue];
+                Log.d("", "MyAdapter  strIEndvalue inside ==========   ==="+strIEndvalue);
+            }
+            else if(iEndValue>=16 && iEndValue<26){
+                iEndValue=iEndValue+1;
+                strIEndvalue =rowname[iEndValue];
+            }
+            else if(iEndValue>=26 && iEndValue<28){
+                iEndValue=iEndValue+1;
+                strIEndvalue =rowname[iEndValue];
+            }
+            else{
+                strIEndvalue =rowname[iEndValue];
+            }
+            Log.d("", "MyAdapter  strIEndvalue==="+strIEndvalue);
             holder.textIStart.setText("Row "+strIvalue);
             holder.textIEnd.setText(" To  "+strIEndvalue);
             holder.textPrice.setText("-Rs ."+String.valueOf(auditorium.getPrice()));
@@ -215,7 +246,6 @@ public class SchemeBhaidasFragment extends Fragment {
         ArrayList<AuditoriumPriceRange> lists=new ArrayList<AuditoriumPriceRange>();
         if(auditorium!=null && auditorium.getAuditoriumPriceRanges()!=null && auditorium.getAuditoriumPriceRanges().size()>0){
             for(int i=0;i<auditorium.getAuditoriumPriceRanges().size();i++){
-
                 lists.add(auditorium.getAuditoriumPriceRanges().get(i));
             }
         }

@@ -471,7 +471,6 @@ public class AuditoriumListFragment extends Fragment {
                     newTV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(getActivity(),"Time"+timeArray+" Auditorium  name "+auditorium.getAudiName()+"Auditorium  id"+auditorium.getAudiId(),Toast.LENGTH_LONG).show();
                             final String bookedseatsurl=properties.getProperty(Constants.API_URL_BOOKING.bookedseats.name());
                             Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
                             KalravApplication.getInstance().getPrefs().showDialog(getActivity());
@@ -565,14 +564,12 @@ public class AuditoriumListFragment extends Fragment {
 
                                 Bundle bundle = new Bundle();
                                 if(foundItems!=null && foundItems.size()>0){
-                                    Log.e("","RequestItemsServiceTask bookedseatsurl foundItems  "+foundItems);
-                                    Log.e("","RequestItemsServiceTask bookedseatsurl foundItems.length()  "+foundItems.size());
 
                                     bundle.putSerializable("itemsList", (Serializable) foundItems);
 
                                 }
                                 KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
-                                Log.d(TAG,"bookedSeats auditorium.getAudiName()========" +auditorium.getAudiName());
+                                Log.d(TAG,"bookedSeats auditorium.toString()========" +auditorium.toString());
 //
                                 if(auditorium.getAudiName().equalsIgnoreCase("ASPEE Auditorium")){
 
