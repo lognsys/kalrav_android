@@ -25,8 +25,9 @@
         <item>Drama</item>
         <item>Notification</item>
         <item>Bookmark</item>
+        <item>Booked Tickets</item>
+        <item>My Drama</item>
         <item>Settings</item>
-        <item>Detail Drama</item>
         <item>Detail Drama</item>
     </string-array>
 

@@ -80,7 +80,7 @@ public class HallScheme {
         }
         sceneBackgroundColor = unavailableSeatColor;
         textPaint = initTextPaint(Color.WHITE);
-        scenePaint.setTextSize(35);
+        scenePaint.setTextSize(15);
 
         backgroundPaint = new Paint();
         backgroundPaint.setStyle(Paint.Style.FILL);

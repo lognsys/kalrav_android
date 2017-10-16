@@ -7,7 +7,8 @@
     android:id="@+id/pricelist"
     android:layout_width="match_parent"
     android:layout_alignParentStart="true"
-    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+    android:scrollbars="vertical"
+    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
     <by.anatoldeveloper.hallscheme.view.ZoomableImageView
         android:id="@+id/zoomable_image"
         android:layout_width="match_parent"

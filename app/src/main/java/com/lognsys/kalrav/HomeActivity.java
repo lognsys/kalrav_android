@@ -81,6 +81,7 @@ public class HomeActivity extends AppCompatActivity {
     // tags used to attach the fragments
     private static final String TAG_DRAMA = "drama";
     private static final String TAG_BOOKMARK = "bookmark";
+    private static final String TAG_BOOKEDTICKETS = "bookedtickets";
     private static final String TAG_MYDRAMA = "mydrama";
     private static final String TAG_NOTIFICATIONS = "notification";
 //    private static final String TAG_SETTINGS = "settings";
@@ -363,18 +364,18 @@ public class HomeActivity extends AppCompatActivity {
                         fragment = new BookmarkFragment();
 
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                                .replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null).commit();
                         drawer.closeDrawers();
                         return true;
 //                          break;
                     case R.id.my_ticket:
                         navItemIndex = 3;
                         Log.d("","setUpNavigationView nav_bookmark ");
-                        CURRENT_TAG = TAG_BOOKMARK;
+                        CURRENT_TAG = TAG_BOOKEDTICKETS;
                         fragment = new MyticketListFragment();
 
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                                .replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null).commit();
                         drawer.closeDrawers();
                         return true;
                     case R.id.nav_mydrama:
@@ -384,7 +385,7 @@ public class HomeActivity extends AppCompatActivity {
                         fragment = new MyDramaFragment();
 
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                                .replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null).commit();
                         drawer.closeDrawers();
                         return true;
                   case R.id.nav_about_us:

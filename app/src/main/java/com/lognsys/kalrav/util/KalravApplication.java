@@ -6,11 +6,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -145,6 +149,31 @@ public void showDialog(Context context, String message){
     });
     // Showing Alert Message
     alertDialog.show();
+    }
+
+
+    public AlertDialog.Builder buildDialog(Context c) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(c, null));
+        builder.setTitle("No Internet Connection");
+        builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
+        AlertDialog dialog = builder.create();
+        Button b = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+        if(b != null) {
+            b.setTextColor(R.color.colorPrimary);
+            b.setTextSize(12.5f);
+        }
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        return builder;
     }
 
     public String getCurrentDate()

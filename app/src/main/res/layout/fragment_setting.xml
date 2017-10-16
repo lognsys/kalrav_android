@@ -17,84 +17,115 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginBottom="30dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/greybackground"
             android:orientation="vertical">
-<!--
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/profile" />-->
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="15dp"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/profile_image"
                 />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter name"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="5dp" />
             <EditText
                 android:id="@+id/editName"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="30dp"
                 android:background="#f3f3f3"
                 android:hint="Enter name"
+                android:paddingLeft="5dp" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter username"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
                 android:paddingLeft="5dp" />
 
             <EditText
                 android:id="@+id/editUsername"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="15dp"
                 android:background="#f3f3f3"
                 android:hint="Enter username"
                 android:paddingLeft="5dp" />
-
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter contact number"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="5dp" />
             <EditText
                 android:id="@+id/editMobileNumber"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="15dp"
                 android:background="#f3f3f3"
-                android:hint="Enter mobile number"
+                android:hint="Enter contact number"
                 android:paddingLeft="5dp" />
-
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter address"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="5dp" />
             <EditText
                 android:id="@+id/editAddress"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="15dp"
                 android:background="#f3f3f3"
                 android:hint="Enter address"
                 android:paddingLeft="5dp" />
-
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter city"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="5dp" />
             <EditText
             android:id="@+id/editCities"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="15dp"
             android:background="#f3f3f3"
             android:hint="Enter city"
             android:paddingLeft="5dp" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter state"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="5dp" />
             <EditText
             android:id="@+id/editState"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="15dp"
             android:background="#f3f3f3"
             android:hint="Enter state"
             android:paddingLeft="5dp" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter pin code"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="5dp" />
             <EditText
                 android:id="@+id/editPincode"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:layout_marginTop="15dp"
                 android:background="#f3f3f3"
                 android:hint="Enter pin code"
                 android:paddingLeft="5dp" />
@@ -111,21 +142,7 @@
 
         </LinearLayout>
 
-
-        <LinearLayout android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-
-            >
-
-
-
-
-        </LinearLayout>
-
-
     </LinearLayout>
-
 
 
 </ScrollView>

@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,12 +81,24 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
         userDaoImpl = new UserInfoDAOImpl(this);
         Log.d(TAG, "Setting onCreate getCustomer_id " + KalravApplication.getInstance().getPrefs().getCustomer_id());
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         populateData();
 
 
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id=item.getItemId();
+        if(id==android.R.id.home){
+            Intent intent=new Intent(this,HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            this.finish();
 
+        }
+        return super.onOptionsItemSelected(item);
+    }
     private void populateData() {
 
         editUsername = (EditText) findViewById(R.id.editUsername);
