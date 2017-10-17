@@ -213,8 +213,10 @@ public class SchemePrabhodhanFragment extends Fragment {
                     if (i == 1) {
                         if (j == 0) {
                             seat.status = HallScheme.SeatStatus.INFO;
-
+                            seat.marker = rowname[i];
                         }
+                        Log.d(TAG, " kk th row (i == 1 && j > 11 && j < 24)"+((i == 1 && j > 11 && j < 24)));
+
                         if ((i == 1 && j > 11 && j < 24)) {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
@@ -222,6 +224,8 @@ public class SchemePrabhodhanFragment extends Fragment {
                             Log.d(TAG, " kk th row");
                             seat.marker = rowname[i];
                         }
+                        Log.d(TAG, " kk th row"+seat.marker);
+
                     }
                     if (i > 1 && i < 3) {// jjth row
 
@@ -253,7 +257,7 @@ public class SchemePrabhodhanFragment extends Fragment {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
+//                            seat.price = 200;
                         }
                     }
                     if (i > 3 && i < 8) { //gg, ff, ee, dd row
@@ -268,7 +272,8 @@ public class SchemePrabhodhanFragment extends Fragment {
                             seat.id = ++k;
                             seat.status = HallScheme.SeatStatus.FREE;
                             seat.selectedSeatMarker = String.valueOf(seat.id);
-                            seat.price = 200;
+//                            seat.price = 200;
+
                         }
                     }
                     if (i > 7 && i < 10) { // cc, bb row
@@ -438,7 +443,7 @@ public class SchemePrabhodhanFragment extends Fragment {
                         seat.selectedSeatMarker = String.valueOf(seat.id);
                     }
                 }
-                if(i>0){
+                /*if(i>0){
                     for(int p=0;p<auditoriumPriceRangeList.size();p++){
                         if(j>0 && j<49){
                             if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
@@ -448,6 +453,16 @@ public class SchemePrabhodhanFragment extends Fragment {
 
                     }
 
+                }*/
+                if(i>0){
+                        for(int p=0;p<auditoriumPriceRangeList.size();p++){
+                            if(j>0 && j<37){
+                                Log.d("","auditoriumPriceRangeList.get(p).getIstart() " +auditoriumPriceRangeList.get(p).getIstart());
+                                Log.d("","auditoriumPriceRangeList.get(p).getIend()" + auditoriumPriceRangeList.get(p).getIend());
+
+                                seat.price=auditoriumPriceRangeList.get(p).getPrice();
+                            }
+                        }
                 }
             }
 
@@ -1135,13 +1150,32 @@ public class SchemePrabhodhanFragment extends Fragment {
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
 
             AuditoriumPriceRange auditorium = list.get(position);
+            String strIEndvalue=null;
+            String strIvalue=null;
+
             int iValue=auditorium.getIstart();
-            String strIvalue =rowname[iValue];
-            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            if(iValue==1){
+                strIvalue =rowname[iValue];
+//                Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            }
+            else{
+                strIvalue =rowname[iValue+2];
+//                Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            }
 
             int iEndValue=auditorium.getIend();
-            String strIEndvalue =rowname[iEndValue];
-            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            Log.d("", "Rest MyAdapter  iEndValue==="+iEndValue);
+            strIEndvalue =rowname[iEndValue];
+            if(iEndValue==34){
+                strIEndvalue =rowname[iEndValue+2];
+            }
+            else{
+                strIEndvalue =rowname[iEndValue+3];
+//                Log.d("", "MyAdapter  strIvalue==="+strIvalue);
+            }
+
+
+//            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
             holder.textIStart.setText("Row "+strIvalue);
             holder.textIEnd.setText(" To  "+strIEndvalue);
             holder.textPrice.setText("-Rs ."+String.valueOf(auditorium.getPrice()));

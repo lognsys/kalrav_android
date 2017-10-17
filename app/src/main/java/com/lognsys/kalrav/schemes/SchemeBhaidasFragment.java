@@ -178,12 +178,20 @@ public class SchemeBhaidasFragment extends Fragment {
             else if(iValue>9 && iValue<17){
                 iValue=iValue+1;
                 strIvalue =rowname[iValue];
-            }else if(iValue>16){
-                iValue=iValue+2;
+            }else if(iValue>16 &&iValue<31){
+                iValue=iValue +2;
                 strIvalue =rowname[iValue];
+                Log.d("", "MyAdapter ======iValue>16 &&iValue<33==== strIvalue  ==="+strIvalue+" iValue ====="+iValue);
+            }
+            else if(iValue>30){
+                iValue=iValue+4;
+                strIvalue =rowname[iValue];
+                Log.d("", "MyAdapter ======iValue>32==== strIvalue  ==="+strIvalue+" iValue ====="+iValue);
             }
             else{
                  strIvalue =rowname[iValue];
+                Log.d("", "MyAdapter ======default==== strIvalue  ==="+strIvalue+" iValue ====="+iValue);
+
             }
 //            Log.d("", "MyAdapter  strIvalue==="+strIvalue);
 //            Log.d("", "MyAdapter strIvalue iValue==="+iValue);
@@ -204,7 +212,8 @@ public class SchemeBhaidasFragment extends Fragment {
             {
                 iEndValue=iEndValue+1;
                 strIEndvalue =rowname[iEndValue];
-            } else if(iEndValue>20 && iEndValue<26)
+            }
+            else if(iEndValue>20 && iEndValue<26)
             {
                 iEndValue=iEndValue+2;
                 strIEndvalue =rowname[iEndValue];
@@ -213,16 +222,27 @@ public class SchemeBhaidasFragment extends Fragment {
             {
                 iEndValue=iEndValue+2;
                 strIEndvalue =rowname[iEndValue];
+                if(iEndValue==33){
+                    iEndValue=iEndValue+2;
+                    strIEndvalue =rowname[iEndValue];
+                }
+                Log.d("", "MyAdapter ========== strIEndvalue 32----   ==="+strIEndvalue+" iEndValue ====="+iEndValue);
+
             }
-            else if(iEndValue>32 && iEndValue<40)
+            else if(iEndValue>31 && iEndValue<34)
             {
-                iEndValue=iEndValue+4 ;
+                iEndValue=iEndValue+2;
                 strIEndvalue =rowname[iEndValue];
+                Log.d("", "MyAdapter ========== strIEndvalue  ==="+strIEndvalue+" iEndValue ====="+iEndValue);
+
             }
             else
             {
                 strIEndvalue =rowname[iEndValue];
+                Log.d("", "MyAdapter ========== strIEndvalue else  ==="+strIEndvalue+" iEndValue ====="+iEndValue);
+
             }
+
 
             holder.textIStart.setText("Row "+strIvalue);
             holder.textIEnd.setText(" To  "+strIEndvalue);
