@@ -1,5 +1,6 @@
 package com.lognsys.kalrav;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,5 +30,15 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FragmentManager fm = getFragmentManager(); // or 'getSupportFragmentManager();'
+        int count = fm.getBackStackEntryCount();
+        for(int i = 0; i < count; ++i) {
+            fm.popBackStack();
+        }
     }
 }

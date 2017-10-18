@@ -1,5 +1,6 @@
 package com.lognsys.kalrav;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -272,7 +273,11 @@ public class HomeActivity extends AppCompatActivity {
                   fragmentTransaction.commitAllowingStateLoss();
 
               }
-
+                FragmentManager fm = getFragmentManager(); // or 'getSupportFragmentManager();'
+                int count = fm.getBackStackEntryCount();
+                for(int i = 0; i < count; ++i) {
+                    fm.popBackStack();
+                }
             }
         };
 
@@ -579,6 +584,11 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                 android.R.anim.fade_out);
+        FragmentManager fm = getFragmentManager(); // or 'getSupportFragmentManager();'
+        int count = fm.getBackStackEntryCount();
+        for(int i = 0; i < count; ++i) {
+            fm.popBackStack();
+        }
         fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null);
         fragmentTransaction.commit();
     }

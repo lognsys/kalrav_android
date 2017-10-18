@@ -454,15 +454,23 @@ public class SchemePrabhodhanFragment extends Fragment {
                     }
 
                 }*/
-                if(i>0){
-                        for(int p=0;p<auditoriumPriceRangeList.size();p++){
-                            if(j>0 && j<37){
-                                Log.d("","auditoriumPriceRangeList.get(p).getIstart() " +auditoriumPriceRangeList.get(p).getIstart());
-                                Log.d("","auditoriumPriceRangeList.get(p).getIend()" + auditoriumPriceRangeList.get(p).getIend());
-
-                                seat.price=auditoriumPriceRangeList.get(p).getPrice();
+                if(i>0 ){
+                    for(int p=0;p<auditoriumPriceRangeList.size();p++){
+                        if(j>0 && j<49){
+                            if(i<11){
+                                if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
+                                    seat.price=auditoriumPriceRangeList.get(p).getPrice();
+                                    Log.d("","auditoriumPriceRangeList seat.price" +seat.price);
+                                }
+                            }
+                            else{
+                                if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
+                                    seat.price=auditoriumPriceRangeList.get(p).getPrice();
+                                    Log.d("","auditoriumPriceRangeList seat.price" +seat.price);
+                                }
                             }
                         }
+                    }
                 }
             }
 
@@ -1166,7 +1174,11 @@ public class SchemePrabhodhanFragment extends Fragment {
             int iEndValue=auditorium.getIend();
             Log.d("", "Rest MyAdapter  iEndValue==="+iEndValue);
             strIEndvalue =rowname[iEndValue];
-            if(iEndValue==34){
+
+            if(iEndValue==10){
+                strIEndvalue =rowname[iEndValue];
+            }
+           else if(iEndValue==34){
                 strIEndvalue =rowname[iEndValue+2];
             }
             else{
