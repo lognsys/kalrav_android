@@ -518,11 +518,7 @@ public class SchemeWithAspee extends Fragment {
                 if(i>0){
                     for(int p=0;p<auditoriumPriceRangeList.size();p++){
                         if(j>0 && j<33){
-                            Log.d("","auditoriumPriceRangeList.get(p).getIstart() " +auditoriumPriceRangeList.get(p).getIstart());
-                            Log.d("","auditoriumPriceRangeList.get(p).getIend()" + auditoriumPriceRangeList.get(p).getIend());
-
                                seat.price=auditoriumPriceRangeList.get(p).getPrice();
-
                         }
 
                     }

@@ -559,16 +559,88 @@ public class SchemeBhaidasFragment extends Fragment {
 
 
                     }
-                        if(i>0){
+                        /*if(i>0){
                             for(int p=0;p<auditoriumPriceRangeList.size();p++){
                                 if(j>0 && j<49){
                                     if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
                                         seat.price=auditoriumPriceRangeList.get(p).getPrice();
                                     }
                                 }
-
                             }
+                        }*/
+                        if(i>0 ){
+                            for(int p=0;p<auditoriumPriceRangeList.size();p++){
+                                if(j>0 && j<49){
+                                    if(auditoriumPriceRangeList.get(p).getIstart()==1 && auditoriumPriceRangeList.get(p).getIend()==1) {
+                                        if(i==auditoriumPriceRangeList.get(p).getIend())
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+                                    }
+                                   else if(auditoriumPriceRangeList.get(p).getIstart()==2 && auditoriumPriceRangeList.get(p).getIend()==9) {
 
+                                        if(i<11)
+                                        {
+//                                            auditoriumPriceRangeList.get(p).setIend(9);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+                                   else if(auditoriumPriceRangeList.get(p).getIstart()==10 && auditoriumPriceRangeList.get(p).getIend()==16) {
+
+                                        if(i>10 && i<19)
+                                        {
+                                            auditoriumPriceRangeList.get(p).setIend(16);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+                                    else if(auditoriumPriceRangeList.get(p).getIstart()==17 && auditoriumPriceRangeList.get(p).getIend()==23) {
+
+                                        if(i>18 && i<27)
+                                        {
+                                            auditoriumPriceRangeList.get(p).setIend(23);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+                                    else if(auditoriumPriceRangeList.get(p).getIstart()==24 && auditoriumPriceRangeList.get(p).getIend()==25) {
+
+                                        if(i>26 && i<29)
+                                        {
+                                            auditoriumPriceRangeList.get(p).setIend(25);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+                                    else if(auditoriumPriceRangeList.get(p).getIstart()==26 && auditoriumPriceRangeList.get(p).getIend()==29) {
+
+                                        if(i>28 && i<33)
+                                        {
+                                            auditoriumPriceRangeList.get(p).setIend(29);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+                                    else if(auditoriumPriceRangeList.get(p).getIstart()==30 && auditoriumPriceRangeList.get(p).getIend()==32) {
+
+                                        if(i>32 && i<36)
+                                        {
+                                            auditoriumPriceRangeList.get(p).setIend(32);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+                                    else if(auditoriumPriceRangeList.get(p).getIstart()==33 && auditoriumPriceRangeList.get(p).getIend()==33) {
+
+                                        if(i>35 && i<39)
+                                        {
+                                            auditoriumPriceRangeList.get(p).setIend(33);
+                                            seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                        }
+                                    }
+
+                                }
+                            }
                         }
                 }
             catch (ArrayIndexOutOfBoundsException e){

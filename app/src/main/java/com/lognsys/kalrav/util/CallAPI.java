@@ -311,6 +311,7 @@ public class CallAPI {
 
     //   alreadyExist user checking
     public void alReadyExsistUser(UserInfo userInfo, final String fb_id, final String google_id, String url, final String seatAuth, final Activity activity) {
+        Log.d(TAG,"alReadyExsistUser KalravApplication.getInstance().getPrefs().getDevice_token() == "+KalravApplication.getInstance().getPrefs().getDevice_token()  );
 
         userDaoImpl = new UserInfoDAOImpl(mContext);
         JSONObject params = new JSONObject();

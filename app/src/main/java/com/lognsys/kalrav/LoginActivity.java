@@ -77,26 +77,23 @@ public class LoginActivity extends AppCompatActivity implements
     //faceboook callback manager
     private CallbackManager mCallbackManager;
     private static final int RC_SIGN_IN = 100;
-    private static final int RC_NETWORK_DIALOG = 101;
+
     Timer timer;
     TimerTask timerTask;
     TextView textSkipLogin;
-    ProgressDialog progressDialog;
 
     //login_activity UI variable
     private ImageView googSignIn;
     private LoginButton loginButton;
+
     //we are going to use a handler to be able to run in our TimerTask
     final Handler handler = new Handler();
 
     private HTextView hTextView;
-    Handler mHtHandler;
-    Handler mUiHandler;
 
     //firebase variable declaration
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private  String facebookImageUrl;
 
     //Google API variable
     private GoogleApiClient mGoogleApiClient;
@@ -118,6 +115,7 @@ public class LoginActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Intent intent = getIntent();
         seatAuth = intent.getStringExtra("seatAuth");
 
@@ -166,6 +164,10 @@ public class LoginActivity extends AppCompatActivity implements
 
             //setting layout activity_login
             setContentView(R.layout.activity_login);
+            //Initialize FirebaseAuth
+            //You need to include google-services.json (downloaded from firebase console) file under the "app" folder of this project.
+            mAuth = FirebaseAuth.getInstance();
+            Log.d(TAG, "onCreate mAuth:========================== " + mAuth);
 
             textSkipLogin = (TextView) findViewById(R.id.textSkipLogin);
             textSkipLogin.setOnClickListener(this);
@@ -185,9 +187,22 @@ public class LoginActivity extends AppCompatActivity implements
             loginButton.setReadPermissions("email", "public_profile");
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
-                public void onSuccess(LoginResult loginResult) {
+                public void onSuccess(final LoginResult loginResult) {
                     Log.v(TAG, " Facebook API requestData - ");
-                    requestData(loginResult);
+                    if (KalravApplication.getInstance().getPrefs().getDevice_token() == null)
+                    {
+                        invokeFCMService();
+                    }
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Do something after 500ms
+                            requestData(loginResult);
+
+                        }
+                    }, 5000);
                     Log.d(TAG, "mCallbackManager loginResult ==" + loginResult);
                 }
 
@@ -226,17 +241,11 @@ public class LoginActivity extends AppCompatActivity implements
                     .build();
 
             /*********************************FIREBASE************************************/
-
-            //Initialize FirebaseAuth
-            //You need to include google-services.json (downloaded from firebase console) file under the "app" folder of this project.
-            mAuth = FirebaseAuth.getInstance();
-            Log.d(TAG, "onAuthStateChanged:mAuth: ============================= " + mAuth);
-
             // firebase authentication listener will chek if user is authenticated.
             mAuthListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    Log.d(TAG, "onAuthStateChanged:firebaseAuth:============================= " + firebaseAuth + " firebaseAuth.getCurrentUser()getEmail:" + firebaseAuth.getCurrentUser());
+                    Log.d(TAG, "onCreate FirebaseAuth:========================== " + firebaseAuth);
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     Log.d(TAG, "onAuthStateChanged:user:" + user);
@@ -289,7 +298,7 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-    private void invokeFCMService() {
+    public void invokeFCMService() {
         Log.d(TAG, "Rest invokeFCMService ");
 
         if(KalravApplication.getInstance().getPrefs().getDevice_token()==null){
@@ -307,7 +316,7 @@ public class LoginActivity extends AppCompatActivity implements
 
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
-               JSONObject json = response.getJSONObject();
+                JSONObject json = response.getJSONObject();
                 try {
                     if (json != null) {
                         userInfo.setFb_id(json.getString("id"));
@@ -391,12 +400,12 @@ public class LoginActivity extends AppCompatActivity implements
         Log.v(TAG, " isConnecting -----signIn  ");
 
         if(KalravApplication.getInstance().isConnectedToInternet()) {
-           Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-           startActivityForResult(signInIntent, RC_SIGN_IN);
-       }
-       else{
-        KalravApplication.getInstance().buildDialog(LoginActivity.this).show();
-       }
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }
+        else{
+            KalravApplication.getInstance().buildDialog(LoginActivity.this).show();
+        }
     }
 
 
@@ -418,28 +427,36 @@ public class LoginActivity extends AppCompatActivity implements
         if (requestCode==100) {
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult result "+result );
+            Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult result.isSuccess() "+result.isSuccess() );
 
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
+
+                Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult result.getSignInAccount() "+result.getSignInAccount() );
                 GoogleSignInAccount account = result.getSignInAccount();
+                Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult account "+account );
+
                 firebaseAuthWithGoogle(account);
 
             } else {
-
-                // Google Sign In failed, update UI appropriately
+                // Signed out, show unauthenticated UI.
+//                updateUI(false);
+              /*  // Google Sign In failed, update UI appropriately
                 DialogFragment dialog = new NetworkStatusDialog();
                 Bundle args = new Bundle();
-                  /*  args.putString("title", getString(R.string.text_google_error_title));
-                    args.putString("message", getString(R.string.text_google_error_msg));*/
+                  *//*  args.putString("title", getString(R.string.text_google_error_title));
+                    args.putString("message", getString(R.string.text_google_error_msg));*//*
                 dialog.setArguments(args);
                 dialog.setTargetFragment(dialog, 100);
                 dialog.show(getSupportFragmentManager(), "NetworkDialogFragment TAG");
-                return;
+                return;*/
 
             }
         }
 
     }
+
 
 
     /**
@@ -495,138 +512,16 @@ public class LoginActivity extends AppCompatActivity implements
                                     }
                                 }
                                 else{
-                                        KalravApplication.getInstance().buildDialog(LoginActivity.this);
+                                    KalravApplication.getInstance().buildDialog(LoginActivity.this);
                                 }
-
 
                             } catch (Exception e) {
                                 Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..."+e);
 
                             }
                         }
-
-
                     }
                 });
-    }
-
-    /**
-     * call this method by facebook callbackmanager on successful login authorisation.
-     *
-     * @param token
-     */
-
-    private void handleFacebookAccessToken(final AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token.getUserId());
-
-        //Adding facebook userid in shared_preferences
-        final SharedPreferences.Editor sharedPrefEditor = sharedpreferences.edit();
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        Log.d(TAG, "signInWithCredential:onComplete Facebook:" + task.isSuccessful());
-                        Log.d(TAG, "signInWithCredential:onComplete Facebook:  mAuth.getCurrentUser().getUid() " +  mAuth.getCurrentUser().getUid());
-
-                        //FB:UID
-                        String firebaseUID = mAuth.getCurrentUser().getUid();
-                        sharedPrefEditor.putString("Constants.FacebookFields.FB_UID.name()", firebaseUID);
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            try {
-                                Log.e(TAG, "signInWithCredential", task.getException());
-                                throw task.getException();
-
-                            } catch (FirebaseAuthUserCollisionException fe) {
-
-                                //Google account already created in Firebase with same EmailId as Facebook EmailId
-                                Log.e(TAG, "#handleFacebookAccessToken#FacebookAuthUserCollision - " + fe.getMessage());
-
-                                sharedPrefEditor.putBoolean("Constants.Shared.IS_SIMILAR_EMAILID.name()", true);
-
-                                if(seatAuth!=null && seatAuth.equalsIgnoreCase("seatsDetailsPrabhodhan")){
-                                    SeatsDetailInfo seatsDetailInfo=  KalravApplication.getInstance().getGlobalSeatsDetailInfo();
-
-                                    Auditorium auditorium=seatsDetailInfo.getAuditorium();
-                                    int dramaInfoId=seatsDetailInfo.getDramaInfoId();
-                                    String time=seatsDetailInfo.getTime();
-                                    String strDate=seatsDetailInfo.getStrDate();
-                                    Bundle bundle = new Bundle();
-                                    if(auditorium.getAuditoriumPriceRanges()!= null){
-
-                                        bundle.putSerializable("auditorium",auditorium);
-                                        bundle.putInt("dramaInfoId", dramaInfoId);
-                                        bundle.putString("time", time);
-                                        bundle.putString("strDate", strDate);
-                                    }
-                                    Fragment fragment = new SchemePrabhodhanFragment();
-                                    fragment.setArguments(bundle);
-                                   LoginActivity.this.getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-
-                                }
-                                else{
-                                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                                    startActivity(i);
-                                    finish();
-
-                                }
-
-                            } catch (Exception e) {
-                                Log.e(TAG, "handleFacebookAccessToken#Facebook Login Exception - " + e.getMessage());
-                            }
-
-                        } else {
-
-                            Log.d(TAG, "Facebook Login Successful...");
-                            Log.d(TAG, "Starting MainActivity...");
-                            Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(i);
-                            finish();
-                        }
-                    }
-                });
-    }
-    /**
-     * @param token
-     */
-    public AsyncTask.Status saveFacebookData(AccessToken token) {
-
-        final SharedPreferences.Editor sharedPrefEditor = sharedpreferences.edit();
-        //final FBUser fbuser = new FBUser();
-
-        GraphRequest request = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
-
-            @Override
-            public void onCompleted(JSONObject object, GraphResponse response) {
-
-                Log.v(TAG, " Facebook API response - " + response.toString());
-                Log.v(TAG, " Facebook API response.getJSONObject() - " +response.getJSONObject());
-
-                JSONObject json = response.getJSONObject();
-
-                try {
-                    if (json != null) {
-                        String s = json.getString("name");
-                        Log.v(TAG, " Facebook API response name - " + s);
-
-                    }
-                } catch (JSONException e) {
-                    Log.v(TAG, " Facebook API JSONException - " +e);
-
-                }
-            }
-
-        });
-        AsyncTask.Status status = request.executeAsync().getStatus();
-        return status;
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -655,7 +550,6 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     public void startTimer() {
-
         //set a new Timer
         timer = new Timer();
 
@@ -680,34 +574,22 @@ public class LoginActivity extends AppCompatActivity implements
             timer = null;
         }
     }
-
-
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
-
             public void run() {
-
                 //use a handler to run a toast that shows the current timestamp
                 handler.post(new Runnable() {
-
                     public void run() {
-
                         hTextView = (HTextView) findViewById(R.id.text);
                         Typeface myTypeFace = Typeface.createFromAsset(getAssets(), "fonts/Mirza-Regular.ttf");
-
-//                        hTextView.setTypeface(FontManager.getInstance(getApplicationContext().getAssets()).getFont("fonts/Mirza-Regular.ttf"));
                         if(hTextView!=null) {
                             hTextView.setTypeface(myTypeFace);
                             hTextView.setAnimateType(HTextViewType.TYPER);
                             hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
-
                         }// be sure to set custom typeface before setting the animate type, otherwise the font may not be updated.
-
                     }
                 });
             }
         };
     }
-
 }
-

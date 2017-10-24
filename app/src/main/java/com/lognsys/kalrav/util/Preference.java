@@ -169,17 +169,6 @@ public class Preference {
         return sharedPreferences.getString("picture", null);
     }
 
-    public void setTimezone(String timezone)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("timezone", timezone);
-        editor.commit();
-    }
-
-    public String getTimezone()
-    {
-        return sharedPreferences.getString("timezone", null);
-    }
     public void setDevice_token(String device_token)
     {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -190,53 +179,6 @@ public class Preference {
     public String getDevice_token()
     {
         return sharedPreferences.getString("device_token", null);
-    }
-    public void setDevice_type(String device_type)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("device_type", device_type);
-        editor.commit();
-    }
-
-    public String getDevice_type()
-    {
-        return sharedPreferences.getString("device_type", null);
-    }
-
-
-    public void setIsSimilarEmailID(Boolean Is_similarEmailid)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("IS_SIMILAR_EMAILID", Is_similarEmailid);
-        editor.commit();
-    }
-
-    public Boolean getIsSimilarEmailID()
-    {
-        return sharedPreferences.getBoolean("IS_SIMILAR_EMAILID", false);
-    }
-    public void setGoogTokenId(String googTokenId)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("GOOG_TOKEN_ID", googTokenId);
-        editor.commit();
-    }
-
-    public String getGoogTokenId()
-    {
-        return sharedPreferences.getString("GOOG_TOKEN_ID", null);
-    }
-
-    public void setGoogServerAuthcode(String googServerAuthcode)
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("GOOG_SERVE_AUTHCODE", googServerAuthcode);
-        editor.commit();
-    }
-
-    public String getGoogServerAuthcode()
-    {
-       return sharedPreferences.getString("GOOG_SERVE_AUTHCODE", null);
     }
     public void setUser_id(String user_id)
     {

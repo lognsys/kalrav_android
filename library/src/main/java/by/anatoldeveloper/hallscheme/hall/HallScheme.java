@@ -80,7 +80,7 @@ public class HallScheme {
         }
         sceneBackgroundColor = unavailableSeatColor;
         textPaint = initTextPaint(Color.WHITE);
-        scenePaint.setTextSize(15);
+        scenePaint.setTextSize(25);
 
         backgroundPaint = new Paint();
         backgroundPaint.setStyle(Paint.Style.FILL);
@@ -382,6 +382,7 @@ public class HallScheme {
             int totalWidth = width * (seatWidth + seatGap) - seatGap + offset;
             topX = height * (seatWidth + seatGap) - seatGap + offset;
             topY = totalWidth / 2 - width * 6;
+
             bottomX = topX + scene.dimension;
             bottomY = topY + scene.dimensionSecond;
         }

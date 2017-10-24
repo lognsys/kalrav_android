@@ -190,16 +190,17 @@ public class SchemePrabhodhanFragment extends Fragment {
 
 
     public Seat[][] basicScheme() {//[40][52]
-        Seat seats[][] = new Seat[37][37];
+        Seat seats[][] = new Seat[38][37];
 
 
-        for (int i = 0; i < 37; i++) {
+        for (int i = 0; i < 38; i++) {
             int k = 0;
             for (int j = 0; j < 37; j++) {
                 SeatExample seat = new SeatExample();
-                seats[i][j] = seat;
                 seat.status = HallScheme.SeatStatus.EMPTY;
                 seat.color = Color.argb(255, 60, 179, 113);
+
+                seats[i][j] = seat;
 //              for 0th  row name : title
                /* if (i == 0 || i == 12) {
                     if (j == 19) {
@@ -456,17 +457,21 @@ public class SchemePrabhodhanFragment extends Fragment {
                 }*/
                 if(i>0 ){
                     for(int p=0;p<auditoriumPriceRangeList.size();p++){
-                        if(j>0 && j<49){
-                            if(i<11){
-                                if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
-                                    seat.price=auditoriumPriceRangeList.get(p).getPrice();
-                                    Log.d("","auditoriumPriceRangeList seat.price" +seat.price);
+                        if(j>0 && j<37){
+                                if(auditoriumPriceRangeList.get(p).getIstart()==1 && auditoriumPriceRangeList.get(p).getIend()==10) {
+                                 if(i<=auditoriumPriceRangeList.get(p).getIend())
+                                    seat.price = auditoriumPriceRangeList.get(p).getPrice();
                                 }
-                            }
-                            else{
-                                if(i>=auditoriumPriceRangeList.get(p).getIstart() && i<=auditoriumPriceRangeList.get(p).getIend()){
-                                    seat.price=auditoriumPriceRangeList.get(p).getPrice();
-                                    Log.d("","auditoriumPriceRangeList seat.price" +seat.price);
+                            if(auditoriumPriceRangeList.get(p).getIstart()==11 && auditoriumPriceRangeList.get(p).getIend()==34) {
+
+                                if(i>auditoriumPriceRangeList.get(p).getIend())
+                                {
+                                    auditoriumPriceRangeList.get(p).setIend(34);
+                                    seat.price = auditoriumPriceRangeList.get(p).getPrice();
+
+                                }else
+                                    {
+                                        seat.price = auditoriumPriceRangeList.get(p).getPrice();
                                 }
                             }
                         }
