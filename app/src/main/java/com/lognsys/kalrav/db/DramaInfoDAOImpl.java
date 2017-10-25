@@ -296,7 +296,10 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
         values.put(DramaInfo.COLUMN_DRAMA_DIRECTOR, dramaInfo.getDirector());
         values.put(DramaInfo.COLUMN_DRAMA_AVG_RATING, dramaInfo.getAvg_rating());
         values.put(DramaInfo.COLUMN_DRAMA_MUSIC, dramaInfo.getMusic());
-        values.put(DramaInfo.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
+        if(dramaInfo.getIsfav()!=null){
+            values.put(DramaInfo.COLUMN_DRAMA_ISFAV, dramaInfo.getIsfav());
+            Log.d(TAG,"THIS updateDrama COLUMN_DRAMA_ISFAV dramaInfo.getIsfav()=== "+dramaInfo.getIsfav());
+        }
 
         // updating row
         int updateCount= db.update(DramaInfo.TABLE_DRAMA, values, DramaInfo.COLUMN_ID + " = ?",

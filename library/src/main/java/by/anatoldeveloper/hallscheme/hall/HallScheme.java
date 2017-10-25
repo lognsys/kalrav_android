@@ -80,7 +80,7 @@ public class HallScheme {
         }
         sceneBackgroundColor = unavailableSeatColor;
         textPaint = initTextPaint(Color.WHITE);
-        scenePaint.setTextSize(25);
+        scenePaint.setTextSize(30);
 
         backgroundPaint = new Paint();
         backgroundPaint.setStyle(Paint.Style.FILL);
@@ -119,6 +119,10 @@ public class HallScheme {
 
     public void setChosenSeatTextColor(int color) {
         textPaint.setColor(color);
+        image.setImageBitmap(getImageBitmap());
+    }
+    public void setTextSize(float size) {
+        textPaint.setTextSize(size);
         image.setImageBitmap(getImageBitmap());
     }
 

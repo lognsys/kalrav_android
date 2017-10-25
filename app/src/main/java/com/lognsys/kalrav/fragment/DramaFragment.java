@@ -76,9 +76,12 @@ public class DramaFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Kalrav Arts");
+        Log.d("","THIS onCreate ");
+
     }
 
     public void initializeList() {
+        Log.d("","THIS initialize ");
 
         dramaInfoDAO = new DramaInfoDAOImpl(getActivity());
         favouritesInfoDAOImpl = new FavouritesInfoDAOImpl(getActivity());
@@ -88,31 +91,30 @@ public class DramaFragment extends Fragment {
 
         if(KalravApplication.getInstance().isConnectedToInternet()) {
             int count =dramaInfoDAO.getDramaCount();
-            Log.d("","initializeList count "+count);
+            Log.d("","THIS initialize count "+count);
 
             if(count>0){
 
                 dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
-               if(dramaInfos!=null)
-                Log.d("","count dramaInfos size"+dramaInfos.size());
                 if (dramaInfos.size() > 0 && dramaInfos != null) {
+                    for(int i=0;i<dramaInfos.size();i++){
+                        Log.d("","THIS initialize dramaInfos.get(i).getIsfav() "+dramaInfos.get(i).getIsfav());
+                    }
                     adapter=new MyAdapter(dramaInfos);
                     myRecyclerView.setAdapter(adapter);
                 }
             }
             else{
-
-                Log.d("","initializeList  drama count next display  drama "+count);
                 displaydrama();
             }
         }
         else{
             Toast.makeText(getContext(),getString(R.string.network_connection),Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void displaydrama() {
+        Log.d("","THIS displaydrama ");
         KalravApplication.getInstance().getPrefs().showDialog(getContext());
         String getAllDramaWithGroupUrl=properties.getProperty(Constants.API_URL_DRAMA.get_alldrama_with_group_url.name());
 
@@ -122,8 +124,6 @@ public class DramaFragment extends Fragment {
                     public void onResponse(JSONArray response) {
 
                         try {
-                            Log.d("","displaydrama response.length() "+response.length());
-
                             for (int i=0; i<response.length(); i++) {
                                 DramaInfo dramaInfo=new DramaInfo();
 
@@ -137,38 +137,34 @@ public class DramaFragment extends Fragment {
                                             Toast.LENGTH_LONG).show();
                                 }
                                 String groups=jsonObject.getString("groups");
-//                                Log.d("","displaydrama groups "+groups);
-
                                 JSONObject jsonGroupsObject=new JSONObject(groups);
                                 int groupId=jsonGroupsObject.getInt("id");
-                                Log.d("","displaydrama jsonGroupsObject groupId "+groupId);
 
                                 String group_name=jsonGroupsObject.getString("group_name");
-                                Log.d("","displaydrama jsonGroupsObject group_name "+group_name);
                                 dramaInfo.setGroup_name(group_name);
 
-
-
                                 String drama=jsonObject.getString("drama");
-                                Log.d("","displaydrama drama "+drama);
+
                                 JSONObject jsonDramaObject=new JSONObject(drama);
 
                                 int dramaId=jsonDramaObject.getInt("id");
-                                Log.d("","displaydrama jsonDramaObject dramaId "+dramaId);
                                 dramaInfo.setId(dramaId);
+
                                 String date=jsonDramaObject.getString("date");
-                                Log.d("","displaydrama jsonDramaObject date "+date);
                                 dramaInfo.setDatetime(date);
 
                                 String title=jsonDramaObject.getString("title");
-                                Log.d("","displaydrama jsonDramaObject title "+title);
                                 dramaInfo.setTitle(title);
 
                                 String imageurl=jsonDramaObject.getString("imageurl");
-                                Log.d("","displaydrama jsonDramaObject imageurl "+imageurl);
                                 dramaInfo.setLink_photo(imageurl);
+
                                 String isFav=favouritesInfoDAOImpl.findfavBy(dramaInfo.getId());
+                               if(isFav !=null)
                                 dramaInfo.setIsfav(isFav);
+                                else
+                                   dramaInfo.setIsfav("false");
+
                                 dramaInfoDAO.addDrama(dramaInfo);
                                 KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
                             }
@@ -280,43 +276,30 @@ public class DramaFragment extends Fragment {
 
         public MyAdapter(ArrayList<DramaInfo> Data) {
             list = Data;
-            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
-
         }
-
 
         @Override
         public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
             // create a new view
-            Log.d("", "MyAdapter onCreateViewHolder ");
             View view=null;
             DramaInfo dramaInfo =list.get(position);
 
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.recycle_items, parent, false);
             MyViewHolder holder = new MyViewHolder(view);
-
-
             return holder;
-
-
         }
 
         @Override
         public void onBindViewHolder(final MyAdapter.MyViewHolder holder, final int position) {
-            Log.d("", "MyAdapter onBindViewHolder ");
-
             final DramaInfo[] dramaInfo = {list.get(position)};
             holder.titleTextView.setText(dramaInfo[0].getTitle());
-//            holder.coverImageView.setImageResource(Integer.parseInt(list.get(position).getLink_photo()));
             Picasso.with(getContext()).load(dramaInfo[0].getLink_photo()).into(holder.coverImageView);
             if(dramaInfo[0].getIsfav()!=null && dramaInfo[0].getIsfav().equalsIgnoreCase("true")){
                 holder.bookmarkImageView.setImageResource(R.mipmap.ic_like);
-
             }
             else{
                 holder.bookmarkImageView.setImageResource(R.mipmap.ic_unlike);
-
             }
             holder.btnbook.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -455,7 +438,6 @@ public class DramaFragment extends Fragment {
                 Log.d("", "MyAdapter MyViewHolder ");
                 itemView.setOnClickListener(this);
             }
-
             @Override
             public void onClick(View v) {
                 int position = getAdapterPosition(); // gets item position
@@ -474,30 +456,21 @@ public class DramaFragment extends Fragment {
             }
         }
     }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,  int[] grantResults) {
         switch (requestCode) {
-
             case 100:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
 //                    Log.d("","shareIt onRequestPermissionsResult bm "+bm);
-
 //                    shareIt(bm);
                 }
                 break;
-
             default:
                 break;
         }
     }
 }
-
-

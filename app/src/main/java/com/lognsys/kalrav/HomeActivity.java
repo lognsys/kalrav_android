@@ -221,6 +221,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
+        Log.d("","Home loadHomeFragment CURRENT_TAG"+CURRENT_TAG);
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
         }
@@ -234,7 +235,6 @@ public class HomeActivity extends AppCompatActivity {
             public void run() {
                 // update the main content by replacing fragments
                 Fragment fragment = getHomeFragment();
-                Log.d("FCM","FCM generateNotification dramaId ========================================== "+dramaId);
 
                 if(isNotifiction){
                     Bundle bundle = new Bundle();
@@ -371,8 +371,7 @@ public class HomeActivity extends AppCompatActivity {
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null).commit();
                         drawer.closeDrawers();
-                        return true;
-//                          break;
+                        break;
                     case R.id.my_ticket:
                         navItemIndex = 3;
                         Log.d("","setUpNavigationView nav_bookmark ");
@@ -382,7 +381,7 @@ public class HomeActivity extends AppCompatActivity {
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null).commit();
                         drawer.closeDrawers();
-                        return true;
+                        break;
                     case R.id.nav_mydrama:
                         navItemIndex = 4;
                         Log.d("","setUpNavigationView nav_bookmark ");
@@ -392,8 +391,8 @@ public class HomeActivity extends AppCompatActivity {
                         HomeActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.frame, fragment, CURRENT_TAG).addToBackStack(null).commit();
                         drawer.closeDrawers();
-                        return true;
-                  case R.id.nav_about_us:
+                        break;
+                    case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(HomeActivity.this, AboutUsActivity.class));
                         drawer.closeDrawers();
@@ -429,12 +428,6 @@ public class HomeActivity extends AppCompatActivity {
                             }
 
                         }
-                        //set log_out in database
-//                        userDaoImpl.logOut(u); //pass UserInfo object
-
-                        //set global Object to null
-//                        u = null;
-//                        KalravApplication.getInstance().setGlobalUserObject(u);
                         LoginManager.getInstance().logOut();
                         // finish();
                         Intent i = new Intent(HomeActivity.this, LoginActivity.class);

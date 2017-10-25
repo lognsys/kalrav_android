@@ -1,28 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_margin="5dip"
+    android:orientation="vertical"
     android:layout_height="match_parent">
-<android.support.v7.widget.RecyclerView
-    android:id="@+id/pricelist"
-    android:layout_width="match_parent"
-    android:layout_alignParentStart="true"
-    android:scrollbars="vertical"
-    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+    <ImageButton
+        android:id="@+id/btnback"
+        android:layout_gravity="top|left"
+        android:layout_width="50dip"
+        android:background="@drawable/backicon"
+        android:layout_height="50dip" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/pricelist"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarStyle="insideOverlay"
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+    </LinearLayout>
     <by.anatoldeveloper.hallscheme.view.ZoomableImageView
         android:id="@+id/zoomable_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="340dip"/>
 
     <Button
         android:id="@+id/btnProceed"
         android:text="Proceed"
         android:gravity="center"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="wrap_content" />
 
-</RelativeLayout>
+</LinearLayout>

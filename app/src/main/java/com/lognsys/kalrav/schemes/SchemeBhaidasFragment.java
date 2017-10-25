@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.lognsys.kalrav.model.AuditoriumPriceRange;
 import com.lognsys.kalrav.model.SeatExample;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import by.anatoldeveloper.hallscheme.hall.HallScheme;
@@ -42,10 +44,13 @@ public class SchemeBhaidasFragment extends Fragment {
     List<SeatExample> itemsList;
     ZoomableImageView imageView;
     Button btnProceed;
+    Hashtable<Integer,Integer> ids;
+    ImageButton btnback;
     HallScheme scheme;
     RecyclerView listViewPrices;
     MyAdapter adapter;
     int n=91;
+    int chash=0;
     int dramaInfoId;
     String time,strDate;
     @Nullable
@@ -56,6 +61,7 @@ public class SchemeBhaidasFragment extends Fragment {
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
         dramaInfoId=  getArguments().getInt("dramaInfoId");
         time=  getArguments().getString("time");
+        ids=new Hashtable<Integer, Integer>();
         strDate=  getArguments().getString("strDate");
         populateData(rootView);
 
@@ -68,6 +74,7 @@ public class SchemeBhaidasFragment extends Fragment {
         }
         imageView = (ZoomableImageView) rootView.findViewById(R.id.zoomable_image);
         btnProceed = (Button) rootView.findViewById(R.id.btnProceed);
+        btnback = (ImageButton) rootView.findViewById(R.id.btnback);
         listViewPrices = (RecyclerView) rootView.findViewById(R.id.pricelist);
         listViewPrices.setHasFixedSize(true);
 
@@ -79,24 +86,44 @@ public class SchemeBhaidasFragment extends Fragment {
         adapter =new MyAdapter(auditoriumPriceRangeList);
 
         listViewPrices.setAdapter( adapter);
+        btnProceed.setEnabled(false);
 
         scheme = new HallScheme(imageView, basicScheme(), getActivity());
         scheme.setScenePosition(ScenePosition.SOUTH);
         scheme.setSceneName(getString(R.string.all_eye_here));
+        scheme.setTextSize(15.5f);
+
         scheme.setSeatListener(new SeatListener() {
 
             @Override
             public void selectSeat(int id) {
                 Toast.makeText(getActivity(), "select seat " + id, Toast.LENGTH_SHORT).show();
-            }
+                ids.put(++(chash),id);
+                if(ids.size()>0) {
+                    btnProceed.setEnabled(true);
+                }
+                }
 
             @Override
             public void unSelectSeat(int id) {
                 Toast.makeText(getActivity(), "unSelect seat " + id, Toast.LENGTH_SHORT).show();
+                ids.values().remove(id);
+                    if(ids.size()<1) {
+                    btnProceed.setEnabled(false);
+                }
+                else{
+                        btnProceed.setEnabled(true);
+
+                    }
             }
 
         });
-
+        btnback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStackImmediate();
+            }
+        });
         btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,29 +132,29 @@ public class SchemeBhaidasFragment extends Fragment {
                     for (int i=0;i<seatList.size();i++){
                         SeatExample seat= (SeatExample) seatList.get(i);
                         Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id()+"Your seat total price : "+seat.getTotal(), Toast.LENGTH_SHORT).show();
-
+                    }
+                    ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                    Fragment fff=new ConfirmFragment();
+                    Bundle args = new Bundle();
+                    args.putSerializable("dramaInfoId",dramaInfoId);
+                    args.putSerializable("auditorium",auditorium);
+                    args.putString("time", time);
+                    args.putString("strDate", strDate);
+                    args.putSerializable("seats", (ArrayList<Seat>) items);
+                    fff.setArguments(args);
+                    if (fff != null){
+                        switchFragment(fff);
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{
                     Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
-
-                }  ArrayList<Seat> items=(ArrayList<Seat>)seatList;
-                Fragment fff=new ConfirmFragment();
-                Bundle args = new Bundle();
-                args.putSerializable("dramaInfoId",dramaInfoId);
-                args.putSerializable("auditorium",auditorium);
-                args.putString("time", time);
-                args.putString("strDate", strDate);
-                args.putSerializable("seats", (ArrayList<Seat>) items);
-                fff.setArguments(args);
-                if (fff != null){
-                    switchFragment(fff);
-                }
-                else {
-                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
     }
 
     private void switchFragment(Fragment fff) {
@@ -184,7 +211,7 @@ public class SchemeBhaidasFragment extends Fragment {
                 Log.d("", "MyAdapter ======iValue>16 &&iValue<33==== strIvalue  ==="+strIvalue+" iValue ====="+iValue);
             }
             else if(iValue>30){
-                iValue=iValue+4;
+                iValue=iValue+2;
                 strIvalue =rowname[iValue];
                 Log.d("", "MyAdapter ======iValue>32==== strIvalue  ==="+strIvalue+" iValue ====="+iValue);
             }

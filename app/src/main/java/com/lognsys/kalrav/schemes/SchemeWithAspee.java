@@ -14,6 +14,7 @@ package com.lognsys.kalrav.schemes;
         import android.view.View;
         import android.view.ViewGroup;
         import android.widget.Button;
+        import android.widget.ImageButton;
         import android.widget.ListAdapter;
         import android.widget.ListView;
         import android.widget.TextView;
@@ -27,6 +28,7 @@ package com.lognsys.kalrav.schemes;
         import com.lognsys.kalrav.model.SeatExample;
 
         import java.util.ArrayList;
+        import java.util.Hashtable;
         import java.util.List;
 
         import by.anatoldeveloper.hallscheme.hall.HallScheme;
@@ -44,6 +46,10 @@ public class SchemeWithAspee extends Fragment {
     Auditorium auditorium;
     ArrayList<AuditoriumPriceRange> auditoriumPriceRangeList;
     Button btnProceed;
+    ImageButton btnback;
+
+    Hashtable<Integer,Integer> ids;
+    int chash=0;
     HallScheme scheme;
     RecyclerView listViewPrices;
     ZoomableImageView imageView;
@@ -58,6 +64,7 @@ public class SchemeWithAspee extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
          View rootView = inflater.inflate(R.layout.basic_scheme_fragment, container, false);
+        ids=new Hashtable<Integer, Integer>();
 
         auditorium= (Auditorium) getArguments().getSerializable("auditorium");
         itemsList= (List<SeatExample>) getArguments().getSerializable("itemsList");
@@ -75,6 +82,8 @@ public class SchemeWithAspee extends Fragment {
         }
         imageView = (ZoomableImageView) rootView.findViewById(R.id.zoomable_image);
         btnProceed = (Button) rootView.findViewById(R.id.btnProceed);
+        btnback = (ImageButton) rootView.findViewById(R.id.btnback);
+
         listViewPrices = (RecyclerView) rootView.findViewById(R.id.pricelist);
         listViewPrices.setHasFixedSize(true);
 
@@ -86,6 +95,7 @@ public class SchemeWithAspee extends Fragment {
             adapter = new MyAdapter(auditoriumPriceRangeList);
         }
         listViewPrices.setAdapter( adapter);
+        btnProceed.setEnabled(false);
 
         scheme = new HallScheme(imageView, schemeWithScene(), getActivity());
         scheme.setScenePosition(ScenePosition.SOUTH);
@@ -95,15 +105,33 @@ public class SchemeWithAspee extends Fragment {
             @Override
             public void selectSeat(int id) {
                 Toast.makeText(getActivity(), "select seat " + id, Toast.LENGTH_SHORT).show();
+                ids.put(++(chash),id);
+                if(ids.size()>0) {
+                    btnProceed.setEnabled(true);
+                }
             }
 
             @Override
             public void unSelectSeat(int id) {
                 Toast.makeText(getActivity(), "unSelect seat " + id, Toast.LENGTH_SHORT).show();
+                ids.values().remove(id);
+                if(ids.size()<1) {
+                    btnProceed.setEnabled(false);
+                }
+                else{
+                    btnProceed.setEnabled(true);
+
+                }
             }
 
         });
 
+        btnback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStackImmediate();
+            }
+        });
         btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,26 +142,27 @@ public class SchemeWithAspee extends Fragment {
                         Toast.makeText(getActivity(), "Your seat number : "+seat.marker()+seat.id()+"Your seat total price : "+seat.getTotal(), Toast.LENGTH_SHORT).show();
 
                     }
+                    ArrayList<Seat> items=(ArrayList<Seat>)seatList;
+                    Fragment fff=new ConfirmFragment();
+                    Bundle args = new Bundle();
+                    args.putSerializable("auditorium",auditorium);
+                    args.putSerializable("dramaInfoId",dramaInfoId);
+                    args.putString("time", time);
+                    args.putString("strDate", strDate);
+                    args.putSerializable("seats", (ArrayList<Seat>) items);
+                    fff.setArguments(args);
+                    if (fff != null){
+                        switchFragment(fff);
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
                     Toast.makeText(getActivity(), "Please select atleast one seat to proceed further", Toast.LENGTH_SHORT).show();
 
                 }
-                ArrayList<Seat> items=(ArrayList<Seat>)seatList;
-                Fragment fff=new ConfirmFragment();
-                Bundle args = new Bundle();
-                args.putSerializable("auditorium",auditorium);
-                args.putSerializable("dramaInfoId",dramaInfoId);
-                args.putString("time", time);
-                args.putString("strDate", strDate);
-                args.putSerializable("seats", (ArrayList<Seat>) items);
-                fff.setArguments(args);
-                if (fff != null){
-                    switchFragment(fff);
-                }
-                else {
-                    Toast.makeText(getActivity(), "Please select your seat no. ", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
     }
