@@ -143,6 +143,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME + " TEXT , "
             + NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE + " TEXT , "
             + NotificationInfo.COLUMN_NOTIFICATION_MESSAGE + " TEXT , "
+            + NotificationInfo.COLUMN_NOTIFICATION_CONFIRMATION_CODE + " TEXT , "
+            + NotificationInfo.COLUMN_NOTIFICATION_BOOKING_ID + " integer , "
             + COLUMN_TIMESTAMP+ " DEFAULT CURRENT_TIMESTAMP NOT NULL);";
 
     @Override

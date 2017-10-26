@@ -123,7 +123,7 @@ public class MyTicketFragment extends Fragment {
         DramaName = "Drama Name : "+tvDramaName.getText().toString().trim();
         Auditorium = "Auditorium Name" +tvAuditorium.getText().toString().trim();
         GroupName = "Group Name : "+textGroupName.getText().toString().trim();
-        DateAndTime = "Drama Date and Time : "+ textDramaDate.getText().toString().trim()+" " +textDramaTiming.getText().toString();
+        DateAndTime = "Drama Date and Time : "+ textDramaDate.getText().toString().trim();
         BookingDateTime ="Booking Date and Time :"+ textBookingDate.getText().toString().trim()+" " +textBookingTime.getText().toString();
         UserName="Booked by : "+ textUserName.getText().toString().trim();
         TicketNumber ="Ticket numbers :"+ tvTicketNumber.getText().toString().trim();

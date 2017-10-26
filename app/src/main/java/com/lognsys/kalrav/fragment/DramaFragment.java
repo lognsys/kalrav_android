@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -67,6 +68,7 @@ public class DramaFragment extends Fragment {
     MyAdapter adapter;
 //    http://www.json-generator.com/api/json/get/bVjwLYiZAi?indent=2
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
     //Properties
     private PropertyReader propertyReader;
     private Properties properties;
@@ -215,6 +217,8 @@ public class DramaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
         propertyReader = new PropertyReader(getActivity());
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeToRefresh);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
 
         myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
@@ -266,6 +270,16 @@ public class DramaFragment extends Fragment {
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         myRecyclerView.setLayoutManager(MyLayoutManager);
+
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                displaydrama();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         return view;
     }
 
@@ -361,24 +375,22 @@ public class DramaFragment extends Fragment {
             holder.shareImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                 Uri bmpUri = getLocalBitmapUri(holder.coverImageView,dramaInfo[0]);
+                    Uri bmpUri = getLocalBitmapUri(holder.coverImageView,dramaInfo[0]);
 
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.putExtra(Intent.EXTRA_STREAM, bmpUri);
                     share.putExtra(Intent.EXTRA_TEXT,"Drama Details : \n Drama Name : "+dramaInfo[0].getTitle()
                                                        /* +" \n Drama Date : "+dramaInfo[0].getDatetime()+" Drama Time : "+dramaInfo[0].getTime()*/
-                                                        +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()
+                                    +" \n Drama Group Name : "+dramaInfo[0].getGroup_name()
                                             /*+" Drama Language : "+dramaInfo[0].getDrama_language()*/);
-                    share.setType("image/jpeg");
+                    share.setType("image/*");
                     share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     getContext().startActivity(Intent.createChooser(share, "Share image File"));
-
                 }
             });
         }
 
-        private Uri getLocalBitmapUri(ImageView coverImageView , DramaInfo dramaInfo) {
-            Log.d("","getLocalBitmapUri  coverImageView.getDrawable() "+ coverImageView.getDrawable());
+        private Uri getLocalBitmapUri(ImageView coverImageView , DramaInfo dramaInfo) {   Log.d("","getLocalBitmapUri  coverImageView.getDrawable() "+ coverImageView.getDrawable());
 
             Drawable drawable = coverImageView.getDrawable();
             Bitmap bmp = null;

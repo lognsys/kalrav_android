@@ -83,9 +83,6 @@ public class SchemePrabhodhanFragment extends Fragment {
         time=  getArguments().getString("time");
         strDate=  getArguments().getString("strDate");
         populateData(rootView);
-        scheme = new HallScheme(imageView, basicScheme(), getActivity());
-        scheme.setSceneName(getString(R.string.all_eye_here));
-        scheme.setScenePosition(ScenePosition.SOUTH);
         return rootView;
     }
 
@@ -95,12 +92,8 @@ public class SchemePrabhodhanFragment extends Fragment {
         mActivity = (FragmentActivity) activity;
     }
     public void switchFragment(Fragment fff) {
-        Log.d("", "Rest alReadyExsistUser seatAuth switchFragment fff " + fff);
-        Log.d("", "Rest alReadyExsistUser seatAuth switchFragment mActivity " + mActivity);
-
         if (mActivity == null)
             return;
-        Log.d("", "Rest alReadyExsistUser seatAuth switchFragment (mActivity instanceof HomeActivity) " + (mActivity instanceof HomeActivity));
 
         if (mActivity instanceof HomeActivity) {
             HomeActivity feeds = (HomeActivity) getActivity();
@@ -156,7 +149,6 @@ public class SchemePrabhodhanFragment extends Fragment {
 
                 }
             }
-
         });
 
         btnback.setOnClickListener(new View.OnClickListener() {
@@ -1037,12 +1029,7 @@ public class SchemePrabhodhanFragment extends Fragment {
                                         seat.color = Color.argb(255, 60, 179, 113);
                                         seat.id =itemsList.get(l).getJrow();
                                         seat.selectedSeatMarker = String.valueOf(seat.id);
-                                    /*else{
-                                    colvalue = 3 + itemsList.get(l).getJrow();
-                                    seat.color = Color.argb(255, 60, 179, 113);
-                                    seat.id =itemsList.get(l).getJrow();
-                                    seat.selectedSeatMarker = String.valueOf(seat.id);
-                                }*/
+
                                     }
                                     else{
                                         seat.status = HallScheme.SeatStatus.INFO;

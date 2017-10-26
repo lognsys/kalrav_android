@@ -41,6 +41,8 @@ public class NotificationDAOImpl implements NotificationDAO {
             values.put(NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME, notificationInfo.getRealname());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE, notificationInfo.getDramaTitle());
             values.put(NotificationInfo.COLUMN_NOTIFICATION_MESSAGE, notificationInfo.getMessage());
+            values.put(NotificationInfo.COLUMN_NOTIFICATION_CONFIRMATION_CODE, notificationInfo.getConfirmationCode());
+            values.put(NotificationInfo.COLUMN_NOTIFICATION_BOOKING_ID, notificationInfo.getBookingId());
             values.put(NotificationInfo.COLUMN_TIMESTAMP, KalravApplication.getInstance().getCurrentDate());
             // Inserting Row
           int id= (int) db.insert(NotificationInfo.TABLE_NOTIFICATION, null, values);
@@ -61,6 +63,8 @@ public class NotificationDAOImpl implements NotificationDAO {
                 NotificationInfo.COLUMN_NOTIFICATION_USER_REALNAME + "," +
                 NotificationInfo.COLUMN_NOTIFICATION_DRAMA_TITLE +"," +
                 NotificationInfo.COLUMN_NOTIFICATION_MESSAGE +"," +
+                NotificationInfo.COLUMN_NOTIFICATION_CONFIRMATION_CODE +"," +
+                NotificationInfo.COLUMN_NOTIFICATION_BOOKING_ID +"," +
                 NotificationInfo.COLUMN_TIMESTAMP +
                 " FROM notification", null);
         if(c!=null)
@@ -88,7 +92,13 @@ public class NotificationDAOImpl implements NotificationDAO {
                 String message = c.getString(5);
                 notificationInfo.setMessage(message);
 
-                String last_edit = c.getString(6);
+                String confirmationCode = c.getString(6);
+                notificationInfo.setConfirmationCode(confirmationCode);
+
+                int bookingId = c.getInt(7);
+                notificationInfo.setBookingId(bookingId);
+
+                String last_edit = c.getString(8);
                 notificationInfo.setLast_edit(last_edit);
                 infos.add(notificationInfo);
 

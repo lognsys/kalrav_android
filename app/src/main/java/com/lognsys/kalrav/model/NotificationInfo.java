@@ -14,6 +14,9 @@ public class NotificationInfo {
     public static final String COLUMN_NOTIFICATION_USER_REALNAME = "realname";
     public static final String COLUMN_NOTIFICATION_DRAMA_TITLE = "dramaTitle";
     public static final String COLUMN_NOTIFICATION_MESSAGE = "message";
+
+    public static final String COLUMN_NOTIFICATION_CONFIRMATION_CODE = "confirmationCode";
+    public static final String COLUMN_NOTIFICATION_BOOKING_ID = "bookingId";
     public static final String COLUMN_TIMESTAMP = "last_edit";
     private int _id ;
     private int dramaId ;
@@ -21,20 +24,40 @@ public class NotificationInfo {
     private String realname;
     private String dramaTitle;
     private String message;
+    private int bookingId;
+    private String confirmationCode;
     private String last_edit;
 
 
-    public NotificationInfo(int _id, int dramaId, int userId, String realname, String dramaTitle, String message) {
+    public NotificationInfo(int _id, int dramaId, int userId, String realname, String dramaTitle, String message, String confirmationCode,int bookingId) {
         this._id = _id;
         this.dramaId = dramaId;
         this.userId = userId;
         this.realname = realname;
         this.dramaTitle = dramaTitle;
         this.message = message;
+        this.confirmationCode = confirmationCode;
+        this.bookingId = bookingId;
     }
 
     public NotificationInfo() {
 
+    }
+
+    public int getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public String getConfirmationCode() {
+        return confirmationCode;
+    }
+
+    public void setConfirmationCode(String confirmationCode) {
+        this.confirmationCode = confirmationCode;
     }
 
     public String getLast_edit() {

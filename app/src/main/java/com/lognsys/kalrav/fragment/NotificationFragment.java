@@ -131,7 +131,9 @@ public class NotificationFragment extends Fragment {
                 holder.delete = (ImageView) convertView.findViewById(R.id.imgdelete);
                 holder.title = (TextView) convertView.findViewById(R.id.title);
                 holder.message = (TextView) convertView.findViewById(R.id.message);
-                holder.realname = (TextView) convertView.findViewById(R.id.genre);
+                holder.realname = (TextView) convertView.findViewById(R.id.realname);
+                holder.bookingid = (TextView) convertView.findViewById(R.id.bookingId);
+                holder.confirmationcode = (TextView) convertView.findViewById(R.id.confirmationcode);
                 convertView.setTag(holder);
             } else {
                 holder = (Holder) convertView.getTag();
@@ -155,19 +157,29 @@ public class NotificationFragment extends Fragment {
             if(info.getDramaTitle()!=null)
                 holder.title.setText(info.getDramaTitle());
 
+
             // rating
 //        message.setText(m.getMessage());
 
             if(info.getMessage()!=null)
                 holder.message.setText(info.getMessage());
 
-
-            // genre
-            //  genre.setText(m.getGenre());
+            if(info.getBookingId()!=0)
+                holder.bookingid.setText("Booking Id = "+info.getBookingId());
+            else{
+                holder.bookingid.setVisibility(View.GONE);
+            }
+            if(info.getConfirmationCode()!=null)
+                holder.confirmationcode.setText("Confirmation code = "+info.getConfirmationCode());
+            else{
+                holder.confirmationcode.setVisibility(View.GONE);
+            }
 
             if(info.getRealname()!=null)
                 holder.realname.setText(info.getRealname());
-
+            else{
+                holder.realname.setVisibility(View.GONE);
+            }
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -232,6 +244,8 @@ public class NotificationFragment extends Fragment {
             public TextView message;
             public ImageView delete;
             public TextView realname;
+            public TextView bookingid;
+            public TextView confirmationcode;
             int pos;
         }
     }

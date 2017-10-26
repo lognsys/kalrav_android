@@ -184,14 +184,16 @@ public class FragmentDramaDetail extends Fragment  {
                     @Override
                     public void onClick(View v) {
                         callAPI=new CallAPI((AppCompatActivity) getActivity());
+                       Log.d("","Rest onSubmit KalravApplication.getInstance().getPrefs().getCustomer_id() "+KalravApplication.getInstance().getPrefs().getCustomer_id());
                         if(KalravApplication.getInstance().getPrefs().getCustomer_id()!=null) {
 
                             String ratedrama=properties.getProperty(Constants.API_URL_DRAMA.ratedrama.name());
-                            KalravApplication.getInstance().getPrefs().showDialog(getActivity());
+                            Log.d("","Rest onSubmit ratedrama "+ratedrama);
+
                             callAPI.rateDrama(Double.parseDouble(tvRatingStar.getText().toString()), dramaInfo,
                                     Integer.parseInt(KalravApplication.getInstance().getPrefs().getCustomer_id()),ratedrama);
-                            KalravApplication.getInstance().getPrefs().hidepDialog(getActivity());
                             dialog.dismiss();
+
                         }
                         else{
                             Intent intent =new Intent(getActivity(), LoginActivity.class);
@@ -211,13 +213,6 @@ public class FragmentDramaDetail extends Fragment  {
 
         TextView tv = (TextView) view.findViewById(R.id.textsynopsys);
         makeTextViewResizable(tv, 2, "View More", true);
-
-
-        //when we scroll the images we have to set the dot that corresponds to the image to White and the others
-        //will be Gray
-
-
-
         return view;
     }
 

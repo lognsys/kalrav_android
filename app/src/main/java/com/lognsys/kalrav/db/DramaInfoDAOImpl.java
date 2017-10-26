@@ -282,7 +282,10 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
         db = sqLiteHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DramaInfo.COLUMN_GROUP_NAME, dramaInfo.getGroup_name());
+        if(dramaInfo.getGroup_name()!=null){
+            values.put(DramaInfo.COLUMN_GROUP_NAME, dramaInfo.getGroup_name());
+            Log.d(TAG,"THIS updateDrama COLUMN_GROUP_NAME dramaInfo.getGroup_name()=== "+dramaInfo.getGroup_name());
+        }
         values.put(DramaInfo.COLUMN_DRAMA_NAME, dramaInfo.getTitle());
         values.put(DramaInfo.COLUMN_LINK_PHOTO, dramaInfo.getLink_photo());
         values.put(DramaInfo.COLUMN_DATETIME, dramaInfo.getDatetime());
@@ -371,6 +374,8 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
                 dramaInfo = new DramaInfo();
                 String id = c.getString(0);
                 String groupname = c.getString(1);
+                Log.d(TAG,"Rest getAllDrama  groupname "+ (groupname));
+
                 String dramaname = c.getString(2);
                 String linkphoto = c.getString(3);
                 String datatime = c.getString(4);
@@ -388,6 +393,8 @@ public class DramaInfoDAOImpl implements DramaInfoDAO {
 
                 dramaInfo.setId(Integer.parseInt(id));
                 dramaInfo.setGroup_name(groupname);
+                Log.d(TAG,"Rest getAllDrama  dramaInfo.getGroupname "+ (dramaInfo.getGroup_name()));
+
                 dramaInfo.setTitle(dramaname);
                 dramaInfo.setLink_photo(linkphoto);
                 dramaInfo.setDatetime(datatime);;

@@ -403,24 +403,16 @@ public class AuditoriumListFragment extends Fragment {
         public MyAdapter(List<Auditorium> Data,String strDate) {
             list = Data;
             this.strDate = strDate;
-//            Log.d("", "MyAdapter constructore list "+list+" list size ==="+list.size());
-
         }
         @Override
         public AuditoriumListFragment.MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
             // create a new view
-            Log.d("", "MyAdapter onCreateViewHolder ");
             View view=null;
             Auditorium auditorium =list.get(position);
-
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.auditoriumdetailfragment, parent, false);
             AuditoriumListFragment.MyAdapter.MyViewHolder holder = new AuditoriumListFragment.MyAdapter.MyViewHolder(view);
-
-
             return holder;
-
-
         }
 
         @Override
@@ -430,9 +422,6 @@ public class AuditoriumListFragment extends Fragment {
              final Auditorium auditorium = list.get(position);
             holder.textAuditoriumName.setText(auditorium.getAudiName() +" " +auditorium.getDate());
             final String  timeArray = auditorium.getTime();
-            Log.d("", "MyAdapter onBindViewHolder timeArray "+timeArray);
-//            final String[] split= timeArray.split(" ");
-//                      Log.d("", "MyAdapter onBindViewHolder auditorium.getAuditoriumPriceRanges() "+auditorium.getAuditoriumPriceRanges());
 
             List<TextView> textList = new ArrayList<TextView>();
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -449,12 +438,7 @@ public class AuditoriumListFragment extends Fragment {
                 System.out.println("Comparing two Date in Java using CompareTo method");
             boolean isTrue=false;
             try {
-
-                Log.d("", "df === "+df+"  df.parse(strDate) == "+ df.parse(strDate)+" df.parse(KalravApplication.getInstance().getCurrentDate()  ===" +df.parse(KalravApplication.getInstance().getCurrentDate()));
-
                 isTrue= compareDatesByCompareTo(df, df.parse(strDate), df.parse(KalravApplication.getInstance().getCurrentDate()));
-                Log.d("","df isTrue ==================== " + isTrue);
-
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -475,8 +459,6 @@ public class AuditoriumListFragment extends Fragment {
                             Log.d(TAG, "requestAuditoriumDateTime bookedseatsurl..."+bookedseatsurl);
                             KalravApplication.getInstance().getPrefs().showDialog(getActivity());
                             requestWebService(bookedseatsurl,timeArray,strDate,auditorium);
-//                        new RequestItemsServiceTask(auditorium,split[finalI],strDate).execute();
-
                         }
                     });
                 }
@@ -516,10 +498,9 @@ public class AuditoriumListFragment extends Fragment {
             Log.e("","RequestItemsServiceTask requestWebService bookedseatsurl  "+bookedseatsurl);
             JSONObject params = new JSONObject();
             try {
-
                 params.put("dramas_id", dramaInfoId);
                 params.put("auditoriums_id",Integer.parseInt(auditorium.getAudiId()));
-                Log.d("Confirm Fragment","bookedSeats params " +params);
+                Log.d(TAG,"bookedSeats params " +params);
 
             } catch (Exception e) {
                 Log.d(TAG,"bookedSeats Exception "+e  );
@@ -527,15 +508,12 @@ public class AuditoriumListFragment extends Fragment {
                 e.printStackTrace();
             }
 
-
             final JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST,
                     bookedseatsurl, params,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             List<SeatExample> foundItems = new ArrayList<SeatExample>(10000);
-
-
                             try {
                                 if(response!=null && response.length()>0){
                                     JSONArray jsonseatnumberdetails=response.getJSONArray("seatnumberdetails");
@@ -700,18 +678,6 @@ public class AuditoriumListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int position = getAdapterPosition(); // gets item position
-               /* if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
-                    DramaInfo dramaInfo = list.get(position);
-                    // We can access the data within the views
-                    if(dramaInfo!=null) {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("dramaInfo", dramaInfo);
-                        Fragment fragment = new FragmentDramaDetail();
-                        fragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
-                    }
-                }*/
             }
         }
     }

@@ -55,6 +55,8 @@ import java.util.List;
 
 import by.anatoldeveloper.hallscheme.hall.Seat;
 
+import static android.R.id.toggle;
+
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -273,10 +275,43 @@ public class HomeActivity extends AppCompatActivity {
                   fragmentTransaction.commitAllowingStateLoss();
 
               }
+
+
+
+                /*        addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                            @Override
+                            public void onBackStackChanged () {
+                                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                                    getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
+                                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            onBackPressed();
+                                        }
+                                    });
+                                } else {
+                                    //show hamburger
+                                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+//                                    toggle.syncState();
+                                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            drawer.openDrawer(GravityCompat.START);
+                                        }
+                                    });
+                                }
+                            }
+                        });*/
+//                HomeActivity.this.getActionBar().setDisplayHomeAsUpEnabled(true);
                 FragmentManager fm = getFragmentManager(); // or 'getSupportFragmentManager();'
                 int count = fm.getBackStackEntryCount();
                 for(int i = 0; i < count; ++i) {
                     fm.popBackStack();
+                }
+//                if(count>1)
+                {
+                    displayBack();
                 }
             }
         };
@@ -336,7 +371,32 @@ public class HomeActivity extends AppCompatActivity {
     private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
+public void displayBack(){
+    getSupportFragmentManager().addOnBackStackChangedListener(new android.support.v4.app.FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
+            }
+            else{
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawer.openDrawer(GravityCompat.START);
+                    }
+                });
 
+            }
+        }
+    });
+}
     private void setUpNavigationView() {
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

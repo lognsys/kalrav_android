@@ -113,8 +113,13 @@ public class MyDramaFragment extends Fragment {
                     }
                     else{
                         Log.d("","Rest initializeList else ---- displaydrama ");
-
-                        displaydrama();
+                        dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
+                        Log.d("","Rest initializeList else  dramaInfos.size "+dramaInfos.size());
+                        if (dramaInfos.size() > 0 & dramaInfos != null) {
+                            adapter= new MyAdapter(dramaInfos);
+                            myRecyclerView.setAdapter(adapter);
+                        }
+//                        displaydrama();
                     }
                 }
             }

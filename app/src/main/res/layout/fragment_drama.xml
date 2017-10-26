@@ -10,6 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.lognsys.kalrav.fragment.DramaFragment">
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cardView"
         android:layout_above="@+id/listener_av_main"
@@ -25,5 +30,7 @@
         ads:adSize="BANNER"
         android:visibility="gone"
         ads:adUnitId="ca-app-pub-2091012524875733/3506237007" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>
 
