@@ -216,6 +216,7 @@ public class DramaFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_drama, container, false);
         propertyReader = new PropertyReader(getActivity());
+
         properties = propertyReader.getMyProperties(PROPERTIES_FILENAME);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeToRefresh);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);

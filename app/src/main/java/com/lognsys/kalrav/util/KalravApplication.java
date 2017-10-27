@@ -1,5 +1,6 @@
 package com.lognsys.kalrav.util;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
@@ -9,13 +10,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,15 +53,34 @@ public class KalravApplication extends Application {
     private ProgressDialog pDialog;
 
     ConnectivityManager cm;
-
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
+    }
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
         prefs = new Preference(this);
          cm =  (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
     }
+
+    DrawerLayout drawerLayout;
+    public void setDrawer(DrawerLayout drawerLayout){
+        this.drawerLayout=drawerLayout;
+    }
+
+    public DrawerLayout getDrawerLayout() {
+        return this.drawerLayout;
+    }
+
+    public void setToolBar(){}
+
+    public Toolbar getToolbBar() {
+        return null;
+    }
+
     public Preference getPrefs() {
         return prefs;
     }
@@ -152,9 +175,10 @@ public void showDialog(Context context, String message){
     }
 
 
+    @SuppressLint("ResourceAsColor")
     public AlertDialog.Builder buildDialog(Context c) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(c, null));
+        @SuppressLint("RestrictedApi") AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(c, null));
         builder.setTitle("No Internet Connection");
         builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
         AlertDialog dialog = builder.create();

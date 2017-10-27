@@ -12,9 +12,10 @@
     <ImageButton
         android:id="@+id/btnback"
         android:layout_gravity="top|left"
-        android:layout_width="50dip"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
         android:background="@drawable/backicon"
-        android:layout_height="50dip" />
+        android:layout_height="wrap_content" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/pricelist"
         android:layout_gravity="center"

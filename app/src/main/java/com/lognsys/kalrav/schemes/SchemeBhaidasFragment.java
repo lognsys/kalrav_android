@@ -74,7 +74,7 @@ public class SchemeBhaidasFragment extends Fragment {
         }
         imageView = (ZoomableImageView) rootView.findViewById(R.id.zoomable_image);
         btnProceed = (Button) rootView.findViewById(R.id.btnProceed);
-        btnback = (ImageButton) rootView.findViewById(R.id.btnback);
+//        btnback = (ImageButton) rootView.findViewById(R.id.btnback);
         listViewPrices = (RecyclerView) rootView.findViewById(R.id.pricelist);
         listViewPrices.setHasFixedSize(true);
 
@@ -118,12 +118,12 @@ public class SchemeBhaidasFragment extends Fragment {
             }
 
         });
-        btnback.setOnClickListener(new View.OnClickListener() {
+       /* btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFragmentManager().popBackStackImmediate();
             }
-        });
+        });*/
         btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

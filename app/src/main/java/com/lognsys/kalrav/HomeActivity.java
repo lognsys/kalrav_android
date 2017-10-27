@@ -1,5 +1,6 @@
 package com.lognsys.kalrav;
 
+import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -214,6 +215,7 @@ public class HomeActivity extends AppCompatActivity {
      * Returns respected fragment that user
      * selected from navigation menu
      */
+    @SuppressLint("RestrictedApi")
     private void loadHomeFragment() {
         // selecting appropriate nav menu item
         selectNavMenu();
@@ -276,43 +278,14 @@ public class HomeActivity extends AppCompatActivity {
 
               }
 
-
-
-                /*        addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-                            @Override
-                            public void onBackStackChanged () {
-                                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                                    getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
-                                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            onBackPressed();
-                                        }
-                                    });
-                                } else {
-                                    //show hamburger
-                                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
-//                                    toggle.syncState();
-                                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            drawer.openDrawer(GravityCompat.START);
-                                        }
-                                    });
-                                }
-                            }
-                        });*/
-//                HomeActivity.this.getActionBar().setDisplayHomeAsUpEnabled(true);
                 FragmentManager fm = getFragmentManager(); // or 'getSupportFragmentManager();'
                 int count = fm.getBackStackEntryCount();
                 for(int i = 0; i < count; ++i) {
                     fm.popBackStack();
                 }
-//                if(count>1)
-                {
                     displayBack();
-                }
+
+
             }
         };
 
@@ -375,23 +348,34 @@ public void displayBack(){
     getSupportFragmentManager().addOnBackStackChangedListener(new android.support.v4.app.FragmentManager.OnBackStackChangedListener() {
         @Override
         public void onBackStackChanged() {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onBackPressed();
+//                        onBackPressed();
+                        getSupportFragmentManager().popBackStackImmediate();
+
                     }
                 });
             }
             else{
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        drawer.openDrawer(GravityCompat.START);
+                activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
+                loadNavHeader();
+                // initializing navigation menu
+                setUpNavigationView();
+                setToolbarTitle();
+
+                Log.d("","Home display getSupportFragmentManager().getBackStackEntryCount()"+getSupportFragmentManager().getBackStackEntryCount());
+               if(getSupportFragmentManager().getBackStackEntryCount()==1){
+                   navItemIndex=0;
+                   CURRENT_TAG=TAG_DRAMA;
+               }
+                Log.d("","Home display CURRENT_TAG"+CURRENT_TAG);
+                if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
+                        drawer.closeDrawers();
                     }
-                });
 
             }
         }
