@@ -330,47 +330,62 @@ public class CallAPI {
                 String json = null;
                 String str=null;
                 byte[] response=null;
-                if(volleyError.networkResponse.data!=null)
-                    response = volleyError.networkResponse.data;
-                Log.d("Response","bookedSeats volleyError response " +response);
+
                 try {
+                    if(volleyError.networkResponse.data!=null)
+                        response = volleyError.networkResponse.data;
+
                     str = new String(response, "UTF-8");
-                    Log.d("Response","bookedSeats volleyError str toString  " +str.toString() );
+                    KalravApplication.getInstance().isJSONValid(str.toString());
+                    Log.d("Response","alReadyExsistUser volleyError KalravApplication.getInstance().isJSONValid(str.toString()) " +KalravApplication.getInstance().isJSONValid(str.toString()));
 
                     try {
-                        JSONObject object=new JSONObject(str.toString());
-                        Log.d("Response","exception inside object  " +object);
+                        if( KalravApplication.getInstance().isJSONValid(str.toString())){
+                            JSONObject object=new JSONObject(str.toString());
+                            Log.d("Response","exception inside object  " +object);
 
-                        int  statusCode=object.getInt("statusCode");
-                        Log.d("Response","Rest inside statusCode  " +statusCode);
+                            int  statusCode=object.getInt("statusCode");
+                            Log.d("Response","Rest inside statusCode  " +statusCode);
 
-                        if(statusCode==400){
-                            String msg=object.getString("msg");
-                            displayMessage(msg);
-                        }
-                        else if(statusCode==406){
-                            String msg=object.getString("msg");
-                            displayMessage(msg);
-                        } else if(statusCode==404){
-                            String msg=object.getString("msg");
-                            displayMessage(msg);
-                            Intent i = new Intent(mContext, RegisterActivity.class);
-
-                            if(seatAuth!=null && seatAuth.equalsIgnoreCase("ConfirmationSeats")){
-                                i.putExtra("seatAuth",seatAuth);
-                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+                            if(statusCode==400){
+                                String msg=object.getString("msg");
+                                displayMessage(msg);
                             }
-                            else{
-                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            }
+                            else if(statusCode==406){
+                                String msg=object.getString("msg");
+                                displayMessage(msg);
+                            } else if(statusCode==404){
+                                String msg=object.getString("msg");
+                                displayMessage(msg);
+                                Intent i = new Intent(mContext, RegisterActivity.class);
 
-                            mContext.startActivity(i);
+                                if(seatAuth!=null && seatAuth.equalsIgnoreCase("ConfirmationSeats")){
+                                    i.putExtra("seatAuth",seatAuth);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                }
+                                else{
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                }
+
+                                mContext.startActivity(i);
+                            }
                         }
+                        else{
+                            Log.d("Response","alReadyExsistUser volleyError ========================= KalravApplication.getInstance().isJSONValid(str.toString()) " +KalravApplication.getInstance().isJSONValid(str.toString()));
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }
+                catch (NullPointerException e) {
+                    e.printStackTrace();
+                    Log.d("Response","alReadyExsistUser volleyError str e  " +e );
+
                 } catch (UnsupportedEncodingException e) {
+                    Log.d("Response","alReadyExsistUser volleyError UnsupportedEncodingException e  " +e );
+
                     e.printStackTrace();
                 }
             }

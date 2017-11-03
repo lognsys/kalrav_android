@@ -26,11 +26,20 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
+import com.lognsys.kalrav.LoginActivity;
 import com.lognsys.kalrav.R;
 import com.lognsys.kalrav.fragment.DramaFragment;
 import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -150,29 +159,78 @@ public class KalravApplication extends Application {
     return isConnected;
     }
 
-public void showDialog(Context context, String message){
+public void showDialog(final Context context, String message){
+
+    Log.d("Response","alReadyExsistUser volleyError context  " +context+ " message ==="+message );
     AlertDialog alertDialog = new AlertDialog.Builder(
             context).create();
-
     // Setting Dialog Title
     alertDialog.setTitle("Kalrav");
 
     // Setting Dialog Message
     alertDialog.setMessage(message);
 
-    // Setting Icon to Dialog
-    alertDialog.setIcon(R.drawable.kalrav_logo);
-
     alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
+            boolean isServerDown=true;
+        Intent intent=new Intent(getApplicationContext(), LoginActivity.class);
+        intent.putExtra("isServerDown",isServerDown);
+            Log.d("Response","alReadyExsistUser volleyError isServerDown  " +isServerDown );
 
+            context.startActivity(intent);
         }
     });
     // Showing Alert Message
     alertDialog.show();
     }
+     public boolean isServerReachable(Context context) {
+        ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connMan.getActiveNetworkInfo();
+         Log.v(TAG, " isConnecting -----context  "+context);
+         Log.v(TAG, " isConnecting -----netInfo isConnected  "+netInfo.isConnected());
+
+
+         if (netInfo.isConnected()) {
+            try {
+
+                URL urlServer = new URL("http://kalravapi.lognsys.com:8080/kalravweb");
+                Log.v(TAG, " isConnecting -----urlServer  "+urlServer);
+
+                Log.v(TAG, " isConnecting -----urlServer openConnection() "+urlServer.openConnection());
+                HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
+                Log.v(TAG, " isConnecting -----urlConn "+urlConn);
+                urlConn.connect();
+                Log.v(TAG, " isConnecting -----urlConn.getResponseCode()  "+urlConn.getResponseCode());
+
+                if (urlConn.getResponseCode() == 200) {
+
+                    Log.v(TAG, " isConnecting -----true  200  ");
+                    return true;
+                } else {
+                    Log.v(TAG, " isConnecting -----false not 200  ");
+
+                    return false;
+                }
+            } catch (MalformedURLException e1) {
+
+                Log.v(TAG, " isConnecting -----MalformedURLException false el   "+e1);
+                return false;
+            } catch (IOException e) {
+                Log.v(TAG, " isConnecting -----IOException false e   "+e);
+
+                return false;
+            }
+            catch (Exception e) {
+                Log.v(TAG, " isConnecting -----Exception false e   "+e);
+
+                return false;
+            }
+        }
+        return false;
+    }
+
 
 
     @SuppressLint("ResourceAsColor")
@@ -223,5 +281,18 @@ public void showDialog(Context context, String message){
 
         }
       }
-
+    public boolean isJSONValid(String test) {
+        try {
+            new JSONObject(test);
+        } catch (JSONException ex) {
+            // edited, to include @Arthur's comment
+            // e.g. in case JSONArray is valid as well...
+            try {
+                new JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
