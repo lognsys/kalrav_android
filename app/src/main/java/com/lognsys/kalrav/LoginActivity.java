@@ -100,11 +100,10 @@ public class LoginActivity extends AppCompatActivity implements
 
 
     //Shared preference variables;
-    private String fb_id,google_id,email = "";
+    private String fb_id,google_id;
     UserInfoDAOImpl userDaoImpl;
-    SharedPreferences sharedpreferences;
     CallAPI callAPI;
-boolean isServerDown;
+    boolean isServerDown;
 
     //Properties
     private PropertyReader propertyReader;
@@ -162,11 +161,12 @@ boolean isServerDown;
             }
         }
         else {
-            Log.d(TAG, "Rest CASE2: OnCreate method - Login through Facebook Auth and saving to database.");
-            if(KalravApplication.getInstance().getPrefs().getDevice_token()==null)
+            Log.d(TAG, "Rest CASE2:  KalravApplication.getInstance().getPrefs().getDevice_token()  "+KalravApplication.getInstance().getPrefs().getDevice_token());
+            if(KalravApplication.getInstance().getPrefs().getDevice_token()==null) {
                 invokeFCMService();
-            Log.d(TAG, "Rest CASE2: OnCreate method - token "+KalravApplication.getInstance().getPrefs().getDevice_token());
+                Log.d(TAG, "Rest CASE2: after  KalravApplication.getInstance().getPrefs().getDevice_token()  "+KalravApplication.getInstance().getPrefs().getDevice_token());
 
+            }
             //Initialize Facebook sdk
             FacebookSdk.sdkInitialize(getApplicationContext());
             mCallbackManager = CallbackManager.Factory.create();
@@ -176,7 +176,6 @@ boolean isServerDown;
             //Initialize FirebaseAuth
             //You need to include google-services.json (downloaded from firebase console) file under the "app" folder of this project.
             mAuth = FirebaseAuth.getInstance();
-            Log.d(TAG, "onCreate mAuth:========================== " + mAuth);
 
             textSkipLogin = (TextView) findViewById(R.id.textSkipLogin);
             textSkipLogin.setOnClickListener(this);
@@ -189,7 +188,7 @@ boolean isServerDown;
             hTextView.animateText(getBaseContext().getString(R.string.company_name)); // animate
 
 
-            loginButton = (LoginButton) findViewById(R.id.fb_image);
+            loginButton = (LoginButton) findViewById(R.id.btnfacebookLogin);
 
             loginButton.setBackgroundResource(R.drawable.fb);
             loginButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -293,16 +292,11 @@ boolean isServerDown;
                             if(isServerDown==false){
 
                                 if(KalravApplication.getInstance().isConnectedToInternet()){
-                                    if(KalravApplication.getInstance().isServerReachable(LoginActivity.this)){
                                         if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
 
                                             String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                                             callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth, LoginActivity.this);
                                         }
-                                    }
-                                    else{
-                                        KalravApplication.getInstance().showDialog(LoginActivity.this,getString(R.string.unknown_error));
-                                    }
                                 }
                                 else{
                                     KalravApplication.getInstance().buildDialog(LoginActivity.this);
@@ -442,26 +436,26 @@ boolean isServerDown;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult" );
+        Log.d(TAG, "Rest firebaseAuthWithGoogle: onActivityResult" );
 
         // Pass the activity result back to the Facebook SDK
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "mCallbackManager onActivityResult requestCode ==" +requestCode+
+        Log.d(TAG, "Rest mCallbackManager onActivityResult requestCode ==" +requestCode+
                 " resultCode ==== "+resultCode+" data === "+data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode==100) {
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult result "+result );
-            Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult result.isSuccess() "+result.isSuccess() );
+            Log.d(TAG, "Rest firebaseAuthWithGoogle: onActivityResult result "+result );
+            Log.d(TAG, "Rest firebaseAuthWithGoogle: onActivityResult result.isSuccess() "+result.isSuccess() );
 
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
 
-                Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult result.getSignInAccount() "+result.getSignInAccount() );
+                Log.d(TAG, "Rest firebaseAuthWithGoogle: onActivityResult result.getSignInAccount() "+result.getSignInAccount() );
                 GoogleSignInAccount account = result.getSignInAccount();
-                Log.d(TAG, "firebaseAuthWithGoogle: onActivityResult account "+account );
+                Log.d(TAG, "Rest firebaseAuthWithGoogle: onActivityResult account "+account );
 
                 firebaseAuthWithGoogle(account);
 
@@ -491,8 +485,8 @@ boolean isServerDown;
      * @param acct
      */
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle: acct.getEmail -=====" + acct.getEmail());
-        Log.d(TAG, "firebaseAuthWithGoogle: acct.getIdToken -=====" + acct.getIdToken());
+        Log.d(TAG, "Rest firebaseAuthWithGoogle: acct.getEmail -=====" + acct.getEmail());
+        Log.d(TAG, "Rest firebaseAuthWithGoogle: acct.getIdToken -=====" + acct.getIdToken());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -529,25 +523,28 @@ boolean isServerDown;
                                     KalravApplication.getInstance().getPrefs().setName(mAuth.getCurrentUser().getDisplayName());
                                 }
                                 userInfo.setLoggedIn(Constants.LOG_IN);
-                                Log.v(TAG, " isConnecting -----firebaseAuthWithGoogle  ");
+                                Log.d(TAG, " Rest isConnecting -----firebaseAuthWithGoogle  ");
+                                Log.d(TAG, " Rest isConnecting -----firebaseAuthWithGoogle =============== "+KalravApplication.getInstance().isConnectedToInternet());
 
                                 if(KalravApplication.getInstance().isConnectedToInternet()){
-                                    if(KalravApplication.getInstance().isServerReachable(LoginActivity.this)){
-                                        if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
+                                    Log.d(TAG, " Rest isConnecting -----firebaseAuthWithGoogle =====userInfo.getLoggedIn() "+userInfo.getLoggedIn());
+
+                                    if(userInfo.getLoggedIn()==1){
+                                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
+                                        }
+                                    Log.d(TAG, " Rest isConnecting -----firebaseAuthWithGoogle =====userInfo.getEmail() "+userInfo.getEmail());
+
+                                    if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
                                             String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                                             callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth,LoginActivity.this);
                                         }
-                                    }
-                                    else{
-                                        KalravApplication.getInstance().showDialog(LoginActivity.this,getString(R.string.unknown_error));
-                                    }
                                 }
                                 else{
                                     KalravApplication.getInstance().buildDialog(LoginActivity.this);
                                 }
 
                             } catch (Exception e) {
-                                Log.d(TAG, "firebaseAuthWithGoogle :acct Exception ..."+e);
+                                Log.d(TAG, "Rest firebaseAuthWithGoogle :acct Exception ..."+e);
 
                             }
                         }

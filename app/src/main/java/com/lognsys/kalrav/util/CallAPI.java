@@ -170,8 +170,6 @@ public class CallAPI {
                 String json = null;
                 String str=null;
                 byte[] response=null;
-
-                Log.d("","Rest onSubmit volleyError.networkResponse.data "+volleyError.networkResponse.data);
                 if(volleyError.networkResponse.data!=null)
                     response = volleyError.networkResponse.data;
                 Log.d("Response","Rest volleyError response " +response);
@@ -327,17 +325,15 @@ public class CallAPI {
 //                Log.d("Response","Rest volleyError networkResponse.data " +volleyError.networkResponse.data);
 
                 KalravApplication.getInstance().getPrefs().hidepDialog(mContext);
-                String json = null;
                 String str=null;
                 byte[] response=null;
 
                 try {
                     if(volleyError.networkResponse.data!=null)
                         response = volleyError.networkResponse.data;
-
+                    Log.d("Response","alReadyExsistUser volleyError response " +response);
                     str = new String(response, "UTF-8");
-                    KalravApplication.getInstance().isJSONValid(str.toString());
-                    Log.d("Response","alReadyExsistUser volleyError KalravApplication.getInstance().isJSONValid(str.toString()) " +KalravApplication.getInstance().isJSONValid(str.toString()));
+
 
                     try {
                         if( KalravApplication.getInstance().isJSONValid(str.toString())){
@@ -381,8 +377,8 @@ public class CallAPI {
                 }
                 catch (NullPointerException e) {
                     e.printStackTrace();
-                    Log.d("Response","alReadyExsistUser volleyError str e  " +e );
-
+                    Log.d("Response","alReadyExsistUser volleyError nullptrExc e  " +e );
+                    KalravApplication.getInstance().showDialog(mContext,mContext.getString(R.string.unknown_error));
                 } catch (UnsupportedEncodingException e) {
                     Log.d("Response","alReadyExsistUser volleyError UnsupportedEncodingException e  " +e );
 

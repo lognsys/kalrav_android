@@ -126,10 +126,10 @@ public class DramaFragment extends Fragment {
                     public void onResponse(JSONArray response) {
 
                         try {
-                            for (int i=0; i<response.length(); i++) {
-                                DramaInfo dramaInfo=new DramaInfo();
+                            for (int i = 0; i < response.length(); i++) {
+                                DramaInfo dramaInfo = new DramaInfo();
 
-                                JSONObject jsonObject= null;
+                                JSONObject jsonObject = null;
                                 try {
                                     jsonObject = (response.getJSONObject(i));
                                 } catch (JSONException e) {
@@ -138,39 +138,43 @@ public class DramaFragment extends Fragment {
                                             "Error: 1 " + e.getMessage(),
                                             Toast.LENGTH_LONG).show();
                                 }
-                                String groups=jsonObject.getString("groups");
-                                JSONObject jsonGroupsObject=new JSONObject(groups);
-                                int groupId=jsonGroupsObject.getInt("id");
+                                String groups = jsonObject.getString("groups");
+                                JSONObject jsonGroupsObject = new JSONObject(groups);
+                                int groupId = jsonGroupsObject.getInt("id");
 
-                                String group_name=jsonGroupsObject.getString("group_name");
+                                String group_name = jsonGroupsObject.getString("group_name");
                                 dramaInfo.setGroup_name(group_name);
 
-                                String drama=jsonObject.getString("drama");
+                                String drama = jsonObject.getString("drama");
 
-                                JSONObject jsonDramaObject=new JSONObject(drama);
+                                if (drama != null)
+                                {
+                                    JSONObject jsonDramaObject = new JSONObject(drama);
 
-                                int dramaId=jsonDramaObject.getInt("id");
-                                dramaInfo.setId(dramaId);
+                                    int dramaId = jsonDramaObject.getInt("id");
+                                    dramaInfo.setId(dramaId);
 
-                                String date=jsonDramaObject.getString("date");
-                                dramaInfo.setDatetime(date);
+                                    String date = jsonDramaObject.getString("date");
+                                    dramaInfo.setDatetime(date);
 
-                                String title=jsonDramaObject.getString("title");
-                                dramaInfo.setTitle(title);
+                                    String title = jsonDramaObject.getString("title");
+                                    if (title != null)
+                                        dramaInfo.setTitle(title);
 
-                                String imageurl=jsonDramaObject.getString("imageurl");
-                                dramaInfo.setLink_photo(imageurl);
+                                    String imageurl = jsonDramaObject.getString("imageurl");
+                                    if (imageurl != null)
+                                        dramaInfo.setLink_photo(imageurl);
 
-                                String isFav=favouritesInfoDAOImpl.findfavBy(dramaInfo.getId());
-                               if(isFav !=null)
-                                dramaInfo.setIsfav(isFav);
-                                else
-                                   dramaInfo.setIsfav("false");
+                                    String isFav = favouritesInfoDAOImpl.findfavBy(dramaInfo.getId());
+                                    if (isFav != null)
+                                        dramaInfo.setIsfav(isFav);
+                                    else
+                                        dramaInfo.setIsfav("false");
 
-                                dramaInfoDAO.addDrama(dramaInfo);
-                                KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                                    dramaInfoDAO.addDrama(dramaInfo);
+                                    KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+                                }
                             }
-
                                 dramaInfos= (ArrayList<DramaInfo>) dramaInfoDAO.getAllDrama();
 
                                 if ( dramaInfos != null && dramaInfos.size()>0) {

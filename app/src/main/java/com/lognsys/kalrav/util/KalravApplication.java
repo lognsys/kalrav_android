@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -177,6 +178,9 @@ public void showDialog(final Context context, String message){
             boolean isServerDown=true;
         Intent intent=new Intent(getApplicationContext(), LoginActivity.class);
         intent.putExtra("isServerDown",isServerDown);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK );
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             Log.d("Response","alReadyExsistUser volleyError isServerDown  " +isServerDown );
 
             context.startActivity(intent);
@@ -185,11 +189,13 @@ public void showDialog(final Context context, String message){
     // Showing Alert Message
     alertDialog.show();
     }
-     public boolean isServerReachable(Context context) {
-        ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+
+     public boolean isServerReachable(final Context context) {
+
+
+         ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connMan.getActiveNetworkInfo();
-         Log.v(TAG, " isConnecting -----context  "+context);
-         Log.v(TAG, " isConnecting -----netInfo isConnected  "+netInfo.isConnected());
 
 
          if (netInfo.isConnected()) {
@@ -229,7 +235,7 @@ public void showDialog(final Context context, String message){
             }
         }
         return false;
-    }
+}
 
 
 
