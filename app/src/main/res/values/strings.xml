@@ -83,6 +83,7 @@
 
     <string name="network_connection">Please check your network connection</string>
     <string name="no_data_available">No data available</string>
+    <string name="something_went_wrong">Something went wrong please try again later...</string>
     <string name="unknown_error">Unknown Error please Contact to Support Team</string>
 
     <string name="login_cancel">Login Cancelled...</string>

@@ -35,9 +35,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.hanks.htextview.HTextView;
@@ -45,12 +43,7 @@ import com.hanks.htextview.HTextViewType;
 import com.lognsys.kalrav.FCM.FCMInstanceIdService;
 import com.lognsys.kalrav.db.SQLiteHelper;
 import com.lognsys.kalrav.db.UserInfoDAOImpl;
-import com.lognsys.kalrav.dialog.NetworkStatusDialog;
-import com.lognsys.kalrav.model.Auditorium;
-import com.lognsys.kalrav.model.SeatExample;
-import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
-import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
 import com.lognsys.kalrav.util.CallAPI;
 import com.lognsys.kalrav.util.Constants;
 import com.lognsys.kalrav.util.FontManager;
@@ -59,8 +52,6 @@ import com.lognsys.kalrav.util.KalravApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -196,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements
             loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(final LoginResult loginResult) {
-                    Log.v(TAG, " Facebook API requestData - ");
+                    Log.v(TAG, " Rest CASE2 API requestData - ");
                     if (KalravApplication.getInstance().getPrefs().getDevice_token() == null)
                     {
                         invokeFCMService();
@@ -207,13 +198,15 @@ public class LoginActivity extends AppCompatActivity implements
                         @Override
                         public void run() {
                             //Do something after 500ms
+                            Log.v(TAG, " Rest CASE2 API requestData isServerDown - "+isServerDown);
+
                             if(isServerDown==false){
                                 requestData(loginResult);
                             }
 
                         }
                     }, 3000);
-                    Log.d(TAG, "mCallbackManager loginResult ==" + loginResult);
+                    Log.d(TAG, "Rest CASE2 mCallbackManager loginResult ==" + loginResult);
                 }
 
                 @Override
@@ -258,12 +251,12 @@ public class LoginActivity extends AppCompatActivity implements
                     Log.d(TAG, "onCreate FirebaseAuth:========================== " + firebaseAuth);
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                    Log.d(TAG, "onAuthStateChanged:user:" + user);
+                    Log.d(TAG, "Rest CASE2 onAuthStateChanged:user:" + user);
                     if (user != null) {
 
                         // User is signed in
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " Provider:" + user.getProviderId());
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " Provider:" + user.getProviderId());
+                        Log.d(TAG, "Rest CASE2 onAuthStateChanged:signed_in:" + user.getUid() + " Provider:" + user.getProviderId());
+                        Log.d(TAG, "Rest CASE2 onAuthStateChanged:signed_in:" + user.getUid() + " Provider:" + user.getProviderId());
                         KalravApplication.getInstance().getPrefs().setIsLogin(true);
                         final UserInfo userInfo = new UserInfo();
 
@@ -286,17 +279,17 @@ public class LoginActivity extends AppCompatActivity implements
                                 KalravApplication.getInstance().getPrefs().setName(mAuth.getCurrentUser().getDisplayName());
                             }
                             userInfo.setLoggedIn(Constants.LOG_IN);
-                            Log.v(TAG, " isConnecting -----onCreate  else ----------");
+                            Log.d(TAG, "Rest CASE2 isConnecting -----onCreate  isServerDown ----------"+isServerDown);
 
 
                             if(isServerDown==false){
 
                                 if(KalravApplication.getInstance().isConnectedToInternet()){
-                                        if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
+                                    if (userInfo.getEmail() != null && userInfo.getEmail().length() > 0 && KalravApplication.getInstance().getPrefs().getIsLogin() == true) {
 
-                                            String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
-                                            callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth, LoginActivity.this);
-                                        }
+                                        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
+                                        callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth, LoginActivity.this);
+                                    }
                                 }
                                 else{
                                     KalravApplication.getInstance().buildDialog(LoginActivity.this);
@@ -352,16 +345,16 @@ public class LoginActivity extends AppCompatActivity implements
                         KalravApplication.getInstance().getPrefs().setName(userInfo.getName());
                         Log.v(TAG, " isConnecting -----requestData  ");
                         if(KalravApplication.getInstance().isConnectedToInternet()){
-                            if(KalravApplication.getInstance().isServerReachable(LoginActivity.this)){
+//                            if(KalravApplication.getInstance().isServerReachable(LoginActivity.this)){
                                 if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0){
                                     String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
                                     callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth, LoginActivity.this);
                                     finish();
                                 }
-                            }
-                            else{
-                                KalravApplication.getInstance().showDialog(LoginActivity.this,getString(R.string.unknown_error));
-                            }
+//                            }
+//                            else{
+//                                KalravApplication.getInstance().showDialog(LoginActivity.this,getString(R.string.unknown_error));
+//                            }
                         }
                         else{
                             KalravApplication.getInstance().buildDialog(LoginActivity.this);
@@ -530,14 +523,14 @@ public class LoginActivity extends AppCompatActivity implements
                                     Log.d(TAG, " Rest isConnecting -----firebaseAuthWithGoogle =====userInfo.getLoggedIn() "+userInfo.getLoggedIn());
 
                                     if(userInfo.getLoggedIn()==1){
-                                            KalravApplication.getInstance().getPrefs().setIsLogin(true);
-                                        }
+                                        KalravApplication.getInstance().getPrefs().setIsLogin(true);
+                                    }
                                     Log.d(TAG, " Rest isConnecting -----firebaseAuthWithGoogle =====userInfo.getEmail() "+userInfo.getEmail());
 
                                     if(userInfo.getEmail()!=null && userInfo.getEmail().length()>0 && KalravApplication.getInstance().getPrefs().getIsLogin()==true){
-                                            String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
-                                            callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth,LoginActivity.this);
-                                        }
+                                        String alReadyExsistUser=properties.getProperty(Constants.API_URL_USER.post_userdetails_already_exist_url.name());
+                                        callAPI.alReadyExsistUser(userInfo, fb_id, google_id,alReadyExsistUser,seatAuth,LoginActivity.this);
+                                    }
                                 }
                                 else{
                                     KalravApplication.getInstance().buildDialog(LoginActivity.this);

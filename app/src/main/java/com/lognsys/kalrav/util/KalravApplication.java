@@ -39,7 +39,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
@@ -201,7 +204,7 @@ public void showDialog(final Context context, String message){
          if (netInfo.isConnected()) {
             try {
 
-                URL urlServer = new URL("http://kalravapi.lognsys.com:8080/kalravweb");
+                URL urlServer = new URL("http://kalravapi.lognsys.com:8080/kalravweb/getalldramaandgroup");
                 Log.v(TAG, " isConnecting -----urlServer  "+urlServer);
 
                 Log.v(TAG, " isConnecting -----urlServer openConnection() "+urlServer.openConnection());
@@ -235,9 +238,7 @@ public void showDialog(final Context context, String message){
             }
         }
         return false;
-}
-
-
+     }
 
     @SuppressLint("ResourceAsColor")
     public AlertDialog.Builder buildDialog(Context c) {

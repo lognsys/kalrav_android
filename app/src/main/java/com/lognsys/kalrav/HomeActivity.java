@@ -72,11 +72,6 @@ public class HomeActivity extends AppCompatActivity {
     private FloatingActionButton fab;
 
     private GoogleApiClient mGoogleApiClient;
-    // urls to load navigation header background image
-    // and profile image
-   // private static final String urlNavHeaderBg = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-   // private static final String urlProfileImg = "https://lh3.googleusercontent.com/eCtE_G34M9ygdkmOpYvCag1vBARCmZwnVS6rS5t4JLzJ6QgQSBquM0nuTsCpLhYbKljoyS-txg";
-
     // index to identify current nav menu item
     public static int navItemIndex;
     public static int dramaId;

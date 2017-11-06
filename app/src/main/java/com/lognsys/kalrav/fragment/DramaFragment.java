@@ -51,6 +51,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -124,7 +125,6 @@ public class DramaFragment extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 DramaInfo dramaInfo = new DramaInfo();
@@ -196,12 +196,20 @@ public class DramaFragment extends Fragment {
                     }
                 }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("","Error: volly Exception " + error);
-                Toast.makeText(getContext(),
-                        getString(R.string.unknown_error),
-                        Toast.LENGTH_LONG).show();
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+
                 KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
+
+                Log.d("","THIS displaydrama volleyError "+volleyError);
+                if(volleyError.networkResponse!=null){
+                    Log.d("","THIS displaydrama volleyError.networkResponse "+volleyError.networkResponse);
+                    Log.d("","THIS displaydrama  volleyError.networkResponse.data "+ volleyError.networkResponse.data.toString());
+
+                }
+                String msg=getString(R.string.something_went_wrong);
+                KalravApplication.getInstance().showDialog(getActivity(),msg);
+
             }
         });
         req.setRetryPolicy(new DefaultRetryPolicy(

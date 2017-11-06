@@ -36,38 +36,13 @@ import com.lognsys.kalrav.fragment.AuditoriumListFragment;
 import com.lognsys.kalrav.model.Auditorium;
 import com.lognsys.kalrav.model.DramaInfo;
 import com.lognsys.kalrav.model.Ratings;
-import com.lognsys.kalrav.model.SeatExample;
 import com.lognsys.kalrav.model.SeatsDetailInfo;
 import com.lognsys.kalrav.model.UserInfo;
-import com.lognsys.kalrav.schemes.SchemeBhaidasFragment;
-import com.lognsys.kalrav.schemes.SchemePrabhodhanFragment;
-import com.lognsys.kalrav.schemes.SchemeWithAspee;
-import com.squareup.picasso.Picasso;
 
-import org.joda.time.DateTime;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -294,13 +269,13 @@ public class CallAPI {
 
                                     Intent i = new Intent(mContext, HomeActivity.class);
                                     i.putExtra("id",dramaInfoId);
-                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     mContext.startActivity(i);
 
                                 }
                                 else{
                                     Intent i = new Intent(mContext, HomeActivity.class);
-                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     mContext.startActivity(i);
 //
                                 }
