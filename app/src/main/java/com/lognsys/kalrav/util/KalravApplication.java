@@ -1,6 +1,7 @@
 package com.lognsys.kalrav.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.ProgressDialog;
@@ -162,7 +163,29 @@ public class KalravApplication extends Application {
 
     return isConnected;
     }
+    public static boolean isConnectingToInternet() {
+        ConnectivityManager connectivity = (ConnectivityManager) getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected())
+                try {
+                    URL url = new URL("http://kalravapi.lognsys.com:8080/kalravweb/getalldramaandgroup");
+                    HttpURLConnection urlc = (HttpURLConnection) url
+                            .openConnection();
+                    urlc.setConnectTimeout(3000);
+                    urlc.connect();
+                    if (urlc.getResponseCode() == 200) {
+                        return true;
+                    }
+                } catch (MalformedURLException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
+        }
+        return false;
+    }
 public void showDialog(final Context context, String message){
 
     Log.d("Response","alReadyExsistUser volleyError context  " +context+ " message ==="+message );
@@ -194,51 +217,6 @@ public void showDialog(final Context context, String message){
     }
 
 
-     public boolean isServerReachable(final Context context) {
-
-
-         ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = connMan.getActiveNetworkInfo();
-
-
-         if (netInfo.isConnected()) {
-            try {
-
-                URL urlServer = new URL("http://kalravapi.lognsys.com:8080/kalravweb/getalldramaandgroup");
-                Log.v(TAG, " isConnecting -----urlServer  "+urlServer);
-
-                Log.v(TAG, " isConnecting -----urlServer openConnection() "+urlServer.openConnection());
-                HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
-                Log.v(TAG, " isConnecting -----urlConn "+urlConn);
-                urlConn.connect();
-                Log.v(TAG, " isConnecting -----urlConn.getResponseCode()  "+urlConn.getResponseCode());
-
-                if (urlConn.getResponseCode() == 200) {
-
-                    Log.v(TAG, " isConnecting -----true  200  ");
-                    return true;
-                } else {
-                    Log.v(TAG, " isConnecting -----false not 200  ");
-
-                    return false;
-                }
-            } catch (MalformedURLException e1) {
-
-                Log.v(TAG, " isConnecting -----MalformedURLException false el   "+e1);
-                return false;
-            } catch (IOException e) {
-                Log.v(TAG, " isConnecting -----IOException false e   "+e);
-
-                return false;
-            }
-            catch (Exception e) {
-                Log.v(TAG, " isConnecting -----Exception false e   "+e);
-
-                return false;
-            }
-        }
-        return false;
-     }
 
     @SuppressLint("ResourceAsColor")
     public AlertDialog.Builder buildDialog(Context c) {
@@ -301,5 +279,46 @@ public void showDialog(final Context context, String message){
             }
         }
         return true;
+    }
+    public static class NetCheck extends AsyncTask<String, Void, Boolean> {
+        String exsistUserUrl;
+        String email;
+        UserInfo userInfo;
+        String fb_id;
+        String google_id;
+        String seatAuth;
+        Activity activity;
+
+        public NetCheck(String email, UserInfo userInfo, String fb_id, String google_id, String seatAuth,Activity activity) {
+            this.email=email;
+            this.userInfo=userInfo;
+            this.fb_id=fb_id;
+            this.google_id=google_id;
+            this.seatAuth=seatAuth;
+            this.activity=activity;
+            }
+
+        @Override
+        protected Boolean doInBackground(String... args) {
+            // get Internet status
+            Log.d(TAG, "Rest Google NetCheck ");
+
+            exsistUserUrl=args[0];
+            Log.d(TAG, "Rest Google NetCheck exsistUserUrl "+exsistUserUrl);
+            Log.d(TAG, "Rest Google NetCheck isConnectingToInternet() "+isConnectingToInternet());
+
+            return isConnectingToInternet();
+        }
+
+        protected void onPostExecute(Boolean th) {
+            Log.d(TAG, "Rest Google NetCheck onPostExecute th() "+th);
+
+            if (th == true) {
+                CallAPI callAPI=new CallAPI(KalravApplication.getInstance());
+                callAPI.alReadyExsistUser(this.userInfo, this.fb_id, this.google_id,this.exsistUserUrl,this.seatAuth, this.activity);
+            } else {
+                KalravApplication.getInstance().showDialog(this.activity,getInstance().getString(R.string.unknown_error));
+            }
+        }
     }
 }

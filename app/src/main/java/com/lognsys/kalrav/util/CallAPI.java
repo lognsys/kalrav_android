@@ -68,6 +68,11 @@ public class CallAPI {
         mContext=activity;
     }
 
+    public CallAPI(KalravApplication instance) {
+        mContext=instance;
+
+    }
+
     public void rateDrama(double rating, DramaInfo dramaInfo, int customer_id, String url){
 
         String post_create_rating_url=url;

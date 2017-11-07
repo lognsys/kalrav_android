@@ -112,11 +112,16 @@ public class FragmentDramaDetail extends Fragment  {
         textRatingvalue=(TextView) view.findViewById(R.id.textRatingvalue);
         rbRatingBar.setRating(4.0F);
         textRatingvalue.setText("4.0");
-        if(dramaInfo!= null){
-            displayDramaDetail(dramaInfo,0);
+        if(KalravApplication.getInstance().isConnectedToInternet()){
+            if(dramaInfo!= null){
+                displayDramaDetail(dramaInfo,0);
+            }
+            else{
+                displayDramaDetail(null,dramaId);
+            }
         }
-        else{
-            displayDramaDetail(null,dramaId);
+        else {
+            KalravApplication.getInstance().buildDialog(getContext());
         }
         viewPager=(ViewPager)view.findViewById(R.id.viewpager);
         btnbook=(Button)view.findViewById(R.id.btnbook);
@@ -363,10 +368,10 @@ public class FragmentDramaDetail extends Fragment  {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("","displayDramaDetail VolleyError "+error);
-
-                Toast.makeText(getActivity(),
+                
+            /*    Toast.makeText(getActivity(),
                         error.getMessage(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
+            */    // hide the progress dialog
                 KalravApplication.getInstance().getPrefs().hidepDialog(getContext());
 
             }

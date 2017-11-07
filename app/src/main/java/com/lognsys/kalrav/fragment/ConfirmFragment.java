@@ -713,9 +713,13 @@ public class ConfirmFragment extends Fragment implements View.OnClickListener {
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage);
         sendNotification(notificationId);
-        Fragment fragment = new DramaFragment();
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+        Intent  intent = new Intent(getActivity(),
+                HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+//        Fragment fragment = new DramaFragment();
+//        getActivity().getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
 
     }
 
